@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "component": "pyav",
+  "version": "18.1.0",
+  "filename": "av-18.1.0-cp311-abi3-win_amd64.whl",
+  "sha256": "ea1480b7a8d5405cb5f382b344731bf125fd2c1c6fae3964f6c48595628387ff",
+  "official_source": "https://files.pythonhosted.org/packages/33/b4/76ba21e46704f632004276b85289a1582e95f5eff760436d6149875a1881/av-18.1.0-cp311-abi3-win_amd64.whl",
+  "mode": "explicit-offline-import",
+  "distributed": false
+}

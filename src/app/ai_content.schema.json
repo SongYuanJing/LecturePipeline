@@ -1,0 +1,510 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lecture AI content, v1.5 schema 1; boundary v1.7",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "input_hashes",
+    "title",
+    "organization",
+    "summary",
+    "notes",
+    "definitions",
+    "formulas",
+    "emphasis",
+    "uncertainties",
+    "vocabulary",
+    "part_review"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "input_hashes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/block"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/block"
+      }
+    },
+    "definitions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/block"
+      }
+    },
+    "formulas": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/block"
+          },
+          {
+            "required": [
+              "math"
+            ]
+          }
+        ]
+      }
+    },
+    "emphasis": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/block"
+      }
+    },
+    "uncertainties": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/block"
+          },
+          {
+            "properties": {
+              "basis": {
+                "const": "uncertain"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "organization": {
+      "type": "object",
+      "required": [
+        "homework",
+        "deadlines",
+        "exam",
+        "preparation",
+        "announcements",
+        "dates"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "homework": {
+          "type": "object",
+          "required": [
+            "status",
+            "items"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "confirmed",
+                "uncertain",
+                "not_found"
+              ]
+            },
+            "items": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/$defs/block"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "deadlines": {
+          "type": "object",
+          "required": [
+            "status",
+            "items"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "confirmed",
+                "uncertain",
+                "not_found"
+              ]
+            },
+            "items": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/$defs/block"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "exam": {
+          "type": "object",
+          "required": [
+            "status",
+            "items"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "confirmed",
+                "uncertain",
+                "not_found"
+              ]
+            },
+            "items": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/$defs/block"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "preparation": {
+          "type": "object",
+          "required": [
+            "status",
+            "items"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "confirmed",
+                "uncertain",
+                "not_found"
+              ]
+            },
+            "items": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/$defs/block"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "announcements": {
+          "type": "object",
+          "required": [
+            "status",
+            "items"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "confirmed",
+                "uncertain",
+                "not_found"
+              ]
+            },
+            "items": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/$defs/block"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "dates": {
+          "type": "object",
+          "required": [
+            "status",
+            "items"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "confirmed",
+                "uncertain",
+                "not_found"
+              ]
+            },
+            "items": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "$ref": "#/$defs/block"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "vocabulary": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "object",
+        "required": [
+          "chinese",
+          "pinyin",
+          "russian",
+          "refs"
+        ],
+        "properties": {
+          "chinese": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pinyin": {
+            "type": "string",
+            "minLength": 1
+          },
+          "russian": {
+            "type": "string",
+            "minLength": 1
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1
+          },
+          "entry_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sense_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "refs": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/$defs/ref"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "part_review": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "part",
+          "status",
+          "note"
+        ],
+        "properties": {
+          "part": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "enum": [
+              "usable",
+              "mixed",
+              "unreliable"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "type": "string",
+          "minLength": 1
+        },
+        "end": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "block": {
+      "type": "object",
+      "required": [
+        "text",
+        "basis",
+        "refs"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "basis": {
+          "enum": [
+            "transcript",
+            "reconstruction",
+            "uncertain"
+          ]
+        },
+        "refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/ref"
+          }
+        },
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "math": {
+          "$ref": "#/$defs/math"
+        }
+      },
+      "additionalProperties": false
+    },
+    "math": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/$defs/math"
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "sub"
+          ],
+          "properties": {
+            "sub": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "#/$defs/math"
+              },
+              "maxItems": 2
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "sup"
+          ],
+          "properties": {
+            "sup": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "#/$defs/math"
+              },
+              "maxItems": 2
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "frac"
+          ],
+          "properties": {
+            "frac": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "#/$defs/math"
+              },
+              "maxItems": 2
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "hat"
+          ],
+          "properties": {
+            "hat": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/math"
+              },
+              "maxItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "bar"
+          ],
+          "properties": {
+            "bar": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/math"
+              },
+              "maxItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "sum"
+          ],
+          "properties": {
+            "sum": {
+              "type": "array",
+              "minItems": 3,
+              "items": {
+                "$ref": "#/$defs/math"
+              },
+              "maxItems": 3
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

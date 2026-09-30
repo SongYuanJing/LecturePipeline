@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "component": "ctranslate2",
+  "version": "4.8.2",
+  "filename": "ctranslate2-4.8.2-cp311-cp311-win_amd64.whl",
+  "sha256": "995938fcd24a1174a7abf9765e7fa216b5b91a1d8e8c4c8f383c7a186e8bab2e",
+  "official_source": "https://files.pythonhosted.org/packages/7e/86/21926da682103a20d4f4833b389131b801c71e6b8d6047be5f0a28fe673a/ctranslate2-4.8.2-cp311-cp311-win_amd64.whl",
+  "supplier": "CTranslate2 via official PyPI",
+  "mode": "external-user-provisioned",
+  "distributed": false,
+  "python_abi": "cp311",
+  "platform": "win_amd64"
+}

@@ -1,0 +1,27 @@
+{
+  "version": "1.8.1",
+  "files": {
+    "lecture_asr.py": "31aaa6998fcf77ef8f0fbd590e2f7eb8909b0033d015c942f1363515220bb83a",
+    "lecture_pipeline.py": "a6d5ec5b315ddde55d241e9eced6b69118b518eb7578b2a429a0f909fef5898e",
+    "lecture_worker.py": "00b671f9e6c7d218cdb8bce228628fa5533a5cf846cded5c11d913a5197e3e3f",
+    "pipeline_config.py": "9f1f2ee1bddc0dc55249df0e16a9dfa6accaba981beee299402907f0d5cedc22",
+    "ai_queue.py": "a83ca13bd79f35be428dfdd0153ccf5ba42531599d37ad028c1b3b577c726566",
+    "dictionary_merge.py": "c6b03416d963b429b16a82389835edd39ad1ee0aea1a56e096029caa4d4d64e7",
+    "atomic_publish.py": "0e43103868ce029d0fc79b731886af9a41b4ec8ebade8b7a8479313b9c76ceb2",
+    "windows_publish.py": "22dbe0b386588c44f1e55c64247ba2d27fc9a417a91cb8fa148449049631eef6",
+    "Config.ps1": "905ec07aae7b633eef71ba30d3f32782551f4983843524bb0aed6335b194f508",
+    "WorkerControl.ps1": "8131a7322aa0ce54c0c10d1844d9e1198b21f03ae8b6b5f458628117e8f2c7ce",
+    "DialogueControl.ps1": "ef8d81e25f0accc5174c0e7327a29530d889d286e7e437a28f9d1c9aef6570f8",
+    "DictionaryMerge.ps1": "0cf32f17a1e5d0b28fafd1fe3884949adefffefd2be6458d803807d3db7f9aa7",
+    "WordAI.ps1": "6a75c8ca7c792f18eedad67d369bf7b93b468a8b29934e759740a4bb5333019f",
+    "AI_INSTRUCTIONS_v1.7.md": "da12f54fc181f80fc2af0977255abc8ef770dea2cd1525a4adbbb08b19842387",
+    "ai_content.schema.json": "e1735aa1cf111bacd66f298d71a930ac3981af29df3f8eaba6d81dc3741a3b37",
+    "word_ai_v1.5/lecture_ai.py": "ac4ea8446851eccdc3b2297a67b0a39b07c4396322495fda91b02213c5748f27",
+    "word_ai_v1.5/AI_INSTRUCTIONS_v1.5.md": "9d677325fa095975632d36e7b93943597e367b490d9aee44c32c97cb148befd0",
+    "gui_v1.8/app.py": "0e6bd8e280df43751f6b7b6a56ae4eebbbcf0bf935276c2c0442f8e0f6009519",
+    "gui_v1.8/adapter.py": "8ab05c1466b0874155df2b9a63d464d34a1be33d06bf7d80cb7268fb43c87454",
+    "dialogue_v1.6/dialogue_worker.py": "bca5d177821dccfae1b865909f25e3659570fc52ac0320fea51d868b11213880",
+    "dialogue_v1.6/dialogue_word.py": "6ddc431e1710a5f9c3727d7d9cd5376c75ca6e22146b271e5292c9438da3f92c",
+    "dialogue_v1.6/dialogue_manage.py": "ad6ba94473c8d02500ce371f4d674cf07e31e7a4fbedd19fb3022e0c3bd3c450"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "version": "1.9.4",
+  "install_root": "../versions/1.9.3-thin-candidate",
+  "data_root": "REPLACE_WITH_ABSOLUTE_DATA_ROOT",
+  "active_workspace": "semester-1",
+  "workspaces": {
+    "semester-1": {
+      "name": "Семестр 1",
+      "folder": "semester-1",
+      "lecture_state": "system/state.json",
+      "ai_state": "system/ai_state.json",
+      "worker_home": "run/workspaces/semester-1",
+      "subjects": [
+        {
+          "subject_code": "SUBJECT",
+          "subject_name": "Название предмета",
+          "folder": "subject",
+          "default_language": "zh",
+          "enabled": true,
+          "paths": {
+            "audio": "audio",
+            "raw": "raw",
+            "ready": "word"
+          }
+        }
+      ]
+    }
+  },
+  "languages": {
+    "lecture": "zh",
+    "dialogue": "auto"
+  },
+  "asr": {
+    "model": "large-v3",
+    "preferred_device": "gpu"
+  },
+  "dialogue": {
+    "folder": "dialogue",
+    "runtime": "run/dialogue"
+  },
+  "dictionary": {
+    "book": "dictionary/vocabulary.xlsx"
+  },
+  "ai": {
+    "mode": "manual_chatgpt",
+    "queue_runtime": "run/ai_queue"
+  },
+  "runtimes": {
+    "asr_python": "runtime/asr/python.exe",
+    "document_python": "runtime/document/python.exe",
+    "cuda": "runtime/cuda/v1.3",
+    "model_cache": "models/huggingface/hub"
+  },
+  "application_home": "..",
+  "hidden_tasks": []
+}

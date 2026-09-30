@@ -1,0 +1,12 @@
+# Windows prerequisites / provisioning
+
+Observed host: Windows 11 Pro x64, standard non-admin token, Microsoft VC v14.51.36247 x64 already installed. No Sandbox/Hyper-V management/other VM found. This cannot prove native prerequisites on a bare OS.
+
+- Supported target: current Windows 11 x64, local user-writable application/data directories, NTFS for tested local installation. Sync storage must be materialized and writable; clean-install tests use external local data, not Drive.
+- Windows PowerShell 5.1, Task Scheduler service and Explorer shell link support are integration dependencies. Tasks run Limited/Interactive for the current user, only while logged in. A lock-screen is different from logoff. Real logon-trigger execution must still be tested on a disposable VM/profile.
+- Microsoft Visual C++ v14 x64 is required by observed ASR native modules: MSVCP140.dll and MSVCP140_1.dll were loaded from System32, even though CPython supplies VCRUNTIME DLLs. Provisioning strategy: user/admin installs the current supported Microsoft redistributable directly from [Microsoft](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170). Never silently install or copy DLLs from another host. Bootstrap import probes fail before data initialization and explain this dependency. No Microsoft redistributable was installed during validation.
+- Optional NVIDIA GPU needs a driver compatible with the private CUDA 12.x/cuDNN9 component. No driver installation; existing CPU int8 fallback remains. Hardware-disable testing was not performed; missing-CUDA preflight produces the tested CPU fallback warning.
+- Word and Excel are not required for generating DOCX/XLSX. Google Drive Desktop is not required for a local external data root. No Codex/system Python/user HF-cache dependency is used by the candidate.
+- `.lnk` launches pythonw directly: verified with the candidate VBS entry removed. Windows Script Host policy itself was not altered. Use this shortcut if VBS is unavailable. Task/shortcut creation currently uses the standard WScript.Shell COM shortcut API; restrictions on that COM class remain a managed-Windows policy limitation.
+
+Do not reboot/log off a production session to claim clean-environment coverage. This first Beta uses disposable-host validation and explicitly does not certify clean-OS prerequisites or login/reboot. See BETA1_VALIDATION.md for the release scope; no production-host reboot/logoff is part of this pass.

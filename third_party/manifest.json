@@ -1,0 +1,1472 @@
+{
+  "schema_version": 1,
+  "packages": [
+    {
+      "runtime": "asr",
+      "name": "anyio",
+      "version": "4.15.1",
+      "license_expression": "MIT",
+      "license": "",
+      "classifiers": [],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/anyio-4.15.1.dist-info/licenses/LICENSE"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "certifi",
+      "version": "2026.7.22",
+      "license_expression": null,
+      "license": "MPL-2.0",
+      "classifiers": [
+        "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)"
+      ],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/certifi-2026.7.22.dist-info/licenses/LICENSE"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "click",
+      "version": "8.5.0",
+      "license_expression": "BSD-3-Clause",
+      "license": "",
+      "classifiers": [],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/click-8.5.0.dist-info/licenses/LICENSE.txt"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "colorama",
+      "version": "0.4.6",
+      "license_expression": null,
+      "license": "",
+      "classifiers": [
+        "License :: OSI Approved :: BSD License"
+      ],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/colorama-0.4.6.dist-info/licenses/LICENSE.txt"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "faster-whisper",
+      "version": "1.2.1",
+      "license_expression": null,
+      "license": "MIT",
+      "classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/faster_whisper-1.2.1.dist-info/LICENSE"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "filelock",
+      "version": "4.0.1",
+      "license_expression": "MIT",
+      "license": "",
+      "classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/filelock-4.0.1.dist-info/licenses/LICENSE"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "flatbuffers",
+      "version": "25.12.19",
+      "license_expression": null,
+      "license": "Apache 2.0",
+      "classifiers": [
+        "License :: OSI Approved :: Apache Software License"
+      ],
+      "license_files": []
+    },
+    {
+      "runtime": "asr",
+      "name": "fsspec",
+      "version": "2026.9.0",
+      "license_expression": "BSD-3-Clause",
+      "license": "",
+      "classifiers": [],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/fsspec-2026.9.0.dist-info/licenses/LICENSE"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "h11",
+      "version": "0.16.0",
+      "license_expression": null,
+      "license": "MIT",
+      "classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/h11-0.16.0.dist-info/licenses/LICENSE.txt"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "hf-xet",
+      "version": "1.6.0",
+      "license_expression": "Apache-2.0",
+      "license": "",
+      "classifiers": [
+        "License :: OSI Approved :: Apache Software License"
+      ],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/hf_xet-1.6.0.dist-info/licenses/LICENSE"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "httpcore",
+      "version": "1.0.9",
+      "license_expression": "BSD-3-Clause",
+      "license": "",
+      "classifiers": [
+        "License :: OSI Approved :: BSD License"
+      ],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/httpcore-1.0.9.dist-info/licenses/LICENSE.md"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "httpx",
+      "version": "0.28.1",
+      "license_expression": null,
+      "license": "BSD-3-Clause",
+      "classifiers": [
+        "License :: OSI Approved :: BSD License"
+      ],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/httpx-0.28.1.dist-info/licenses/LICENSE.md"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "huggingface_hub",
+      "version": "1.32.0",
+      "license_expression": null,
+      "license": "Apache-2.0",
+      "classifiers": [
+        "License :: OSI Approved :: Apache Software License"
+      ],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/huggingface_hub-1.32.0.dist-info/licenses/LICENSE"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "idna",
+      "version": "3.20",
+      "license_expression": "BSD-3-Clause",
+      "license": "",
+      "classifiers": [],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/idna-3.20.dist-info/licenses/LICENSE.md"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "numpy",
+      "version": "2.4.6",
+      "license_expression": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+      "license": "",
+      "classifiers": [],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/LICENSE.txt",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/linalg/lapack_lite/LICENSE.txt",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/ma/LICENSE",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/LICENSE.md",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/distributions/LICENSE.md",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/pcg64/LICENSE.md",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/philox/LICENSE.md",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/highway/LICENSE",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
+        "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/umath/svml/LICENSE"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "onnxruntime",
+      "version": "1.30.0",
+      "license_expression": null,
+      "license": "MIT License",
+      "classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "license_files": []
+    },
+    {
+      "runtime": "asr",
+      "name": "packaging",
+      "version": "26.3",
+      "license_expression": "Apache-2.0 OR BSD-2-Clause",
+      "license": "",
+      "classifiers": [],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/packaging-26.3.dist-info/licenses/LICENSE",
+        "runtime/asr/Lib/site-packages/packaging-26.3.dist-info/licenses/LICENSE.APACHE",
+        "runtime/asr/Lib/site-packages/packaging-26.3.dist-info/licenses/LICENSE.BSD"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "pip",
+      "version": "26.2.1",
+      "license_expression": "MIT",
+      "license": "",
+      "classifiers": [],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/LICENSE.txt",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/cachecontrol/LICENSE.txt",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/certifi/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/distlib/LICENSE.txt",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/distro/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/msgpack/COPYING",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.APACHE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.BSD",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pkg_resources/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/platformdirs/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pygments/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pyproject_hooks/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/requests/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/resolvelib/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/rich/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/tomli/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/tomli_w/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/truststore/LICENSE",
+        "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/urllib3/LICENSE.txt"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "protobuf",
+      "version": "7.36.2",
+      "license_expression": null,
+      "license": "3-Clause BSD License",
+      "classifiers": [],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/protobuf-7.36.2.dist-info/LICENSE"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "PyYAML",
+      "version": "6.0.3",
+      "license_expression": null,
+      "license": "MIT",
+      "classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/pyyaml-6.0.3.dist-info/licenses/LICENSE"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "setuptools",
+      "version": "65.5.0",
+      "license_expression": null,
+      "license": "",
+      "classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/setuptools-65.5.0.dist-info/LICENSE"
+      ]
+    },
+    {
+      "runtime": "asr",
+      "name": "tokenizers",
+      "version": "0.23.2",
+      "license_expression": null,
+      "license": "",
+      "classifiers": [
+        "License :: OSI Approved :: Apache Software License"
+      ],
+      "license_files": []
+    },
+    {
+      "runtime": "asr",
+      "name": "tqdm",
+      "version": "4.70.1",
+      "license_expression": null,
+      "license": "MPL-2.0 AND MIT",
+      "classifiers": [],
+      "license_files": []
+    },
+    {
+      "runtime": "asr",
+      "name": "typing_extensions",
+      "version": "4.16.0",
+      "license_expression": "PSF-2.0",
+      "license": "",
+      "classifiers": [],
+      "license_files": [
+        "runtime/asr/Lib/site-packages/typing_extensions-4.16.0.dist-info/licenses/LICENSE"
+      ]
+    },
+    {
+      "runtime": "document",
+      "name": "et_xmlfile",
+      "version": "2.0.0",
+      "license_expression": null,
+      "license": "MIT",
+      "classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "license_files": []
+    },
+    {
+      "runtime": "document",
+      "name": "lxml",
+      "version": "6.1.1",
+      "license_expression": null,
+      "license": "BSD-3-Clause",
+      "classifiers": [],
+      "license_files": [
+        "runtime/document/Lib/site-packages/lxml-6.1.1.dist-info/licenses/LICENSE.txt",
+        "runtime/document/Lib/site-packages/lxml-6.1.1.dist-info/licenses/LICENSES.txt"
+      ]
+    },
+    {
+      "runtime": "document",
+      "name": "openpyxl",
+      "version": "3.1.5",
+      "license_expression": null,
+      "license": "MIT",
+      "classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "license_files": []
+    },
+    {
+      "runtime": "document",
+      "name": "python-docx",
+      "version": "1.2.0",
+      "license_expression": null,
+      "license": "MIT",
+      "classifiers": [
+        "License :: OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        "runtime/document/Lib/site-packages/python_docx-1.2.0.dist-info/licenses/LICENSE"
+      ]
+    },
+    {
+      "runtime": "document",
+      "name": "typing_extensions",
+      "version": "4.16.0",
+      "license_expression": "PSF-2.0",
+      "license": "",
+      "classifiers": [],
+      "license_files": [
+        "runtime/document/Lib/site-packages/typing_extensions-4.16.0.dist-info/licenses/LICENSE"
+      ]
+    }
+  ],
+  "license_texts": [
+    {
+      "path": "third_party/licenses/runtime/asr/LICENSE.txt",
+      "origin": "runtime/asr/LICENSE.txt",
+      "sha256": "e502c6b880ff58d614901495a9009c136539cd0b1e2a2abb8fc00b934c203419"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/anyio-4.15.1.dist-info/licenses/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/anyio-4.15.1.dist-info/licenses/LICENSE",
+      "sha256": "5361ac9dc58f2ef5fd2e9b09c68297c17f04950909bbc8023bdb82eacf22c2b0"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/certifi-2026.7.22.dist-info/licenses/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/certifi-2026.7.22.dist-info/licenses/LICENSE",
+      "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/click-8.5.0.dist-info/licenses/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/click-8.5.0.dist-info/licenses/LICENSE.txt",
+      "sha256": "9a8ad106a394e853bfe21f42f4e72d592819a22805d991b5f3275029292b658d"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/colorama-0.4.6.dist-info/licenses/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/colorama-0.4.6.dist-info/licenses/LICENSE.txt",
+      "sha256": "cac35c02686e5d04a5a7140bfb3b36e73aed496656e891102e428886d7930318"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/faster_whisper-1.2.1.dist-info/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/faster_whisper-1.2.1.dist-info/LICENSE",
+      "sha256": "af6798135e729f8aa6c853936d037dfdea449734d26b8ea6a89805fca758c0d5"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/filelock-4.0.1.dist-info/licenses/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/filelock-4.0.1.dist-info/licenses/LICENSE",
+      "sha256": "608c89d5060ae9921adccf3236695bc654a9946e12323ef6c021dfa04e294d48"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/fsspec-2026.9.0.dist-info/licenses/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/fsspec-2026.9.0.dist-info/licenses/LICENSE",
+      "sha256": "2dc35496ce53a7307915c008a844aad53e772b49b34cdd00445067691407ec94"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/h11-0.16.0.dist-info/licenses/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/h11-0.16.0.dist-info/licenses/LICENSE.txt",
+      "sha256": "37db5bb85926db28a427a25867f10b1232003aea1be69ccb851138adb8e6f361"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/hf_xet-1.6.0.dist-info/licenses/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/hf_xet-1.6.0.dist-info/licenses/LICENSE",
+      "sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/httpcore-1.0.9.dist-info/licenses/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/httpcore-1.0.9.dist-info/licenses/LICENSE.md",
+      "sha256": "fdcb59154c74cbaba16a11242f7740bea9f23d6feb5547917d8c5f94a80392a5"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/httpx-0.28.1.dist-info/licenses/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/httpx-0.28.1.dist-info/licenses/LICENSE.md",
+      "sha256": "4ec59d544f12b5f539a3a716fd321ac58ccd8030b465221f2c880200cdf28d8d"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/huggingface_hub-1.32.0.dist-info/licenses/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/huggingface_hub-1.32.0.dist-info/licenses/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/idna-3.20.dist-info/licenses/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/idna-3.20.dist-info/licenses/LICENSE.md",
+      "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy/ma/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/numpy/ma/LICENSE",
+      "sha256": "d78dbb208b80d92b4d333e41a4baae50d12444f46e53199fa7726a91de6e2da7"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy/random/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/numpy/random/LICENSE.md",
+      "sha256": "b4bc2f4fa1c95778f1ed3dd8f14706bece399475b978f9f34b5d3cd72521b48a"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy/_core/include/numpy/random/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/numpy/_core/include/numpy/random/LICENSE.txt",
+      "sha256": "d544761558b510866c21f7e8a2d5716fca76e0b98117e3b6b86314db7244d150"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/LICENSE.txt",
+      "sha256": "a804dff0ead9fadc5293456410bcbfc32bf024be9c4513459663fb7b442d2341"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md",
+      "sha256": "8db000e158c162e7249787852d8c69764706502ccee725c06641b31c1e95c8af"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/linalg/lapack_lite/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/linalg/lapack_lite/LICENSE.txt",
+      "sha256": "19060ef465e1797d682ee0fc3081bd25ab1395e995e43d25c9d13c95d9a3cd6b"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/ma/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/ma/LICENSE",
+      "sha256": "d78dbb208b80d92b4d333e41a4baae50d12444f46e53199fa7726a91de6e2da7"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/LICENSE.md",
+      "sha256": "b4bc2f4fa1c95778f1ed3dd8f14706bece399475b978f9f34b5d3cd72521b48a"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/distributions/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/distributions/LICENSE.md",
+      "sha256": "cf5619f25b112d5ce7c896efffc8e610bcb345dfadcc19f2c1460aa48fff2c9e"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md",
+      "sha256": "92c10699884321f1c2947fe2a70ab23b0fbf1507f756d89dd08f38c61fc3d4fa"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/pcg64/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/pcg64/LICENSE.md",
+      "sha256": "41190663b77bee5302386495a07b7eabfbfa571aa0ae2f11da6764162062fc4f"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/philox/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/philox/LICENSE.md",
+      "sha256": "322ac46d870c8aeead6c53adcccc839296fb3c8e456eae155081297daf7f8013"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md",
+      "sha256": "28cad82ce1379dc529df30da78ec012d7d0d1d576b03ddcb93388aee53659f59"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md",
+      "sha256": "454ec7350e478e037061850b67395753b425b1cb0a34bbc26290b020bf89d763"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt",
+      "sha256": "d544761558b510866c21f7e8a2d5716fca76e0b98117e3b6b86314db7244d150"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING",
+      "sha256": "aea41976c720f91bd19725c16916a1ace40eb1ea42620d340e587a5de4bbcea0"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/highway/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/highway/LICENSE",
+      "sha256": "d208152e2777ffd0126eacc1bd21c0320d69e4e6b622d21a2a12a47e8ef73763"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt",
+      "sha256": "b0fd592d4ead563148e3977e7b589169d46a5ef2ff133c755a81af880a3fc919"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
+      "sha256": "a732977853530066790c42817087f4829b518dd98d340c916acbfd227e39d3cb"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/umath/svml/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/numpy-2.4.6.dist-info/licenses/numpy/_core/src/umath/svml/LICENSE",
+      "sha256": "585483905b13d4b42f800c55ba99e89d6e2e33ccd5f503e201c07531d148ff41"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/onnxruntime/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/onnxruntime/LICENSE",
+      "sha256": "c250d6278f0b47a6439fb7592b08b58a55eb9f535aa49a1db63211c3f982b674"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/onnxruntime/ThirdPartyNotices.txt",
+      "origin": "runtime/asr/Lib/site-packages/onnxruntime/ThirdPartyNotices.txt",
+      "sha256": "c53a76501ef60db6f865f20599f220761201ac4057683acefdab37d861b86622"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/packaging-26.3.dist-info/licenses/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/packaging-26.3.dist-info/licenses/LICENSE",
+      "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/packaging-26.3.dist-info/licenses/LICENSE.APACHE",
+      "origin": "runtime/asr/Lib/site-packages/packaging-26.3.dist-info/licenses/LICENSE.APACHE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/packaging-26.3.dist-info/licenses/LICENSE.BSD",
+      "origin": "runtime/asr/Lib/site-packages/packaging-26.3.dist-info/licenses/LICENSE.BSD",
+      "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/cachecontrol/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/cachecontrol/LICENSE.txt",
+      "sha256": "86eeee87be2a43f3ff1f56496f451f69243926f025fedbb033666c304c4c161b"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/certifi/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/certifi/LICENSE",
+      "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/distlib/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/distlib/LICENSE.txt",
+      "sha256": "808e10c8a6ab8deb149ff9b3fb19f447a808094606d712a9ca57fead3552599d"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/distro/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/distro/LICENSE",
+      "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/idna/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/idna/LICENSE.md",
+      "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/msgpack/COPYING",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/msgpack/COPYING",
+      "sha256": "492dedba85da5872f78e6091bcd1fea474d660d35acb4dee964b8aab3f007427"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/packaging/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/packaging/LICENSE",
+      "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/packaging/LICENSE.APACHE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/packaging/LICENSE.APACHE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/packaging/LICENSE.BSD",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/packaging/LICENSE.BSD",
+      "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/pkg_resources/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/pkg_resources/LICENSE",
+      "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/platformdirs/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/platformdirs/LICENSE",
+      "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/pygments/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/pygments/LICENSE",
+      "sha256": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/pyproject_hooks/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/pyproject_hooks/LICENSE",
+      "sha256": "1b22b049b5267d6dfc23a67bf4a84d8ec04b9fdfb1a51d360e42b4342c8b4154"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/requests/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/requests/LICENSE",
+      "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/resolvelib/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/resolvelib/LICENSE",
+      "sha256": "f388fd38cad13112c1dc0f669bbe80e7f84541edbafb72f3030d2ca7642c3c9d"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/rich/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/rich/LICENSE",
+      "sha256": "deed7c17a4318158190a3ea239cc879a5a50271cebb98ae7025f48fbe58dca15"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/tomli/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/tomli/LICENSE",
+      "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/tomli_w/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/tomli_w/LICENSE",
+      "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/truststore/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/truststore/LICENSE",
+      "sha256": "33be7b7e8fa4fd19b1760e1a8ed8a668bdab852c91b692dd41424bcb725a9fca"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip/_vendor/urllib3/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/pip/_vendor/urllib3/LICENSE.txt",
+      "sha256": "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/LICENSE.txt",
+      "sha256": "634300a669d49aeae65b12c6c48c924c51a4cdf3d1ff086dc3456dc8bcaa2104"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/cachecontrol/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/cachecontrol/LICENSE.txt",
+      "sha256": "86eeee87be2a43f3ff1f56496f451f69243926f025fedbb033666c304c4c161b"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/certifi/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/certifi/LICENSE",
+      "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/distlib/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/distlib/LICENSE.txt",
+      "sha256": "808e10c8a6ab8deb149ff9b3fb19f447a808094606d712a9ca57fead3552599d"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/distro/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/distro/LICENSE",
+      "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
+      "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/msgpack/COPYING",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/msgpack/COPYING",
+      "sha256": "492dedba85da5872f78e6091bcd1fea474d660d35acb4dee964b8aab3f007427"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE",
+      "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.APACHE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.APACHE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.BSD",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.BSD",
+      "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pkg_resources/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pkg_resources/LICENSE",
+      "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/platformdirs/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/platformdirs/LICENSE",
+      "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pygments/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pygments/LICENSE",
+      "sha256": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pyproject_hooks/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pyproject_hooks/LICENSE",
+      "sha256": "1b22b049b5267d6dfc23a67bf4a84d8ec04b9fdfb1a51d360e42b4342c8b4154"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/requests/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/requests/LICENSE",
+      "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/resolvelib/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/resolvelib/LICENSE",
+      "sha256": "f388fd38cad13112c1dc0f669bbe80e7f84541edbafb72f3030d2ca7642c3c9d"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/rich/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/rich/LICENSE",
+      "sha256": "deed7c17a4318158190a3ea239cc879a5a50271cebb98ae7025f48fbe58dca15"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/tomli/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/tomli/LICENSE",
+      "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/tomli_w/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/tomli_w/LICENSE",
+      "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/truststore/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/truststore/LICENSE",
+      "sha256": "33be7b7e8fa4fd19b1760e1a8ed8a668bdab852c91b692dd41424bcb725a9fca"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/urllib3/LICENSE.txt",
+      "origin": "runtime/asr/Lib/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/urllib3/LICENSE.txt",
+      "sha256": "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/protobuf-7.36.2.dist-info/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/protobuf-7.36.2.dist-info/LICENSE",
+      "sha256": "6e5e117324afd944dcf67f36cf329843bc1a92229a8cd9bb573d7a83130fea7d"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/pyyaml-6.0.3.dist-info/licenses/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/pyyaml-6.0.3.dist-info/licenses/LICENSE",
+      "sha256": "8d3928f9dc4490fd635707cb88eb26bd764102a7282954307d3e5167a577e8a4"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/setuptools-65.5.0.dist-info/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/setuptools-65.5.0.dist-info/LICENSE",
+      "sha256": "db3f0246b1f9278f15845b99fec478b8b506eb76487993722f8c6e254285faf8"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/tqdm-4.70.1.dist-info/licenses/LICENCE",
+      "origin": "runtime/asr/Lib/site-packages/tqdm-4.70.1.dist-info/licenses/LICENCE",
+      "sha256": "fcff87c3a47ce8028a8512aa182d4fcf0ad1c90544ee75cf9b343684cac194de"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/Lib/site-packages/typing_extensions-4.16.0.dist-info/licenses/LICENSE",
+      "origin": "runtime/asr/Lib/site-packages/typing_extensions-4.16.0.dist-info/licenses/LICENSE",
+      "sha256": "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/tcl/tk8.6/license.terms",
+      "origin": "runtime/asr/tcl/tk8.6/license.terms",
+      "sha256": "0d1e4405f6273f091732764ed89b57066be63ce64869be6c71ea337dc4f2f9b5"
+    },
+    {
+      "path": "third_party/licenses/runtime/asr/tcl/tk8.6/demos/license.terms",
+      "origin": "runtime/asr/tcl/tk8.6/demos/license.terms",
+      "sha256": "0d1e4405f6273f091732764ed89b57066be63ce64869be6c71ea337dc4f2f9b5"
+    },
+    {
+      "path": "third_party/licenses/runtime/document/LICENSE.txt",
+      "origin": "runtime/document/LICENSE.txt",
+      "sha256": "886a0ead2d89030ee62dbff52b04e47ab91998341295bb9c56fb952b4e081c7a"
+    },
+    {
+      "path": "third_party/licenses/runtime/document/Lib/site-packages/et_xmlfile-2.0.0.dist-info/LICENCE.python",
+      "origin": "runtime/document/Lib/site-packages/et_xmlfile-2.0.0.dist-info/LICENCE.python",
+      "sha256": "4ccdaaebc0f44b83720ec0399bb7ab329adce067dd62f73c5535a2dc05628ab2"
+    },
+    {
+      "path": "third_party/licenses/runtime/document/Lib/site-packages/et_xmlfile-2.0.0.dist-info/LICENCE.rst",
+      "origin": "runtime/document/Lib/site-packages/et_xmlfile-2.0.0.dist-info/LICENCE.rst",
+      "sha256": "0c84bb42f5d367e5ebf9fc2dde35b16141df5ee0fdc189250858bc6c5560f69e"
+    },
+    {
+      "path": "third_party/licenses/runtime/document/Lib/site-packages/lxml-6.1.1.dist-info/licenses/LICENSE.txt",
+      "origin": "runtime/document/Lib/site-packages/lxml-6.1.1.dist-info/licenses/LICENSE.txt",
+      "sha256": "e7c3ce8d76331b0101cc46790ab43958ea90a364bcf962ed8763d5a818340e69"
+    },
+    {
+      "path": "third_party/licenses/runtime/document/Lib/site-packages/lxml-6.1.1.dist-info/licenses/LICENSES.txt",
+      "origin": "runtime/document/Lib/site-packages/lxml-6.1.1.dist-info/licenses/LICENSES.txt",
+      "sha256": "ce53f508d0cb88bdb4621e236ca34881a3fa1805f97dfccf38960128a4e2ead9"
+    },
+    {
+      "path": "third_party/licenses/runtime/document/Lib/site-packages/openpyxl-3.1.5.dist-info/LICENCE.rst",
+      "origin": "runtime/document/Lib/site-packages/openpyxl-3.1.5.dist-info/LICENCE.rst",
+      "sha256": "0c84bb42f5d367e5ebf9fc2dde35b16141df5ee0fdc189250858bc6c5560f69e"
+    },
+    {
+      "path": "third_party/licenses/runtime/document/Lib/site-packages/python_docx-1.2.0.dist-info/licenses/LICENSE",
+      "origin": "runtime/document/Lib/site-packages/python_docx-1.2.0.dist-info/licenses/LICENSE",
+      "sha256": "7652f271e46d0d533e9dc463f3b5fcbdcacf4d6a9c8d6b554d15efd0f37f6132"
+    },
+    {
+      "path": "third_party/licenses/runtime/document/Lib/site-packages/typing_extensions-4.16.0.dist-info/licenses/LICENSE",
+      "origin": "runtime/document/Lib/site-packages/typing_extensions-4.16.0.dist-info/licenses/LICENSE",
+      "sha256": "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf"
+    },
+    {
+      "path": "third_party/licenses/runtime/document/tcl/tk8.6/license.terms",
+      "origin": "runtime/document/tcl/tk8.6/license.terms",
+      "sha256": "0d1e4405f6273f091732764ed89b57066be63ce64869be6c71ea337dc4f2f9b5"
+    },
+    {
+      "path": "third_party/licenses/runtime/document/tcl/tk8.6/demos/license.terms",
+      "origin": "runtime/document/tcl/tk8.6/demos/license.terms",
+      "sha256": "0d1e4405f6273f091732764ed89b57066be63ce64869be6c71ea337dc4f2f9b5"
+    },
+    {
+      "path": "third_party/licenses/upstream/flatbuffers-25.12.19/LICENSE",
+      "origin": "https://raw.githubusercontent.com/google/flatbuffers/v25.12.19/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "third_party/licenses/upstream/tokenizers-0.23.2/LICENSE",
+      "origin": "https://raw.githubusercontent.com/huggingface/tokenizers/v0.23.2/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    }
+  ],
+  "binaries": [
+    {
+      "path": "runtime/asr/python.exe",
+      "sha256": "5f7b89a612c9b8af1d6456cdfcd1dbe5ca630849e79aebced9bee9a6694952ec"
+    },
+    {
+      "path": "runtime/asr/python3.dll",
+      "sha256": "db84bc052cfb121fe4db36242ba5f1d2c031b600ef5d8d752cf25b7c02b6bac6"
+    },
+    {
+      "path": "runtime/asr/python311.dll",
+      "sha256": "0817a2a657a24c0d5fbb60df56960f42fc66b3039d522ec952dab83e2d869364"
+    },
+    {
+      "path": "runtime/asr/pythonw.exe",
+      "sha256": "d5355e1de2a5195dccb1ba524b146aa7705be71af18d876819756838251b37b3"
+    },
+    {
+      "path": "runtime/asr/vcruntime140.dll",
+      "sha256": "4d292623516f65c80482081e62d5dadb759dc16e851de5db24c3cbb57b87db83"
+    },
+    {
+      "path": "runtime/asr/vcruntime140_1.dll",
+      "sha256": "a113f192195f245f17389e6ecbed8005990bcb2476ddad33f7c4c6c86327afe5"
+    },
+    {
+      "path": "runtime/asr/DLLs/libcrypto-3.dll",
+      "sha256": "05fe080eab7fc535c51e10c1bd76a2f3e6217f9c91a25034774588881c3f99de"
+    },
+    {
+      "path": "runtime/asr/DLLs/libffi-8.dll",
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a"
+    },
+    {
+      "path": "runtime/asr/DLLs/libssl-3.dll",
+      "sha256": "2e9fbcd8f7fdc13a5179533239811456554f2b3aa2fb10e1b17be0df81c79006"
+    },
+    {
+      "path": "runtime/asr/DLLs/pyexpat.pyd",
+      "sha256": "c7c7564f7f874fb660a46384980a2cf28bc3e245ca83628a197ccf861eab5560"
+    },
+    {
+      "path": "runtime/asr/DLLs/select.pyd",
+      "sha256": "bae0974390945520eb99ab32486c6a964691f8f4a028ac408d98fa8fb0db7d90"
+    },
+    {
+      "path": "runtime/asr/DLLs/sqlite3.dll",
+      "sha256": "314bba62f4a1628b986afc94c09dc29cdaf08210eae469440fbf46bcdb86d3fd"
+    },
+    {
+      "path": "runtime/asr/DLLs/tcl86t.dll",
+      "sha256": "4e699ff2d6d147d0586c8c77be5a18f20ca0758f432d7b0f489223f2fa4dd221"
+    },
+    {
+      "path": "runtime/asr/DLLs/tk86t.dll",
+      "sha256": "b6af038120f2b8644c7ce1e11917f410009848287622135d7e386f90d28a831c"
+    },
+    {
+      "path": "runtime/asr/DLLs/unicodedata.pyd",
+      "sha256": "37c68617fa02a2cadced17ef724e2d450ef12a8a37215da789a4679fde1c5c02"
+    },
+    {
+      "path": "runtime/asr/DLLs/winsound.pyd",
+      "sha256": "b79c9bd9114b7f243f5a80ffd2de5c5942fc64ceec4a52a048bb4a07848b9239"
+    },
+    {
+      "path": "runtime/asr/DLLs/_asyncio.pyd",
+      "sha256": "746bc8fa88282afe19dc60e426cc0a75bea3bd137cca06a0b57a30bd31459403"
+    },
+    {
+      "path": "runtime/asr/DLLs/_bz2.pyd",
+      "sha256": "00b8ca9a338d2b47285c9e56d6d893db2a999b47216756f18439997fb80a56e3"
+    },
+    {
+      "path": "runtime/asr/DLLs/_ctypes.pyd",
+      "sha256": "c148292328f0aab7863af82f54f613961e7cb95b7215f7a81cafaf45bd4c42b7"
+    },
+    {
+      "path": "runtime/asr/DLLs/_ctypes_test.pyd",
+      "sha256": "19db8a96c732cce30252f15145c4438e76e49dc13153d1c0ae6303eaeff007f9"
+    },
+    {
+      "path": "runtime/asr/DLLs/_decimal.pyd",
+      "sha256": "980a63f2b39cf16910f44384398e25f24482346a482addb00de42555b17d4278"
+    },
+    {
+      "path": "runtime/asr/DLLs/_elementtree.pyd",
+      "sha256": "02e30b6a2bee5be5336e40a9c89575603051bde86f9c9cdc78b7fa7d9b7bd1f0"
+    },
+    {
+      "path": "runtime/asr/DLLs/_hashlib.pyd",
+      "sha256": "87dd0c858620287454fd6d31d52b6a48eddbb2a08e09e8b2d9fdb0b92200d766"
+    },
+    {
+      "path": "runtime/asr/DLLs/_lzma.pyd",
+      "sha256": "f5e01b516c2c23035f7703e23569dec26c5616c05a929b2580ae474a5c6722c5"
+    },
+    {
+      "path": "runtime/asr/DLLs/_msi.pyd",
+      "sha256": "0f876c25188d1dde26eb852251439a6ec8edc1bc921be026f819eeb8686db2af"
+    },
+    {
+      "path": "runtime/asr/DLLs/_multiprocessing.pyd",
+      "sha256": "975c1947798e3c39898c86675ca1eb68249f77361f41f172f9800275227213b9"
+    },
+    {
+      "path": "runtime/asr/DLLs/_overlapped.pyd",
+      "sha256": "ca106e4dfdeafeabf9e98956d3d8d0cb73e109f1a96f1a7e35bc47dbd7c7e164"
+    },
+    {
+      "path": "runtime/asr/DLLs/_queue.pyd",
+      "sha256": "3f8e7e6aa13b417acc78b63434fb1144e6319a010a9fc376c54d6e69b638fe4c"
+    },
+    {
+      "path": "runtime/asr/DLLs/_socket.pyd",
+      "sha256": "a19e3c7c03ef1b5625790b1c9c42594909311ab6df540fbf43c6aa93300ab166"
+    },
+    {
+      "path": "runtime/asr/DLLs/_sqlite3.pyd",
+      "sha256": "ff6a2a2f38b21b7784f97d604c99961d8c07ef455f7908110a4e893835d42b76"
+    },
+    {
+      "path": "runtime/asr/DLLs/_ssl.pyd",
+      "sha256": "ba5388d6a6557d431e086734a3323621dc447f63ba299b0a815e5837cf869678"
+    },
+    {
+      "path": "runtime/asr/DLLs/_testbuffer.pyd",
+      "sha256": "a83ee6a87c40a78790cb604fdcc630b5af5473c8ac31e8853ff329395289d3ff"
+    },
+    {
+      "path": "runtime/asr/DLLs/_testcapi.pyd",
+      "sha256": "38a693ada9c95d17ed5094aa7d0ced9f648efab3a1bf4ec749688b16a656670c"
+    },
+    {
+      "path": "runtime/asr/DLLs/_testconsole.pyd",
+      "sha256": "4018091725ae37b775c3ee476a1580a8c99c84afdf92f1b058e73de765537c48"
+    },
+    {
+      "path": "runtime/asr/DLLs/_testimportmultiple.pyd",
+      "sha256": "f6cb713ebe75305bf9c1b75407b9865e08e6f62e80c7f37cde6ac23ad31f7755"
+    },
+    {
+      "path": "runtime/asr/DLLs/_testinternalcapi.pyd",
+      "sha256": "6898ea4173c038d65e6c98f3aec28f404173c05c554bb81b3c7aa265785528c4"
+    },
+    {
+      "path": "runtime/asr/DLLs/_testmultiphase.pyd",
+      "sha256": "969b8aeb2d9527d63a8783ac13fd6902ef154419162f692bacc94dc6f4da38ad"
+    },
+    {
+      "path": "runtime/asr/DLLs/_tkinter.pyd",
+      "sha256": "6f7bdc2f60a1795b58ec7015ec262d6b234aa8d0f022185de0f52bac4adab449"
+    },
+    {
+      "path": "runtime/asr/DLLs/_uuid.pyd",
+      "sha256": "e6aa7f1637e211251c9d6f467203b2b6d85e5bc2d901699f2a55af637fa89250"
+    },
+    {
+      "path": "runtime/asr/DLLs/_zoneinfo.pyd",
+      "sha256": "7e7b4157e401f8281fd85b68f2e21c828bf739c91416b2824dd22cb385eef819"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/google/_upb/_message.pyd",
+      "sha256": "58a206771b73f129d45dd2cda625bd4f7d6347b5f2d6dd76b4dbf4d2c6e3ac59"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/hf_xet/hf_xet.pyd",
+      "sha256": "ea8f5ddb1ae42adf5e4d376ec27b7f1ea1fe843e15f5d7a9e45fe1298ca4fd4c"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/fft/_pocketfft_umath.cp311-win_amd64.pyd",
+      "sha256": "e22ee51c9761e8cb2e153efc321d09cb656c5573488e55167f69d6e070d22466"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/linalg/lapack_lite.cp311-win_amd64.pyd",
+      "sha256": "402813d0433d382d1bdbb24e51b87b008ef26e7479743b07a8b74207591894b0"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/linalg/_umath_linalg.cp311-win_amd64.pyd",
+      "sha256": "8742391ee3d6dfb4a6e41418626bb45048b102e05229d424279ddefb877d9cd6"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/random/bit_generator.cp311-win_amd64.pyd",
+      "sha256": "eafa63966c1b3e34397bec8fef991dee5a7944b09058b38afd9f2de40acfd141"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/random/mtrand.cp311-win_amd64.pyd",
+      "sha256": "6f8a3d3ce835c6cd4fea9e4425b757b268ad69b0cef201a225f6cbd1b453182a"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/random/_bounded_integers.cp311-win_amd64.pyd",
+      "sha256": "418dc5293b11f83a70c63ef77c3c9ca0dc4b9f20c7fadb4625805480305ddcef"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/random/_common.cp311-win_amd64.pyd",
+      "sha256": "f2cdbaa3d3d0dd8f5b74b7b4630470d609be4e4d31f8e37f8681e6c3c5aca895"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/random/_generator.cp311-win_amd64.pyd",
+      "sha256": "91f53ff9a803213ea5fa38b73be057b448be1728b4a353586d10f08d4f2c021c"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/random/_mt19937.cp311-win_amd64.pyd",
+      "sha256": "e66de88dbf0b9a2ae67576cf2f4e7c220e10729d445403787bc8b58f4e8a6750"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/random/_pcg64.cp311-win_amd64.pyd",
+      "sha256": "16e4f9401783c502d82bce06263d98c985c841f3115d301741b22413bbbff851"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/random/_philox.cp311-win_amd64.pyd",
+      "sha256": "56c44540e500dfb820e5a75004b5cf9945a648a87d0e40d64672325dd22fa3c1"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/random/_sfc64.cp311-win_amd64.pyd",
+      "sha256": "23f03f25c5528ca51c11846bcbb5aaaee7c1c518897249865c47dca913c43863"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/_core/_multiarray_tests.cp311-win_amd64.pyd",
+      "sha256": "adf0e01de577f4ccc2a11099c817cb41c8a78b6174175356dd62e745075cfac8"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/_core/_multiarray_umath.cp311-win_amd64.pyd",
+      "sha256": "4fb4c5d62a6bd766eea716350eaf5396580e33cf7dc159e305488d1b7d72dad2"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/_core/_operand_flag_tests.cp311-win_amd64.pyd",
+      "sha256": "a0cd2c78890a871bb255a0111f9ed7ec2c9fe30f56995b0a7fcebe4dd5d23a69"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/_core/_rational_tests.cp311-win_amd64.pyd",
+      "sha256": "b2c0167071fb5859a5cdc44d07cf9f825e618fcf47d6b54b9ad17aae182d3c0f"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/_core/_simd.cp311-win_amd64.pyd",
+      "sha256": "cf64eb2c4af10e1b1795acf8056ec108da258ecf68d799353d86a7105c6238ac"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/_core/_struct_ufunc_tests.cp311-win_amd64.pyd",
+      "sha256": "76814ca65e5347e05b6d07a903152711f8656783f1efe47233a6e8175723a404"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy/_core/_umath_tests.cp311-win_amd64.pyd",
+      "sha256": "d13b14e94223279dfff3171655fe6c55fb847459a2014ba3ba34bb951edbdd8c"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy.libs/libscipy_openblas64_-63c857e738469261263c764a36be9436.dll",
+      "sha256": "63c857e738469261263c764a36be9436ebdeaa272e340a828f42047a97131080"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/numpy.libs/msvcp140-a4c2229bdc2a2a630acdc095b4d86008.dll",
+      "sha256": "a4c2229bdc2a2a630acdc095b4d86008e5c3e3bc7773174354f3da4f5beb9cde"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/onnxruntime/capi/onnxruntime.dll",
+      "sha256": "44741724166ad61c8c82885e394793807f2cf5707c83b9e33c2d78d75c6e7650"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/onnxruntime/capi/onnxruntime_providers_shared.dll",
+      "sha256": "fabb99add45aa1a0386c80bc63e92479c5f56e9e95ab98c85fb7ad21c4092ce0"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/onnxruntime/capi/onnxruntime_pybind11_state.pyd",
+      "sha256": "06b712319c15145ac68f6e0f2796ba53defc2dbdfe667a76ec7f5383798421ec"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/pip/_vendor/distlib/t32.exe",
+      "sha256": "6b4195e640a85ac32eb6f9628822a622057df1e459df7c17a12f97aeabc9415b"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/pip/_vendor/distlib/t64-arm.exe",
+      "sha256": "ebc4c06b7d95e74e315419ee7e88e1d0f71e9e9477538c00a93a9ff8c66a6cfc"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/pip/_vendor/distlib/t64.exe",
+      "sha256": "81a618f21cb87db9076134e70388b6e9cb7c2106739011b6a51772d22cae06b7"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/pip/_vendor/distlib/w32.exe",
+      "sha256": "47872cc77f8e18cf642f868f23340a468e537e64521d9a3a416c8b84384d064b"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/pip/_vendor/distlib/w64-arm.exe",
+      "sha256": "c5dc9884a8f458371550e09bd396e5418bf375820a31b9899f6499bf391c7b2e"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/pip/_vendor/distlib/w64.exe",
+      "sha256": "7a319ffaba23a017d7b1e18ba726ba6c54c53d6446db55f92af53c279894f8ad"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/setuptools/cli-32.exe",
+      "sha256": "75f12ea2f30d9c0d872dade345f30f562e6d93847b6a509ba53beec6d0b2c346"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/setuptools/cli-64.exe",
+      "sha256": "28b001bb9a72ae7a24242bfab248d767a1ac5dec981c672a3944f7a072375e9a"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/setuptools/cli-arm64.exe",
+      "sha256": "a3d6a6c68c2e759f7c36f35687f6b60d163c2e1a0846a4c07a4c4006a96d88c7"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/setuptools/cli.exe",
+      "sha256": "75f12ea2f30d9c0d872dade345f30f562e6d93847b6a509ba53beec6d0b2c346"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/setuptools/gui-32.exe",
+      "sha256": "5c1af46c7300e87a73dacf6cf41ce397e3f05df6bd9c7e227b4ac59f85769160"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/setuptools/gui-64.exe",
+      "sha256": "69828c857d4824b9f850b1e0597d2c134c91114b7a0774c41dffe33b0eb23721"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/setuptools/gui-arm64.exe",
+      "sha256": "4c416738a0e2fa6ab766ccf1a9b0a80974e733f9615168dd22a069afa7d5b38d"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/setuptools/gui.exe",
+      "sha256": "5c1af46c7300e87a73dacf6cf41ce397e3f05df6bd9c7e227b4ac59f85769160"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/tokenizers/tokenizers.pyd",
+      "sha256": "05848a2a85e1466d19242499ed6b8c016a886db79aca020792aa5598ded77ef9"
+    },
+    {
+      "path": "runtime/asr/Lib/site-packages/yaml/_yaml.cp311-win_amd64.pyd",
+      "sha256": "ee7df83fa5dca1467bfd841dc08189b10361f31700cf57a6aacddaf0c05706f4"
+    },
+    {
+      "path": "runtime/asr/Lib/venv/scripts/nt/python.exe",
+      "sha256": "21bb438c0d4a6f1f164b9a646f6ee000340185e5871180aec06db8d3f07c0082"
+    },
+    {
+      "path": "runtime/asr/Lib/venv/scripts/nt/pythonw.exe",
+      "sha256": "e07f37e7dc34d8bd0208ecda202d6c75b3a12ab3f376fdc7ee50214c8c0fd50b"
+    },
+    {
+      "path": "runtime/asr/tcl/dde1.4/tcldde14.dll",
+      "sha256": "f50e0d3c4de27c4eb3f33c0da6c5bb9c6aa289978d2c82442ca8016f61df3a97"
+    },
+    {
+      "path": "runtime/asr/tcl/nmake/x86_64-w64-mingw32-nmakehlp.exe",
+      "sha256": "5f411c0bd9ed9a42b0f07ed568c7d0cf358a83063b225a1f8f7da3296dde90f1"
+    },
+    {
+      "path": "runtime/asr/tcl/reg1.3/tclreg13.dll",
+      "sha256": "04f5c5c5bc2db31525020fb13aefaa3ae0f3c8556a28601a3fc171ad512e43c5"
+    },
+    {
+      "path": "runtime/asr/tcl/tix8.4.3/tix84.dll",
+      "sha256": "e9fe4ba01e0601aee80b74c2626669ea8ff30074c8a8783a4f4a2184f315083d"
+    },
+    {
+      "path": "runtime/document/python.exe",
+      "sha256": "dd5f8d19f6755d6491ee7c4bef2fe35ddd521334cc3ca3ed8fc93ebcadf135d0"
+    },
+    {
+      "path": "runtime/document/python3.dll",
+      "sha256": "5321bba2d7f95c6bca9a19fd8e0415ca850b2cf85c8c1711c605f9932e9c2826"
+    },
+    {
+      "path": "runtime/document/python312.dll",
+      "sha256": "baa2a3924bc1309284d0a720ccd213f37002fbda82d5761a61ddee8c4c31f608"
+    },
+    {
+      "path": "runtime/document/pythonw.exe",
+      "sha256": "74d25de6be71d00bb914ad4df0625b8998f2b5f580c7e93fc0777fc1fe9bb886"
+    },
+    {
+      "path": "runtime/document/vcruntime140.dll",
+      "sha256": "d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066"
+    },
+    {
+      "path": "runtime/document/vcruntime140_1.dll",
+      "sha256": "1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f"
+    },
+    {
+      "path": "runtime/document/DLLs/libcrypto-3-x64.dll",
+      "sha256": "8e92ff036162d58aaeb2fb68b410c0480daca2f2721c68fcfd9f81f8cde92777"
+    },
+    {
+      "path": "runtime/document/DLLs/libffi-8.dll",
+      "sha256": "2623cd5cfcbfe45ed07a49091d5b73f85655c5d12749945a0cc1d0a93cf572d9"
+    },
+    {
+      "path": "runtime/document/DLLs/libssl-3-x64.dll",
+      "sha256": "352e777ad5a3a04efcfa0825daa3c63c153df86a342307cc826449ead8b1ae01"
+    },
+    {
+      "path": "runtime/document/DLLs/pyexpat.pyd",
+      "sha256": "f2a6c55892ba34b4acb3a7cb943f7087af76b213fcab1b338b8969570d231497"
+    },
+    {
+      "path": "runtime/document/DLLs/select.pyd",
+      "sha256": "56e5cc5a90e8647a0805bfdf10444688c934e68f46f19c27045516dd3d533c3a"
+    },
+    {
+      "path": "runtime/document/DLLs/sqlite3.dll",
+      "sha256": "3532f710416c6b10c4b4d8965ad5d2a77da2342102e83577c30376327c0eff31"
+    },
+    {
+      "path": "runtime/document/DLLs/tcl86t.dll",
+      "sha256": "fbfd065f861ec0a90dd513bc209c56bbc23c54d2839964a0ec2df95848af7860"
+    },
+    {
+      "path": "runtime/document/DLLs/tk86t.dll",
+      "sha256": "cd2f60075064dfc2e65c88b239a970cb4bd07cb3eec7cc26fb1bf978d4356b08"
+    },
+    {
+      "path": "runtime/document/DLLs/unicodedata.pyd",
+      "sha256": "dbb5e8f071d322c9edbd9bf24b5360230975235122850bb66cd7da3de18a445d"
+    },
+    {
+      "path": "runtime/document/DLLs/winsound.pyd",
+      "sha256": "8a488c9bf17a65c6cd06d2ed8336eb5e9c0a419785a7fc0abdff65696c9a870a"
+    },
+    {
+      "path": "runtime/document/DLLs/_asyncio.pyd",
+      "sha256": "b17d0a18b841ee5789ee356df2772d1b9a20bb24514841c17c9ea3bb0c8b2831"
+    },
+    {
+      "path": "runtime/document/DLLs/_bz2.pyd",
+      "sha256": "e1254c0118a3add01c3b40b95659e6ea32b54a1839d96ac0e950c4de8d95aa49"
+    },
+    {
+      "path": "runtime/document/DLLs/_ctypes.pyd",
+      "sha256": "1d53cd3abbc940dd3025233795a963ec397ee4a5427284aeda0d1963d94716d7"
+    },
+    {
+      "path": "runtime/document/DLLs/_ctypes_test.pyd",
+      "sha256": "c860dea1f0a29242c6f8846e7884519875146dc565474e3bf086ec5b8c7431b3"
+    },
+    {
+      "path": "runtime/document/DLLs/_decimal.pyd",
+      "sha256": "7650a1b328e97fd31bf8269197906630698d86e18866187bec256398630071a1"
+    },
+    {
+      "path": "runtime/document/DLLs/_elementtree.pyd",
+      "sha256": "f6c3417d028130befdd3f5e1ab2642fd938b5bb0dd9271f11450b2606d0bc77d"
+    },
+    {
+      "path": "runtime/document/DLLs/_hashlib.pyd",
+      "sha256": "c9f8780bb4e0dc060ddbd56b7c87c0f7bcb3c708e556b8ef70b2d8d88fe4a9ab"
+    },
+    {
+      "path": "runtime/document/DLLs/_lzma.pyd",
+      "sha256": "c91e1e8b8408ea22cff55b32dee68689536767a7d7bd72de6be30ed7bed4240e"
+    },
+    {
+      "path": "runtime/document/DLLs/_msi.pyd",
+      "sha256": "3bcbd904cf19e5431d21b6b1f4f74b0fbfac6ee3974a31ff9bffe812cc4c4fd3"
+    },
+    {
+      "path": "runtime/document/DLLs/_multiprocessing.pyd",
+      "sha256": "b6d9c3ecf5c9e6c71da004ac62f108a49fdc957c59f8e3abb34a671a27d31048"
+    },
+    {
+      "path": "runtime/document/DLLs/_overlapped.pyd",
+      "sha256": "989f696c664ecc7739f593096702cca8158c9a8692ce169228d672294adeb987"
+    },
+    {
+      "path": "runtime/document/DLLs/_queue.pyd",
+      "sha256": "daaba6491a126b2ff41ab92d5ffe773a45b3091f2441d5cd87b7906f9e1326ff"
+    },
+    {
+      "path": "runtime/document/DLLs/_socket.pyd",
+      "sha256": "0bf04771238d41aae86e9e3c279d6774aad2e381cb7280b95a879b26d3153d15"
+    },
+    {
+      "path": "runtime/document/DLLs/_sqlite3.pyd",
+      "sha256": "ecb519e5176b682e892e3d3f350eb7ba1084805028ce49504a8c083727e7aff1"
+    },
+    {
+      "path": "runtime/document/DLLs/_ssl.pyd",
+      "sha256": "cd457991b957bfc385482b96fb79134a9a046c1ec834e916320103461caaee45"
+    },
+    {
+      "path": "runtime/document/DLLs/_testbuffer.pyd",
+      "sha256": "d5026b3bc9d38c6fb60531ebfef1e75b25857382ef8d5ea82ce6cca291c2b513"
+    },
+    {
+      "path": "runtime/document/DLLs/_testcapi.pyd",
+      "sha256": "2fe85674dc7a223fd66663eeae0e085b6a63cc47a2093398ba97498a2edbb07d"
+    },
+    {
+      "path": "runtime/document/DLLs/_testclinic.pyd",
+      "sha256": "4f8a29360abc80289e82a669571fd7ff373c62615dd2fc00bf74ba55d99a2bfe"
+    },
+    {
+      "path": "runtime/document/DLLs/_testconsole.pyd",
+      "sha256": "195698db9cafee6b49ab99ceb930ec6271b2f7274508aa2ede028cac23cd184e"
+    },
+    {
+      "path": "runtime/document/DLLs/_testimportmultiple.pyd",
+      "sha256": "8bd41438b47b29009f1e97af8ffd50391868d9211e689cd3a5a7877075d9e467"
+    },
+    {
+      "path": "runtime/document/DLLs/_testinternalcapi.pyd",
+      "sha256": "d3bee932630780497d3366ac2f4ed820a5d548150f4ce5057d85dc2669e7494a"
+    },
+    {
+      "path": "runtime/document/DLLs/_testmultiphase.pyd",
+      "sha256": "bd7ef1b15d27379ad7832434fd6f31562e109aaf7607911e5dd8efde0cddb6a8"
+    },
+    {
+      "path": "runtime/document/DLLs/_testsinglephase.pyd",
+      "sha256": "b8b2a3fce3ed8ba3bbe55a0fb03cf1941f5405bedb4860a0452437cff5e58d55"
+    },
+    {
+      "path": "runtime/document/DLLs/_tkinter.pyd",
+      "sha256": "eecd95580cc1ffb337011313d33fdb05e1e5a89aa45fba163d259aac79889267"
+    },
+    {
+      "path": "runtime/document/DLLs/_uuid.pyd",
+      "sha256": "a98b054e4a9a8ae1db6ccca1c8d539f60a580efbc01ee01fb6c41f9ac7503a13"
+    },
+    {
+      "path": "runtime/document/DLLs/_wmi.pyd",
+      "sha256": "d50b7b83806d68e304d652d8223671e9e04c8bd3728d6045e2dedf3789e8ba7d"
+    },
+    {
+      "path": "runtime/document/DLLs/_zoneinfo.pyd",
+      "sha256": "3dea7ab3efb7fd65adbaa84e4c6072f299a1344bc0ae17b3a2cca38c4d79898a"
+    },
+    {
+      "path": "runtime/document/Lib/site-packages/lxml/builder.cp312-win_amd64.pyd",
+      "sha256": "2aedb1dc4fda68814cd5d374cb9b87505a6f6698166ac130c280a5df695c28b0"
+    },
+    {
+      "path": "runtime/document/Lib/site-packages/lxml/etree.cp312-win_amd64.pyd",
+      "sha256": "286a5f69988c6c8f2a680c8cd448905256b8678f8ae19850f00080c211c7b24c"
+    },
+    {
+      "path": "runtime/document/Lib/site-packages/lxml/objectify.cp312-win_amd64.pyd",
+      "sha256": "7a86b35521a4a6dbb1295a387edd3b707aed73126adcff942c0ecfbb8d2fd09a"
+    },
+    {
+      "path": "runtime/document/Lib/site-packages/lxml/sax.cp312-win_amd64.pyd",
+      "sha256": "c332cb4af038df8d42a5e073e0beb5b0f829de0fd576ae76a070bc5a289d10ab"
+    },
+    {
+      "path": "runtime/document/Lib/site-packages/lxml/_elementpath.cp312-win_amd64.pyd",
+      "sha256": "1fe2efe57c4052df68339ae589af3614f5ed3a67d50367f2f5a66867481413dc"
+    },
+    {
+      "path": "runtime/document/Lib/site-packages/lxml/html/diff.cp312-win_amd64.pyd",
+      "sha256": "733fe139f82eb52bbf04c883c3cb74c9d061fbe9789062c16966fac156002f2b"
+    },
+    {
+      "path": "runtime/document/Lib/site-packages/lxml/html/_difflib.cp312-win_amd64.pyd",
+      "sha256": "5136dc8eca347d3c19fb396108da4aafbec4b8765a4aa5d4a6506bf967b3b387"
+    },
+    {
+      "path": "runtime/document/Lib/venv/scripts/nt/python.exe",
+      "sha256": "5fc3c5244b5eef01a82fbefd1932d1382b79c72fe6e64ffe8df1e3ce3643f02f"
+    },
+    {
+      "path": "runtime/document/Lib/venv/scripts/nt/pythonw.exe",
+      "sha256": "2a2f9c4f68d7be952936388825d843225a7d4a923e9360d945f2550a6b2e148b"
+    },
+    {
+      "path": "runtime/document/tcl/dde1.4/tcldde14.dll",
+      "sha256": "c89fdd1c1ed5615d7939260d79b8511d24df26746d9783db0e170b122804df3d"
+    },
+    {
+      "path": "runtime/document/tcl/reg1.3/tclreg13.dll",
+      "sha256": "de0113d5570d205fcfac40b1ea05c3560f03b33606a82eec3fcd65a66a98908b"
+    },
+    {
+      "path": "runtime/document/tcl/tix8.4.3/tix84.dll",
+      "sha256": "420960f1dc667f979dee5ef8265a0e8376f6d3254458bec3d3b576367ed34921"
+    }
+  ],
+  "blockers": [],
+  "sources": [
+    "https://ffmpeg.org/legal.html",
+    "https://docs.python.org/3.12/license.html",
+    "https://docs.nvidia.com/cuda/archive/12.9.0/eula/index.html",
+    "https://docs.nvidia.com/deeplearning/cudnn/backend/v9.10.2/reference/eula.html",
+    "https://huggingface.co/Systran/faster-whisper-large-v3"
+  ],
+  "external_components": [
+    "PyAV/FFmpeg (explicit pinned wheel import)",
+    "Whisper model",
+    "NVIDIA CUDA/cuBLAS/cuDNN",
+    "CTranslate2 complete supplier wheel including native closure (user-provisioned, not distributed)"
+  ],
+  "scope": "Actual bundled base only. External supplier wheels are neither distributed nor legally cleared here.",
+  "public_beta_released": false
+}

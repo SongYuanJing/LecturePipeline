@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "component": "cuda-v1.3",
+  "wheels": {
+    "nvidia_cublas_cu12-12.9.2.10-py3-none-win_amd64.whl": {
+      "bytes": 553162896,
+      "sha256": "623f43027d40d44ceadf0043f002bd25cf353e8f13ce90b9a87057019f560661"
+    },
+    "nvidia_cudnn_cu12-9.10.2.21-py3-none-win_amd64.whl": {
+      "bytes": 692992268,
+      "sha256": "c6288de7d63e6cf62988f0923f96dc339cea362decb1bf5b3141883392a7d65e"
+    }
+  },
+  "files": {
+    "cublas64_12.dll": "52ce5ba0ec5327d39be6021f0f9362d2ed4d64d7206f9b5afc06398d827b8e82",
+    "cublasLt64_12.dll": "71705a7cf0923f4ab034d0d2620bbfc989ff669ac3d79f868b7a7c597ca559c5",
+    "nvblas64_12.dll": "f54ac264becdb8ac866cbc0cce74f1dfe0e0c1f6e60a0629f222490d210302cd",
+    "cudnn64_9.dll": "9edbcdff73b0af070eb160b2ce66e59feca04aa017351d8eedcc5e8e149967d2",
+    "cudnn_adv64_9.dll": "f202e8ff36209ac4292fe2ef79d4539487495b3b948f0c978cc63298f43a1850",
+    "cudnn_cnn64_9.dll": "3f03dec3b81f137f049e1d1c06ff469248eef54ff9424b3b9045fc0f69559d1a",
+    "cudnn_engines_precompiled64_9.dll": "ebc2c1f74366b029a4350f7f9a3b109ccd5aa9b4ae02527950793dd29f7b74fb",
+    "cudnn_engines_runtime_compiled64_9.dll": "93ab6351ca0f2b6ca842f83d284e56c427525778c14657229801a13cf8121bd8",
+    "cudnn_graph64_9.dll": "a933efeb280a3252297f92d79f7e83003bcbc6f665872d11645d1dbbab9cb598",
+    "cudnn_heuristic64_9.dll": "458175f12771a35de0ea39c04250d727c2424d42a7ffe0bc987ae81204748fba",
+    "cudnn_ops64_9.dll": "851d8f4191a24b322b0be738d191a3159455f0da4db47a19f5cc7ad6e55edf61"
+  },
+  "bytes": 1778736944
+}
