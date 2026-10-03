@@ -43,8 +43,19 @@ class Components(ttk.Frame):
   for label,script,folder in [('PyAV: выбрать файл','import_pyav.py',False),('CTranslate2: выбрать файл','import_ctranslate2.py',False),('Выбрать модель','import_model.py',True),('GPU-компонент','import_cuda.py',True)]:
    ttk.Button(bar,text=label,command=lambda s=script,f=folder:self.choose(s,f)).pack(side='left',padx=3)
   ttk.Button(self,text='Проверить компоненты',command=self.refresh).pack(anchor='w',pady=6)
+  online=ttk.Frame(self);online.pack(fill='x',pady=4)
+  ttk.Button(online,text='Скачать обязательные компоненты',command=lambda:self.download('required')).pack(side='left',padx=3)
+  ttk.Button(online,text='Скачать CUDA для GPU',command=lambda:self.download('cuda')).pack(side='left',padx=3)
+  ttk.Label(self,text='Загрузка от поставщиков: модель ≈3,1 ГБ, CUDA отдельно ≈1,25 ГБ. Нужен запас места для кэша и установки. При ошибке повторите: проверенные загрузки используются снова.',wraplength=690).pack(anchor='w')
   ttk.Label(self,text='Импортируются только проверенные версии. Модель: папка snapshot large-v3. CUDA необязателен для CPU. Драйвер и supplier terms не устанавливаются/не принимаются автоматически.',wraplength=690).pack(anchor='w')
   self.refresh()
+ def download(self,kind):
+  if self.async_.busy:messagebox.showinfo('Подождите','Дождитесь проверки/импорта',parent=self);return
+  self.status.set('Загрузка и проверка компонентов… Большие файлы могут занять несколько минут.')
+  def done(value,error):
+   if error:messagebox.showerror('Загрузка не завершена',error,parent=self);self.status.set(error)
+   else:self.status.set(value.strip());self.refresh()
+  self.async_.run(partial(command,self.home,'download_components.py',kind),done)
  def refresh(self):
   if self.async_.busy:return
   self.status.set('Проверяем hashes и private runtime…')
@@ -124,5 +135,5 @@ def first_run(home):
  root.protocol('WM_DELETE_WINDOW',close);root.mainloop();return bool(result)
 
 def show_components(parent,home):
- w=tk.Toplevel(parent);w.title('Компоненты Lecture Pipeline');w.geometry('850x430');panel=Components(w,home);panel.pack(fill='both',expand=True)
+ w=tk.Toplevel(parent);w.title('Компоненты Lecture Pipeline');w.geometry('850x550');panel=Components(w,home);panel.pack(fill='both',expand=True)
  w.protocol('WM_DELETE_WINDOW',lambda:messagebox.showinfo('Подождите','Выполняется проверка/импорт',parent=w) if panel.async_.busy else w.destroy())

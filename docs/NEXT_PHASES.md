@@ -65,3 +65,8 @@ publish another binary under the existing beta tag.
 Download tests use tiny fixtures and simulated network failures. A real supplier
 and private-runtime integration test is required before calling 1a release-ready.
 The full multi-GB model/CUDA download is not part of every unit-test run.
+
+Current handoff: phase 1a source and targeted tests implemented; see
+[ONLINE_COMPONENTS.md](ONLINE_COMPONENTS.md) for operation and validation evidence.
+Next implementation is 1b, followed by reproducible runtime/bootstrapper work in
+1c. The release-level native integration gate for 1a remains open.

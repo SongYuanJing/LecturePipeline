@@ -33,7 +33,7 @@ def build(repo,components,out):
    # Replace source-component inventory: it must describe shipped files only.
    write(private/'component.json',dict(kind='asr-thin',files={p.relative_to(private).as_posix():{'sha256':sha(p)} for p in private.rglob('*') if p.is_file() and p.name!='component.json'}))
  write(out/'current.json',dict(app_version=VERSION,path='versions/'+VERSION))
- for name,script in [('Setup','setup.py'),('Preflight','launch.py preflight'),('ImportModel','import_model.py'),('ImportPyAV','import_pyav.py'),('ImportCTranslate2','import_ctranslate2.py'),('ImportCUDA','import_cuda.py'),('Components','component_status.py')]:
+ for name,script in [('Setup','setup.py'),('Preflight','launch.py preflight'),('ImportModel','import_model.py'),('ImportPyAV','import_pyav.py'),('ImportCTranslate2','import_ctranslate2.py'),('ImportCUDA','import_cuda.py'),('Components','component_status.py'),('DownloadComponents','download_components.py')]:
   entry,*args=script.split();(out/(name+'.cmd')).write_text('@echo off\r\n"%~dp0runtime\\asr\\python.exe" -B -X utf8 "%~dp0launcher\\'+entry+'" '+ ' '.join(args)+' %*\r\n',encoding='ascii')
  for name,script in [('Integrate','Integrate.ps1'),('Uninstall','Uninstall.ps1')]:
   (out/(name+'.cmd')).write_text('@echo off\r\npowershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0launcher\\'+script+'" %*\r\n',encoding='ascii')

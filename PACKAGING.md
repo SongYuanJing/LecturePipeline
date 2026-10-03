@@ -1,5 +1,9 @@
 # Portable package contract — v1.9.5-beta.1 thin Beta
 
+Development after this baseline: [phased plan](docs/NEXT_PHASES.md) and
+[online component download slice](docs/ONLINE_COMPONENTS.md). The contract below
+describes the released Beta; the new source has not been published as that tag.
+
 ## Choice and layout
 
 The first offline candidate is a standard ZIP built with Python stdlib, not a monolithic EXE or an installer framework. This minimizes new dependencies and allows component updates. Extract anywhere writable by the current Windows user. No administrator requirement.
