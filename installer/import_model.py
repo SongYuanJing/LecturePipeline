@@ -15,7 +15,9 @@ def install(source,root=ROOT):
  if source is None:raise ValueError('Model missing: provide the verified offline large-v3 snapshot folder')
  for name,h in spec['files'].items():
   if sha(source/name)!=h:raise ValueError('Source model hash mismatch: '+name)
- pending=snap.with_name(snap.name+'.pending');pending.mkdir(parents=True)
+ # mkdir is the existing exclusive staging claim. Do not append to the 40-char
+ # revision: that can exceed MAX_PATH although the published snapshot fits.
+ pending=snap.parent/'.model.pending';pending.mkdir(parents=True)
  for n,h in spec['files'].items():
   shutil.copy2(source/n,pending/n)
   if sha(pending/n)!=h:raise ValueError('Copied model hash mismatch: '+n)
