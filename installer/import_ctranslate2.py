@@ -68,7 +68,8 @@ def import_lock(root):
   try:msvcrt.locking(lock.fileno(),msvcrt.LK_NBLCK,1)
   except OSError:raise ValueError('Another CTranslate2 import is running; retry after it finishes')
   try:
-   for pending in parent.glob(COMPONENT+'.pending-*'):
+   for pending in [*parent.glob(COMPONENT+'.pending-*'),parent/'.ctranslate2.pending']:
+    if not pending.exists():continue
     if pending.is_symlink() or getattr(pending.lstat(),'st_file_attributes',0)&0x400:raise ValueError('Refusing reparse-point staging directory')
     if pending.is_dir():shutil.rmtree(pending)
    yield
@@ -110,7 +111,8 @@ def publish(root,data,files):
   if valid(root):return 'CTranslate2: Valid (already imported)'
   raise ValueError('Existing CTranslate2 component invalid; preserved, not overwritten')
  dest.parent.mkdir(parents=True,exist_ok=True)
- stage=dest.parent/(COMPONENT+'.pending-'+uuid.uuid4().hex)
+ # Serialized by import_lock; keep staging shorter than the published path.
+ stage=dest.parent/'.ctranslate2.pending'
  try:
   stage.mkdir()
   with zipfile.ZipFile(io.BytesIO(data)) as z:

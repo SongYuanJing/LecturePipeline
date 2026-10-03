@@ -61,7 +61,8 @@ def import_lock(root):
   try:msvcrt.locking(lock.fileno(),msvcrt.LK_NBLCK,1)
   except OSError:raise ValueError('Another PyAV import is running; retry after it finishes')
   try:
-   for pending in parent.glob(COMPONENT+'.pending-*'):
+   for pending in [*parent.glob(COMPONENT+'.pending-*'),parent/'.pyav.pending']:
+    if not pending.exists():continue
     if pending.is_symlink() or getattr(pending.lstat(),'st_file_attributes',0)&0x400:raise ValueError('Refusing reparse-point staging directory')
     if pending.is_dir():shutil.rmtree(pending)
    yield
@@ -103,7 +104,9 @@ def publish(root,data,files):
   if valid(root):return 'PyAV: Valid (already imported)'
   raise ValueError('Existing PyAV component invalid; preserved, not overwritten')
  dest.parent.mkdir(parents=True,exist_ok=True)
- stage=dest.parent/(COMPONENT+'.pending-'+uuid.uuid4().hex)
+ # The exclusive import lock owns this short same-volume staging name. A UUID
+ # suffix on the full component name can exceed MAX_PATH even when dest fits.
+ stage=dest.parent/'.pyav.pending'
  try:
   stage.mkdir()
   with zipfile.ZipFile(io.BytesIO(data)) as z:
