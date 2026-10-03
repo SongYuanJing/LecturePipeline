@@ -26,6 +26,18 @@ class Response(io.BytesIO):
 
 
 class DownloadTests(unittest.TestCase):
+    def test_long_cuda_cache_path_uses_short_temporary_name(self):
+        payload=b'pinned fixture';sha=hashlib.sha256(payload).hexdigest()
+        name='nvidia_cublas_cu12-12.9.2.10-py3-none-win_amd64.whl'
+        with tempfile.TemporaryDirectory() as temporary:
+            base=Path(temporary);root=base/('x'*(116-len(str(base))-1));cache=root/'cache/downloads'
+            final=cache/sha/name
+            self.assertLess(len(str(final)),260);self.assertGreaterEqual(len(str(final))+14,260)
+            with patch.object(downloads,'open_url',return_value=Response(payload)):
+                self.assertEqual(downloads.fetch(URL,sha,name,cache,limit=100),final)
+            self.assertEqual(final.read_bytes(),payload)
+            self.assertEqual(list(cache.rglob('*.part')),[])
+
     def test_verified_cache_avoids_network_and_corruption_is_repaired(self):
         payload = b'verified fixture'
         sha = hashlib.sha256(payload).hexdigest()

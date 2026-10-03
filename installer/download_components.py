@@ -60,7 +60,9 @@ def fetch(url, sha256, name, cache, *, limit, progress=lambda message: None):
         return target
     target.parent.mkdir(parents=True, exist_ok=True)
     # Unique temporary file: parallel downloads cannot expose partial bytes.
-    fd, pending = tempfile.mkstemp(prefix=name + '.', suffix='.part', dir=target.parent)
+    # The hash directory identifies the artifact. Repeating a long wheel name
+    # plus a random suffix can exceed MAX_PATH although the final cache file fits.
+    fd, pending = tempfile.mkstemp(prefix='.download-', suffix='.part', dir=target.parent)
     pending = Path(pending)
     try:
         with os.fdopen(fd, 'wb') as output, open_url(url) as response:
