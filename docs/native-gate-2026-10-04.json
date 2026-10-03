@@ -1,0 +1,335 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-04",
+  "code_commit": "192b08bb6ca5ceee035ceafa51af0afef1701332",
+  "candidate_relative_path": ".local/native-gate/c04",
+  "data_relative_path": ".local/native-gate/data04",
+  "host": {
+    "os": "Windows 11 Pro 10.0.26200",
+    "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "vram_mib": 6144,
+    "driver": "616.92"
+  },
+  "base_release": {
+    "tag": "v1.9.5-beta.1",
+    "bytes": 80109954,
+    "sha256": "8dd18ac260e40cb900d5b2e90a1ce9d3c54aeb6494cd9f22236ef7bad79e155b"
+  },
+  "candidate_archive": {
+    "bytes": 80131923,
+    "sha256": "90589cc62a3337664dfb970f12ae6b48ebb5d8455ce24eebb0c2d0177f3f6e36"
+  },
+  "audio": {
+    "source": "https://raw.githubusercontent.com/openai/whisper/v20250625/tests/jfk.flac",
+    "bytes": 1152693,
+    "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+    "duration_seconds": 11.0
+  },
+  "versions": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "duration_seconds": 11.0,
+    "modules": {
+      "av": {
+        "version": "18.1.0",
+        "path": "runtime\\components\\pyav-18.1.0-ea1480b7a8d5\\av\\__init__.py"
+      },
+      "ctranslate2": {
+        "version": "4.8.2",
+        "path": "runtime\\components\\ctranslate2-4.8.2-995938fcd24a\\ctranslate2\\__init__.py"
+      },
+      "faster_whisper": {
+        "version": "1.2.1",
+        "path": "runtime\\asr\\Lib\\site-packages\\faster_whisper\\__init__.py"
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "component": "pyav",
+      "name": "av-18.1.0-cp311-abi3-win_amd64.whl",
+      "bytes": 27595679,
+      "sha256": "ea1480b7a8d5405cb5f382b344731bf125fd2c1c6fae3964f6c48595628387ff",
+      "events": [
+        "Verified cache: av-18.1.0-cp311-abi3-win_amd64.whl"
+      ],
+      "seconds": 0.03831419994821772
+    },
+    {
+      "component": "ctranslate2",
+      "name": "ctranslate2-4.8.2-cp311-cp311-win_amd64.whl",
+      "bytes": 19220522,
+      "sha256": "995938fcd24a1174a7abf9765e7fa216b5b91a1d8e8c4c8f383c7a186e8bab2e",
+      "events": [
+        "Verified cache: ctranslate2-4.8.2-cp311-cp311-win_amd64.whl"
+      ],
+      "seconds": 0.02984969998942688
+    },
+    {
+      "component": "model",
+      "name": "config.json",
+      "bytes": 2394,
+      "sha256": "a9306624f5ec14270a014b647e5c316b6e03a662c369758d1b90697a7b0655b9",
+      "events": [
+        "Verified cache: config.json"
+      ],
+      "seconds": 0.002356500015594065
+    },
+    {
+      "component": "model",
+      "name": "model.bin",
+      "bytes": 3087284237,
+      "sha256": "69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1",
+      "events": [
+        "Verified cache: model.bin"
+      ],
+      "seconds": 3.288590300013311
+    },
+    {
+      "component": "model",
+      "name": "preprocessor_config.json",
+      "bytes": 340,
+      "sha256": "7ccc62c6f2765af1f3b46c00c9b5894426835a05021c8b9c01eecb6dfb542711",
+      "events": [
+        "Verified cache: preprocessor_config.json"
+      ],
+      "seconds": 0.0011919999960809946
+    },
+    {
+      "component": "model",
+      "name": "tokenizer.json",
+      "bytes": 2480617,
+      "sha256": "6d8cbd7cd0d8d5815e478dac67b85a26bbe77c1f5e0c6d76d1ce2abc0e5f21ca",
+      "events": [
+        "Verified cache: tokenizer.json"
+      ],
+      "seconds": 0.0034528999822214246
+    },
+    {
+      "component": "model",
+      "name": "vocabulary.json",
+      "bytes": 1068114,
+      "sha256": "c69260f2ab26d659b7c398f9a2b2b48ed0df16c3b47d7326782fd9cba71690c1",
+      "events": [
+        "Verified cache: vocabulary.json"
+      ],
+      "seconds": 0.0018880999996326864
+    },
+    {
+      "component": "cuda",
+      "name": "nvidia_cublas_cu12-12.9.2.10-py3-none-win_amd64.whl",
+      "bytes": 553162896,
+      "sha256": "623f43027d40d44ceadf0043f002bd25cf353e8f13ce90b9a87057019f560661",
+      "events": [
+        "Verified cache: nvidia_cublas_cu12-12.9.2.10-py3-none-win_amd64.whl"
+      ],
+      "seconds": 0.6332480999990366
+    },
+    {
+      "component": "cuda",
+      "name": "nvidia_cudnn_cu12-9.10.2.21-py3-none-win_amd64.whl",
+      "bytes": 692992268,
+      "sha256": "c6288de7d63e6cf62988f0923f96dc339cea362decb1bf5b3141883392a7d65e",
+      "events": [
+        "Verified cache: nvidia_cudnn_cu12-9.10.2.21-py3-none-win_amd64.whl"
+      ],
+      "seconds": 0.837181499984581
+    }
+  ],
+  "cold_unique_artifacts": 9,
+  "warm_verified_cache_hits": 9,
+  "network_interruption": "cuDNN read timeout; partial removed; retry reused verified cuBLAS and downloaded cuDNN successfully",
+  "required_download_import_seconds": 1160.2393775,
+  "cuda_import_from_cache_seconds": 28.4986426,
+  "component_status_before_cuda": {
+    "Base runtime": {
+      "status": "Valid",
+      "reason": ""
+    },
+    "PyAV": {
+      "status": "Valid",
+      "reason": ""
+    },
+    "CTranslate2": {
+      "status": "Valid",
+      "reason": ""
+    },
+    "Whisper model": {
+      "status": "Valid",
+      "reason": ""
+    },
+    "CUDA": {
+      "status": "Missing",
+      "reason": "Optional for CPU"
+    },
+    "CPU ASR capability": {
+      "status": "Available",
+      "reason": ""
+    },
+    "GPU ASR capability": {
+      "status": "Blocked",
+      "reason": "CUDA Missing; CPU remains independent"
+    }
+  },
+  "component_status_after_cuda": {
+    "Base runtime": {
+      "status": "Valid",
+      "reason": ""
+    },
+    "PyAV": {
+      "status": "Valid",
+      "reason": ""
+    },
+    "CTranslate2": {
+      "status": "Valid",
+      "reason": ""
+    },
+    "Whisper model": {
+      "status": "Valid",
+      "reason": ""
+    },
+    "CUDA": {
+      "status": "Valid",
+      "reason": ""
+    },
+    "CPU ASR capability": {
+      "status": "Available",
+      "reason": ""
+    },
+    "GPU ASR capability": {
+      "status": "Unverified",
+      "reason": "Полная проверка GPU с моделью выполняется при настройке/запуске ASR"
+    }
+  },
+  "inference": [
+    {
+      "mode": "cpu",
+      "cuda_directory_exists": false,
+      "selection": {
+        "mode": "cpu",
+        "device": "cpu",
+        "compute_type": "int8",
+        "allow_cpu_fallback": false,
+        "reason": ""
+      },
+      "probe_seconds": 10.376470500021242,
+      "inference_seconds": 21.19867949996842,
+      "status": "passed",
+      "last_run": {
+        "status": "ok",
+        "version": "1.3",
+        "model": "large-v3",
+        "profile": {
+          "device": "cpu",
+          "compute_type": "int8",
+          "vad_filter": false
+        },
+        "vad_parameters": null,
+        "condition_on_previous_text": true,
+        "actual_compute_type": "int8_float32",
+        "actual_device": "cpu",
+        "load_s": 9.452999999979511,
+        "transcribe_s": 10.73499999998603,
+        "info": {
+          "duration": 11.0,
+          "language": "en",
+          "duration_after_vad": 11.0
+        },
+        "process_wall_s": 21.18699999997625,
+        "fallback_reason": null
+      },
+      "transcript_nonempty": true
+    },
+    {
+      "mode": "auto",
+      "cuda_directory_exists": true,
+      "selection": {
+        "mode": "auto",
+        "device": "cuda",
+        "compute_type": "int8_float16",
+        "allow_cpu_fallback": true,
+        "reason": ""
+      },
+      "probe_seconds": 23.590844799997285,
+      "inference_seconds": 12.670777999970596,
+      "status": "passed",
+      "last_run": {
+        "status": "ok",
+        "version": "1.3",
+        "model": "large-v3",
+        "profile": {
+          "device": "cuda",
+          "compute_type": "int8_float16",
+          "vad_filter": true
+        },
+        "vad_parameters": {
+          "threshold": 0.25,
+          "neg_threshold": 0.1,
+          "min_silence_duration_ms": 3000,
+          "speech_pad_ms": 1600
+        },
+        "condition_on_previous_text": false,
+        "actual_compute_type": "int8_float16",
+        "actual_device": "cuda",
+        "load_s": 9.75,
+        "transcribe_s": 1.875,
+        "info": {
+          "duration": 11.0,
+          "language": "en",
+          "duration_after_vad": 11.0
+        },
+        "process_wall_s": 12.655999999959022,
+        "fallback_reason": null
+      },
+      "transcript_nonempty": true
+    },
+    {
+      "mode": "gpu",
+      "cuda_directory_exists": true,
+      "selection": {
+        "mode": "gpu",
+        "device": "cuda",
+        "compute_type": "int8_float16",
+        "allow_cpu_fallback": false,
+        "reason": ""
+      },
+      "probe_seconds": 24.58595300000161,
+      "inference_seconds": 11.800348000018857,
+      "status": "passed",
+      "last_run": {
+        "status": "ok",
+        "version": "1.3",
+        "model": "large-v3",
+        "profile": {
+          "device": "cuda",
+          "compute_type": "int8_float16",
+          "vad_filter": true
+        },
+        "vad_parameters": {
+          "threshold": 0.25,
+          "neg_threshold": 0.1,
+          "min_silence_duration_ms": 3000,
+          "speech_pad_ms": 1600
+        },
+        "condition_on_previous_text": false,
+        "actual_compute_type": "int8_float16",
+        "actual_device": "cuda",
+        "load_s": 8.89100000000326,
+        "transcribe_s": 1.7649999999557622,
+        "info": {
+          "duration": 11.0,
+          "language": "en",
+          "duration_after_vad": 11.0
+        },
+        "process_wall_s": 11.78200000000652,
+        "fallback_reason": null
+      },
+      "transcript_nonempty": true
+    }
+  ],
+  "installed_reuse": [
+    "pyav: already verified",
+    "ctranslate2: already verified",
+    "model: already verified",
+    "cuda: already verified"
+  ]
+}

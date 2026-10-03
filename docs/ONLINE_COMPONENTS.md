@@ -48,6 +48,11 @@ Tests use temporary fixtures, not user installations. Real multi-GB download and
 private-runtime/native smoke are still release gates; passing unit tests does not
 close the clean-install gate.
 
+Update 2026-10-04: the real supplier/native gate passed in a new disposable
+candidate on Windows 11 / RTX 3050, after three isolated long-path fixes. See
+[NATIVE_GATE.md](NATIVE_GATE.md) for hashes, cache reuse, native imports and real
+CPU/Auto/GPU inference. This qualifies that host, not fresh Windows or a release.
+
 ## Development validation, 2026-10-03
 
 - 19 tests passed: component downloads (11), existing picker (1), CUDA import (2),

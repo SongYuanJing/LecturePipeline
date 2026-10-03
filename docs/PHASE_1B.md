@@ -113,12 +113,13 @@ $env:LP_TEST_PYTHON311 = '<isolated embedded Python 3.11>/python.exe'
 
 ## Remaining gates and limits
 
-- Phase 1a is implementation-complete, not release-ready: full pinned supplier
-  download/import and private native runtime integration remain open.
-- Phase 1b routing/behavior is tested. Actual pinned large-v3 CPU/GPU execution,
-  VAD and driver/native compatibility must still be qualified in a disposable
-  candidate with real suppliers before release. The current smoke cannot certify
-  that stack, real GPU performance, or first-run visual layout on all DPI settings.
+- The 2026-10-04 [native gate](NATIVE_GATE.md) now qualifies 1a/1b on the tested
+  Windows 11 / RTX 3050 host: real pinned download/import, verified cache reuse,
+  CPU without CUDA directory, and Auto/GPU large-v3 inference with VAD passed.
+  This supersedes the previously open host-native gate, not release validation.
+- Other hosts/drivers, fresh Windows and first-run visual layout on all DPI
+  settings remain unqualified. The earlier controlled process smoke above is
+  still a routing test; real native measurements are recorded separately.
 - A successful short GPU probe cannot guarantee enough VRAM for every subsequent
   lecture. Strict GPU surfaces later errors; Auto can fall back as before.
 - Cold model probing/hash reads add startup/setup time. Slow hardware may reach
