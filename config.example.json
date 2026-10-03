@@ -33,7 +33,8 @@
   },
   "asr": {
     "model": "large-v3",
-    "preferred_device": "gpu"
+    "preferred_device": "cpu",
+    "device_mode": "auto"
   },
   "dialogue": {
     "folder": "dialogue",

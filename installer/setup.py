@@ -14,16 +14,20 @@ def validate_runtimes(root):
   except (OSError,subprocess.SubprocessError,RuntimeError) as exc:
    raise RuntimeError(kind+' runtime unavailable. Restore the complete package; for missing MSVC DLLs install the official Microsoft Visual C++ v14 x64 Redistributable. User data has not been initialized. '+str(exc)) from exc
 
-def configure(root,data,workspace,subject,*,workspace_name=None,subject_name=None,language="zh"):
+def configure(root,data,workspace,subject,*,workspace_name=None,subject_name=None,language="zh",device_mode='auto'):
  if not data.is_absolute():raise ValueError('Выберите абсолютную папку данных')
  root=root.resolve();data=data.resolve();app=app_root(root)
  if root==data or root in data.parents or data in root.parents:raise ValueError('User data and application root must be separate')
  if not re.fullmatch('[A-Za-z0-9_-]+',workspace) or not re.fullmatch('[A-Za-z0-9_-]+',subject):raise ValueError('Workspace and subject IDs: letters, digits, - or _')
  if language not in ('zh','en','auto'):raise ValueError('Invalid lecture language')
+ if device_mode not in ('auto','cpu','gpu'):raise ValueError('ASR mode: auto, cpu или gpu')
  cfg=root/'config/config.json';wr=data/workspace
  if cfg.exists() or (data/'dictionary/vocabulary.xlsx').exists() or (data/'dialogue').exists() or (wr.exists() and any(wr.iterdir())):raise ValueError('Existing configuration/workspace: explicit migration required; nothing overwritten')
  validate_runtimes(root)
+ from asr_devices import selection
+ selected=selection(root,device_mode) # Fail forced GPU before any user-data/config writes.
  template=json.loads((root/'launcher/config.example.json').read_text(encoding='utf8'))
+ template['asr'].update(device_mode=device_mode,preferred_device='gpu' if selected['device']=='cuda' else 'cpu')
  template.update(install_root=os.path.relpath(app,cfg.parent),application_home='..',data_root=str(data),active_workspace=workspace,task_prefix='LP-'+uuid.uuid4().hex[:12])
  w=template['workspaces'].pop('semester-1');w.update(name=workspace_name or workspace,folder=workspace,worker_home='run/workspaces/'+workspace);w['subjects'][0].update(subject_code=subject,subject_name=subject_name or subject,folder=subject,default_language=language)
  template['workspaces']={workspace:w};template['hidden_tasks']=[]
@@ -42,9 +46,9 @@ def configure(root,data,workspace,subject,*,workspace_name=None,subject_name=Non
  else:raise ValueError('Existing dictionary: use explicit adoption, never overwrite')
  new_json(cfg,template);return cfg
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--data-root',type=Path);p.add_argument('--workspace',default='semester-1');p.add_argument('--subject',default='SUBJECT');a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--data-root',type=Path);p.add_argument('--workspace',default='semester-1');p.add_argument('--subject',default='SUBJECT');p.add_argument('--device-mode',choices=('auto','cpu','gpu'),default='auto');a=p.parse_args()
  data=a.data_root or Path(input('Absolute data root (outside application): ').strip().strip('"'))
  if not data.is_absolute():raise SystemExit('Absolute path required')
- try:cfg=configure(ROOT,data,a.workspace,a.subject)
+ try:cfg=configure(ROOT,data,a.workspace,a.subject,device_mode=a.device_mode)
  except (OSError,ValueError,RuntimeError,subprocess.SubprocessError) as exc:raise SystemExit('First run failed: '+str(exc))
  print('Config created: '+str(cfg));print('Run Preflight.cmd, then Integrate.cmd explicitly to create shortcuts/tasks. Workers are not started automatically.')

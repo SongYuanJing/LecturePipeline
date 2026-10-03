@@ -83,13 +83,14 @@ def _write_json(path, value):
 
 class ProductionWhisperModel:
     def __init__(self, model_size_or_path=MODEL, device='cuda',
-                 compute_type='int8_float16', local_files_only=True, *, runtime_dir=None):
+                 compute_type='int8_float16', local_files_only=True, *, runtime_dir=None, allow_cpu_fallback=True):
         if model_size_or_path != MODEL or not local_files_only:
             raise ValueError('Production requires the locally cached large-v3; no model substitution')
         if (device, compute_type) not in {('cuda', 'int8_float16'), ('cpu', 'int8')}:
             raise ValueError('Unsupported production ASR profile')
         self.runtime_dir = Path(runtime_dir) if runtime_dir is not None else RUNTIME
         self.cpu_only = device == 'cpu'
+        self.allow_cpu_fallback = allow_cpu_fallback
         self.fallback_reason = None
         self.last_run = None
         self.progress_callback = None
@@ -150,6 +151,8 @@ class ProductionWhisperModel:
         except BackendError as exc:
             if self.cpu_only or not exc.cuda:
                 raise
+            if not self.allow_cpu_fallback:
+                raise BackendError(str(exc) + '. GPU выбран явно; CPU fallback отключён. Выберите CPU или Auto.', cuda=exc.cuda) from exc
             self.cpu_only = True  # Sticky for this worker/model lifetime, not persisted in state.
             self.fallback_reason = str(exc)
             print('    ASR FALLBACK CPU large-v3/int8/VAD=false: ' + str(exc), flush=True)
@@ -208,6 +211,8 @@ def _child(request_file, result_file):
         set_phase('model_load')
         from faster_whisper import WhisperModel
         model = WhisperModel(MODEL, device=profile['device'], compute_type=profile['compute_type'], local_files_only=True)
+        if model.model.device != profile['device']:
+            raise RuntimeError('ASR backend differs from requested device: ' + str(model.model.device))
         load_s = time.monotonic()-started
         set_phase('transcribe'); transcription_started = time.monotonic()
         segments, info = model.transcribe(request['audio'], **request['options'])
@@ -221,6 +226,7 @@ def _child(request_file, result_file):
                     vad_parameters=request['options'].get('vad_parameters'),
                     condition_on_previous_text=request['options'].get('condition_on_previous_text'),
                     actual_compute_type=model.model.compute_type,
+                    actual_device=model.model.device,
                     load_s=load_s, transcribe_s=time.monotonic()-transcription_started,
                     info=dict(duration=float(info.duration), language=info.language,
                               duration_after_vad=float(info.duration_after_vad)), segments=rows)

@@ -71,7 +71,7 @@ class CT2Tests(unittest.TestCase):
  def test_component_combinations(self):
   for av,ct,model,cuda,expected in [('Missing','Valid','Valid','Missing','Blocked'),('Valid','Missing','Valid','Missing','Blocked'),('Valid','Valid','Missing','Missing','Blocked'),('Valid','Valid','Valid','Missing','Available'),('Valid','Valid','Valid','Valid','Available'),('Invalid','Valid','Valid','Valid','Blocked'),('Valid','Invalid','Valid','Valid','Blocked'),('Valid','Valid','Invalid','Valid','Blocked'),('Valid','Valid','Valid','Invalid','Available')]:
    with self.subTest(av=av,ct=ct,model=model,cuda=cuda),patch.object(status,'base_integrity',return_value=status.state('Valid')),patch.object(status,'wheel_state',side_effect=lambda module,root:status.state(av if module is status.pyav else ct)),patch.object(status,'asset_state',side_effect=lambda root,kind:status.state(cuda if kind=='cuda' else model)),patch.object(status,'probe_backend',return_value={'cpu':True,'gpu':1}):
-    r=status.status(Path('unused'));self.assertEqual(r['CPU ASR capability']['status'],expected);self.assertEqual(r['GPU ASR capability']['status'],'Available' if expected=='Available' and cuda=='Valid' else 'Blocked')
+    r=status.status(Path('unused'));self.assertEqual(r['CPU ASR capability']['status'],expected);self.assertEqual(r['GPU ASR capability']['status'],'Unverified' if expected=='Available' and cuda=='Valid' else 'Blocked') # Device count is not an inference probe.
  def test_missing_ct2_action(self):
   with patch.object(status,'status',return_value={'PyAV':status.state('Valid'),'CTranslate2':status.state('Missing')}),self.assertRaisesRegex(RuntimeError,'ImportCTranslate2.cmd'):status.require_components(Path('unused'))
 

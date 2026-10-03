@@ -32,7 +32,7 @@ def base_integrity(root):
 def probe_backend(root):
  env={k:v for k,v in os.environ.items() if k.upper() in {'SYSTEMROOT','WINDIR','TEMP','TMP'}}
  env['PATH']=str(Path(env.get('SystemRoot',env.get('SYSTEMROOT','C:/Windows')))/'System32')
- code="import sys,pathlib,json;root=pathlib.Path(sys.argv[1]).resolve();import ctranslate2,faster_whisper,av;assert root/'runtime/components' in pathlib.Path(ctranslate2.__file__).resolve().parents;assert root/'runtime/components' in pathlib.Path(av.__file__).resolve().parents;assert all(root==pathlib.Path(p).resolve() or root in pathlib.Path(p).resolve().parents for p in sys.path if p);print(json.dumps({'cpu':'int8' in ctranslate2.get_supported_compute_types('cpu'),'gpu':ctranslate2.get_cuda_device_count()}))"
+ code="import sys,pathlib,json;root=pathlib.Path(sys.argv[1]).resolve();import ctranslate2,faster_whisper,av;assert root/'runtime/components' in pathlib.Path(ctranslate2.__file__).resolve().parents;assert root/'runtime/components' in pathlib.Path(av.__file__).resolve().parents;assert all(root==pathlib.Path(p).resolve() or root in pathlib.Path(p).resolve().parents for p in sys.path if p);print(json.dumps({'cpu':'int8' in ctranslate2.get_supported_compute_types('cpu')}))"
  r=subprocess.run([str(root/'runtime/asr/python.exe'),'-I','-B','-X','utf8','-c',code,str(root)],env=env,capture_output=True,text=True,timeout=60,creationflags=0x08000000 if os.name=='nt' else 0)
  if r.returncode:raise RuntimeError(r.stderr[-800:])
  return json.loads(r.stdout)
@@ -45,7 +45,7 @@ def status(root=ROOT):
   try:
    cap=probe_backend(root)
    cpu=state('Available') if cap['cpu'] else state('Blocked','CPU int8 unavailable')
-   gpu=state('Available') if cap['gpu']>0 and result['CUDA']['status']=='Valid' else state('Blocked','CUDA '+result['CUDA']['status']+' or NVIDIA GPU unavailable; CPU remains independent')
+   gpu=state('Unverified','Полная проверка GPU с моделью выполняется при настройке/запуске ASR') if result['CUDA']['status']=='Valid' else state('Blocked','CUDA '+result['CUDA']['status']+'; CPU remains independent')
   except (OSError,ValueError,subprocess.SubprocessError,RuntimeError) as exc:cpu=gpu=state('Blocked','Private ASR runtime validation failed: '+str(exc))
  result['CPU ASR capability']=cpu;result['GPU ASR capability']=gpu
  return result

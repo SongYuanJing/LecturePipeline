@@ -27,7 +27,10 @@ class Config:
   self.active=d['active_workspace'];spaces=d['workspaces'];need(isinstance(spaces,dict) and self.active in spaces,'active_workspace не найден')
   need(d.get('ai',{}).get('mode')=='manual_chatgpt','Поддерживается только AI mode manual_chatgpt')
   need(d['asr']['model']=='large-v3','v1.7 поддерживает только large-v3; автоматическая смена модели запрещена')
-  need(d['asr']['preferred_device'] in ('gpu','cpu'),'preferred_device: gpu или cpu')
+  from asr_device import configured_mode
+  try:self.device_mode=configured_mode(d['asr'])
+  except ValueError as e:raise ConfigError(str(e)) from e
+  self._asr_selection=None
   for language in d['languages'].values():need(language in ('zh','en','auto'),'Язык: zh, en или auto')
   for field in ('lecture','dialogue'):need(field in d['languages'],'Отсутствует default language: '+field)
   states=set();homes=set();subject_roots=[];output_roots=[]
@@ -87,11 +90,18 @@ class Config:
    candidates=[p for p in (root/'snapshots').glob('*') if (p/'model.bin').is_file()];need(len(candidates)==1,'Модель large-v3 отсутствует или кэш неоднозначен');p=candidates[0]
   for name in ('model.bin','config.json','tokenizer.json','preprocessor_config.json'):need((p/name).is_file(),'Не найден файл модели '+str(p/name))
   return p
+ def asr_selection(self):
+  from asr_device import detect,select
+  self.assert_current()
+  if self._asr_selection is None:
+   report=detect(self.home,self.runtime('asr_python','.venv/Scripts/python.exe'),self.model_cache(),self.runtime('cuda','cuda_runtime/v1.3'),self.device_mode)
+   self._asr_selection=select(self.device_mode,report)
+  return dict(self._asr_selection)
  def new_model(self,*args,**kwargs):
   from lecture_asr import ProductionWhisperModel
   self.assert_current();self.model_snapshot();os.environ['HF_HUB_CACHE']=str(self.model_cache())
-  device='cpu' if self.data['asr']['preferred_device']=='cpu' else 'cuda'
-  kwargs.update(device=device,compute_type='int8' if device=='cpu' else 'int8_float16',runtime_dir=self.runtime('cuda','cuda_runtime/v1.3'))
+  selected=self.asr_selection()
+  kwargs.update(device=selected['device'],compute_type=selected['compute_type'],allow_cpu_fallback=selected['allow_cpu_fallback'],runtime_dir=self.runtime('cuda','cuda_runtime/v1.3'))
   return ProductionWhisperModel(*args,**kwargs)
 
 def preflight(config=None,probe_gpu=True):
@@ -119,12 +129,8 @@ def preflight(config=None,probe_gpu=True):
  check('dialogue_root',dialogue)
  if probe_gpu:
   try:
-   py=c.runtime('asr_python','.venv/Scripts/python.exe');code='import ctranslate2,json;print(json.dumps({"gpu":ctranslate2.get_cuda_device_count(),"cpu":sorted(ctranslate2.get_supported_compute_types("cpu"))}))'
-   r=subprocess.run([str(py),'-B','-c',code],capture_output=True,text=True,timeout=30,creationflags=0x08000000 if os.name=='nt' else 0);need(r.returncode==0,'ASR runtime не запускается: '+r.stderr[-500:]);cap=json.loads(r.stdout);need('int8' in cap['cpu'],'CPU int8 недоступен')
-   from lecture_asr import CUDA_DLLS
-   missing=[n for n in CUDA_DLLS if not (c.runtime('cuda','cuda_runtime/v1.3')/n).is_file()]
-   gpu=cap['gpu']>0 and not missing
-   checks.append(dict(id='asr_backend',status='ok' if gpu or c.data['asr']['preferred_device']=='cpu' else 'warning',message='GPU runtime найден; CPU fallback доступен' if gpu else 'GPU/runtime недоступен; CPU int8 fallback доступен',cpu_fallback=True,gpu_available=gpu))
+   selected=c.asr_selection();gpu=selected['device']=='cuda'
+   checks.append(dict(id='asr_backend',status='warning' if selected['reason'] else 'ok',message=c.device_mode.upper()+' → '+('GPU' if gpu else 'CPU')+(': '+selected['reason'] if selected['reason'] else ''),cpu_fallback=selected['allow_cpu_fallback'],gpu_available=gpu))
   except Exception as e:checks.append(dict(id='asr_backend',status='error',message=str(e)))
  return dict(schema_version=1,version=VERSION,workspace=c.active,ok=all(x['status']!='error' for x in checks),checks=checks)
 def require_preflight(c):

@@ -34,8 +34,8 @@ def integrate(home):
  return 'Интеграция готова'
 
 class Components(ttk.Frame):
- def __init__(self,parent,home):
-  super().__init__(parent,padding=10);self.home=Path(home);self.async_=Async(self);self.status=tk.StringVar(value='Проверка компонентов…')
+ def __init__(self,parent,home,on_changed=None):
+  super().__init__(parent,padding=10);self.home=Path(home);self.on_changed=on_changed;self.async_=Async(self);self.status=tk.StringVar(value='Проверка компонентов…')
   ttk.Label(self,textvariable=self.status,wraplength=690).pack(anchor='w')
   self.tree=ttk.Treeview(self,columns=('component','status'),show='headings',height=7)
   self.tree.heading('component',text='Компонент');self.tree.heading('status',text='Состояние');self.tree.column('component',width=210);self.tree.column('status',width=450);self.tree.pack(fill='x',pady=8)
@@ -63,9 +63,10 @@ class Components(ttk.Frame):
  def loaded(self,value,error):
   if error:self.status.set(error);return
   self.tree.delete(*self.tree.get_children())
-  labels={'Valid':'✓ Готово','Available':'✓ Готово','Missing':'○ Не установлено','Invalid':'⚠ Ошибка','Blocked':'○ Недоступно'}
+  labels={'Valid':'✓ Готово','Available':'✓ Готово','Missing':'○ Не установлено','Invalid':'⚠ Ошибка','Blocked':'○ Недоступно','Unverified':'○ Не проверено'}
   for name,item in value.items():self.tree.insert('','end',values=(name,labels[item['status']]+(' — '+item['reason'] if item['reason'] else '')))
   self.status.set('Проверка завершена')
+  if self.on_changed:self.on_changed()
  def choose(self,script,folder):
   if self.async_.busy:messagebox.showinfo('Подождите','Дождитесь проверки/импорта',parent=self);return
   if script=='import_cuda.py':
@@ -90,10 +91,37 @@ class Components(ttk.Frame):
    else:self.status.set(value.strip());self.refresh()
   self.async_.run(partial(command,self.home,script,str(path)),done)
 
+def device_summary(report,mode):
+ hardware=report.get('hardware',{});adapters=', '.join(hardware.get('adapters',[])) or hardware.get('reason') or 'Видеокарты не обнаружены'
+ recommended=report.get('recommended');recommended=recommended.upper() if recommended else 'нет доступного runtime'
+ from asr_device import select
+ try:
+  selected=select(mode,report);outcome='Будет использован '+('GPU' if selected['device']=='cuda' else 'CPU')
+ except RuntimeError as e:outcome=str(e)
+ return 'Оборудование: '+adapters+'\nПроверка '+mode.upper()+'. Рекомендуется: '+recommended+'. '+outcome+'\n'+report['gpu']['reason']
+
+class DeviceChoice(ttk.Frame):
+ def __init__(self,parent,home):
+  super().__init__(parent,padding=10);self.home=Path(home);self.async_=Async(self);self.mode=tk.StringVar(value='Auto');self.status=tk.StringVar(value='Проверка начнётся после проверки компонентов.')
+  ttk.Label(self,text='Режим распознавания').grid(row=0,column=0,sticky='w')
+  choice=ttk.Combobox(self,textvariable=self.mode,values=('Auto','CPU','GPU'),state='readonly',width=10);choice.grid(row=0,column=1,padx=10)
+  choice.bind('<<ComboboxSelected>>',lambda event:self.refresh())
+  ttk.Button(self,text='Проверить оборудование и runtime',command=self.refresh).grid(row=0,column=2)
+  ttk.Label(self,textvariable=self.status,wraplength=760).grid(row=1,column=0,columnspan=3,sticky='w',pady=8)
+ def refresh(self):
+  if self.async_.busy:return
+  mode=self.mode.get().lower();self.status.set('Проверка CPU runtime…' if mode=='cpu' else 'Проверка '+mode.upper()+'… GPU проверяется загрузкой модели и коротким распознаванием; это может занять до 3 минут.')
+  def done(value,error):
+   if self.mode.get().lower()!=mode:self.refresh();return
+   if error:self.status.set('Проверка не завершена: '+error)
+   else:self.status.set(device_summary(value,mode))
+  self.async_.run(lambda:json.loads(command(self.home,'asr_devices.py',mode)),done)
+
 def first_run(home):
  home=Path(home);root=tk.Tk();root.title('Lecture Pipeline · Первый запуск');root.geometry('900x780');root.minsize(820,730);runner=Async(root);result=[]
  ttk.Label(root,text='Настройка Lecture Pipeline',font=('Segoe UI',18,'bold')).pack(anchor='w',padx=20,pady=15)
- form=ttk.Frame(root,padding=20);form.pack(fill='x');values={}
+ tabs=ttk.Notebook(root);tabs.pack(fill='both',expand=True,padx=10);settings=ttk.Frame(tabs);components_tab=ttk.Frame(tabs);tabs.add(settings,text='Настройка');tabs.add(components_tab,text='Компоненты / загрузка')
+ form=ttk.Frame(settings,padding=20);form.pack(fill='x');values={}
  for row,(key,label,default) in enumerate([('data','Папка данных (вне приложения)',''),('workspace','Название workspace','Semester 1'),('code','Код предмета','SUBJECT'),('name','Название предмета','Предмет')]):
   ttk.Label(form,text=label).grid(row=row,column=0,sticky='w',pady=4);v=tk.StringVar(value=default);values[key]=v;ttk.Entry(form,textvariable=v,width=64).grid(row=row,column=1,sticky='ew',padx=8)
  def browse():
@@ -101,17 +129,18 @@ def first_run(home):
   if p:values['data'].set(p)
  ttk.Button(form,text='Выбрать…',command=browse).grid(row=0,column=2)
  language=tk.StringVar(value='zh');ttk.Label(form,text='Язык лекций').grid(row=4,column=0,sticky='w');ttk.Combobox(form,textvariable=language,values=('zh','en','auto'),state='readonly',width=12).grid(row=4,column=1,sticky='w',padx=8)
- panel=Components(root,home);panel.pack(fill='x',padx=10)
- tasks=tk.BooleanVar(value=True);ttk.Checkbutton(root,text='Создать отдельные tasks и запустить workers для этой установки',variable=tasks).pack(anchor='w',padx=20,pady=8)
+ devices=DeviceChoice(settings,home);devices.pack(fill='x')
+ panel=Components(components_tab,home,on_changed=devices.refresh);panel.pack(fill='x',padx=10)
+ tasks=tk.BooleanVar(value=True);ttk.Checkbutton(settings,text='Создать отдельные tasks и запустить workers для этой установки',variable=tasks).pack(anchor='w',padx=20,pady=8)
  status=tk.StringVar();ttk.Label(root,textvariable=status,wraplength=850).pack(anchor='w',padx=20)
  def finish():
-  if runner.busy or panel.async_.busy:messagebox.showinfo('Подождите','Дождитесь проверки компонентов',parent=root);return
-  fields={k:v.get().strip() for k,v in values.items()};lang=language.get();with_tasks=tasks.get()
+  if runner.busy or panel.async_.busy or devices.async_.busy:messagebox.showinfo('Подождите','Дождитесь проверки компонентов и режима ASR',parent=root);return
+  fields={k:v.get().strip() for k,v in values.items()};lang=language.get();with_tasks=tasks.get();mode=devices.mode.get().lower()
   if not all(fields.values()):messagebox.showerror('Настройка','Заполните все поля',parent=root);return
   status.set('Проверка и создание конфигурации…')
   def work():
    from setup import configure
-   cfg=configure(home,Path(fields['data']),'semester-1',fields['code'],workspace_name=fields['workspace'],subject_name=fields['name'],language=lang)
+   cfg=configure(home,Path(fields['data']),'semester-1',fields['code'],workspace_name=fields['workspace'],subject_name=fields['name'],language=lang,device_mode=mode)
    if with_tasks:
     integrate(home)
     import os,sys
@@ -130,7 +159,7 @@ def first_run(home):
   runner.run(work,done)
  ttk.Button(root,text='Завершить настройку',command=finish).pack(anchor='e',padx=20,pady=12)
  def close():
-  if runner.busy or panel.async_.busy:messagebox.showinfo('Подождите','Дождитесь завершения операции',parent=root)
+  if runner.busy or panel.async_.busy or devices.async_.busy:messagebox.showinfo('Подождите','Дождитесь завершения операции',parent=root)
   else:root.destroy()
  root.protocol('WM_DELETE_WINDOW',close);root.mainloop();return bool(result)
 
