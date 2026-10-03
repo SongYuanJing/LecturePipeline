@@ -66,7 +66,10 @@ Download tests use tiny fixtures and simulated network failures. A real supplier
 and private-runtime integration test is required before calling 1a release-ready.
 The full multi-GB model/CUDA download is not part of every unit-test run.
 
-Current handoff: phase 1a source and targeted tests implemented; see
-[ONLINE_COMPONENTS.md](ONLINE_COMPONENTS.md) for operation and validation evidence.
-Next implementation is 1b, followed by reproducible runtime/bootstrapper work in
-1c. The release-level native integration gate for 1a remains open.
+Current handoff: phase 1a is implementation-complete, not release-ready; see
+[ONLINE_COMPONENTS.md](ONLINE_COMPONENTS.md). Phase 1b implementation, targeted
+tests and controlled disposable process smoke are complete; see
+[PHASE_1B.md](PHASE_1B.md). Real native supplier qualification remains open for
+the release candidate. Phase 1c has NOT started: the owner will separately choose
+the fresh-Windows bootstrap executable architecture. Stop here; do not infer
+authorization to proceed into 1c. Continue locally while GitHub write is blocked.

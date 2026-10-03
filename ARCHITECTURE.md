@@ -2,7 +2,7 @@
 
 The authoritative version pointer is application-root `current.json`. Stable `launcher/launch.py` validates the selected `versions/<version>/release.json` and code hashes, reads `config/config.json`, performs preflight, then invokes existing modules. Config `install_root` selects versioned code; additive `application_home` selects the outer mutable home. Legacy schema-1 config without the new field still means home = install root.
 
-- **ASR:** `lecture_asr.py`, unchanged v1.3 child isolation, large-v3, cuda/int8_float16/beam5/VAD; CPU int8/no-VAD fallback. `Config.new_model()` supplies private HF cache and CUDA path.
+- **ASR:** `lecture_asr.py` retains v1.3 child isolation, large-v3, cuda/int8_float16/beam5/VAD and CPU int8/no-VAD. `asr_device.py` resolves schema-1 `asr.device_mode` (Auto/CPU/GPU) using isolated private-runtime probes. Only Auto permits CPU fallback; forced GPU fails with a recovery suggestion. `Config.new_model()` supplies the selected profile, fallback policy, private HF cache and CUDA path. See [Phase 1b contracts and validation](docs/PHASE_1B.md).
 - **Lecture:** `lecture_worker.py` / `lecture_pipeline.py`, existing READY/DONE/state semantics. Active workspace only. Controls use `Config.ps1`; candidate task names are per-installation.
 - **Dictionary:** `dictionary_merge.py`, manual fields/provenance/merge unchanged. New first-run empty workbook uses the existing v1.4 schema, not a migration of user data.
 - **Word AI:** `word_ai_v1.5/lecture_ai.py`, manual external ChatGPT and versioned instructions. Local packet/queue/state, never chat history, are authoritative.
