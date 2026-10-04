@@ -71,6 +71,10 @@ on the Windows 11 / RTX 3050 host, including real supplier downloads, verified
 cache/import and CPU/Auto/GPU inference; see [NATIVE_GATE.md](NATIVE_GATE.md).
 This is not general release readiness or fresh-Windows certification. Earlier
 contracts/tests remain in [ONLINE_COMPONENTS.md](ONLINE_COMPONENTS.md) and
-[PHASE_1B.md](PHASE_1B.md). Phase 1c has NOT started: the owner will separately choose
-the fresh-Windows bootstrap executable architecture. Stop here; do not infer
-authorization to proceed into 1c. Continue locally while GitHub write is blocked.
+[PHASE_1B.md](PHASE_1B.md). The owner selected a self-contained .NET 10 x64
+WinForms pre-Python shell for Phase 1c, with Windows 11 x64 as the initial target.
+Phase 1c is implementation-complete and native-qualified on this Windows 11 /
+RTX 3050 host, including real HTTP resume, GUI, ASR, warm rerun and shortcut.
+Implementation and native acceptance evidence are tracked in
+[PHASE_1C.md](PHASE_1C.md). Stop after Phase 1c; Phase 2 requires a separate
+instruction. Continue locally while GitHub write is blocked.

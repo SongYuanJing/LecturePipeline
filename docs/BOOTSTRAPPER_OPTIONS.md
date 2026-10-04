@@ -1,7 +1,9 @@
-# Phase 1c architecture decision — proposal only
+# Phase 1c architecture decision — accepted 2026-10-04
 
-No Phase 1c implementation is authorized yet. This compares ways to start on
-fresh Windows without Python. The native integration gate is a separate task.
+The owner selected **self-contained .NET 10 x64 WinForms**, with **Windows 11 x64**
+as the initial official support target. Windows 10 is not a supported product
+platform yet. The comparison below records the rationale at decision time;
+implementation and validation are documented in [PHASE_1C.md](PHASE_1C.md).
 
 ## Common boundary
 
@@ -60,8 +62,5 @@ Use a minimal native EXE if a strict small-download requirement outweighs the
 additional native development/testing cost. Keep PowerShell as a developer or
 diagnostic route, not the primary end-user installation experience.
 
-Before writing code, choose the architecture and the Windows support contract:
-Windows 11 only initially, or an explicitly tested subset of Windows 10 as well.
-Then validate one small throwaway shell for size/startup/signing/UI behavior,
-without building the whole installer on an untested assumption. This document
-does not select on the owner's behalf and contains no bootstrap implementation.
+The accepted sequence was prototype size/startup measurement followed by the
+full flow. Windows 10 qualification and Phase 2 updater remain separate work.

@@ -9,6 +9,7 @@ The authoritative version pointer is application-root `current.json`. Stable `la
 - **Dialogue:** `dialogue_v1.6`, own state/journal; reused ASR and separate private document Python. No lecture READY, subjects or dictionary.
 - **Config/workspaces:** schema 1, config describes external data/workspaces/subjects and component paths. Packaged root paths are relative; data root is explicit absolute user configuration.
 - **GUI:** existing Tk app and adapter, controls/query modules only. GUI does not own worker lifetime or duplicate backend processing.
+- **Initial bootstrap:** Windows 11 x64 self-contained .NET WinForms shell obtains and verifies the pinned private base, then hands off to existing Python download/import/setup/device policies through `bootstrap_flow.py`. Owned incomplete installations have a launch guard; legacy roots without bootstrap metadata retain their contract. Per-user Start shortcuts are independent of worker tasks. See [Phase 1c](docs/PHASE_1C.md). This is not an updater.
 - **Atomic publish:** `atomic_publish.py` and `windows_publish.py` unchanged. Same-machine H3 guarantee only; no new cloud locking claims.
 
 Code, release metadata, launcher and private Python are application-owned immutable files. Config, model cache, logs, local worker/queue state and backups live outside versions. Audio/raw/SRT/Word/XLSX and lecture/AI state are external user data. Never delete or migrate these implicitly on uninstall/update. Working state and integration belong to the installation; do not run two installations against the same data.

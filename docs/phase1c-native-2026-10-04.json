@@ -1,0 +1,467 @@
+{
+  "date": "2026-10-04",
+  "gate": "%TEMP%/LP1c-20261004c",
+  "artifacts": [
+    {
+      "component": "pyav",
+      "name": "av-18.1.0-cp311-abi3-win_amd64.whl",
+      "bytes": 27595679,
+      "sha256": "ea1480b7a8d5405cb5f382b344731bf125fd2c1c6fae3964f6c48595628387ff"
+    },
+    {
+      "component": "ctranslate2",
+      "name": "ctranslate2-4.8.2-cp311-cp311-win_amd64.whl",
+      "bytes": 19220522,
+      "sha256": "995938fcd24a1174a7abf9765e7fa216b5b91a1d8e8c4c8f383c7a186e8bab2e"
+    },
+    {
+      "component": "model",
+      "name": "config.json",
+      "bytes": 2394,
+      "sha256": "a9306624f5ec14270a014b647e5c316b6e03a662c369758d1b90697a7b0655b9"
+    },
+    {
+      "component": "model",
+      "name": "model.bin",
+      "bytes": 3087284237,
+      "sha256": "69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1"
+    },
+    {
+      "component": "model",
+      "name": "preprocessor_config.json",
+      "bytes": 340,
+      "sha256": "7ccc62c6f2765af1f3b46c00c9b5894426835a05021c8b9c01eecb6dfb542711"
+    },
+    {
+      "component": "model",
+      "name": "tokenizer.json",
+      "bytes": 2480617,
+      "sha256": "6d8cbd7cd0d8d5815e478dac67b85a26bbe77c1f5e0c6d76d1ce2abc0e5f21ca"
+    },
+    {
+      "component": "model",
+      "name": "vocabulary.json",
+      "bytes": 1068114,
+      "sha256": "c69260f2ab26d659b7c398f9a2b2b48ed0df16c3b47d7326782fd9cba71690c1"
+    },
+    {
+      "component": "cuda",
+      "name": "nvidia_cublas_cu12-12.9.2.10-py3-none-win_amd64.whl",
+      "bytes": 553162896,
+      "sha256": "623f43027d40d44ceadf0043f002bd25cf353e8f13ce90b9a87057019f560661"
+    },
+    {
+      "component": "cuda",
+      "name": "nvidia_cudnn_cu12-9.10.2.21-py3-none-win_amd64.whl",
+      "bytes": 692992268,
+      "sha256": "c6288de7d63e6cf62988f0923f96dc339cea362decb1bf5b3141883392a7d65e"
+    }
+  ],
+  "base_artifact": {
+    "url": "https://github.com/SongYuanJing/LecturePipeline/releases/download/v1.9.5-beta.1/LecturePipeline-1.9.5-beta.1-win-x64.zip",
+    "sha256": "8dd18ac260e40cb900d5b2e90a1ce9d3c54aeb6494cd9f22236ef7bad79e155b",
+    "bytes": 80109954
+  },
+  "health": {
+    "selection": {
+      "mode": "auto",
+      "device": "cuda",
+      "compute_type": "int8_float16",
+      "allow_cpu_fallback": true,
+      "reason": ""
+    },
+    "components": {
+      "Base runtime": {
+        "status": "Valid",
+        "reason": ""
+      },
+      "PyAV": {
+        "status": "Valid",
+        "reason": ""
+      },
+      "CTranslate2": {
+        "status": "Valid",
+        "reason": ""
+      },
+      "Whisper model": {
+        "status": "Valid",
+        "reason": ""
+      },
+      "CUDA": {
+        "status": "Valid",
+        "reason": ""
+      },
+      "CPU ASR capability": {
+        "status": "Available",
+        "reason": ""
+      },
+      "GPU ASR capability": {
+        "status": "Unverified",
+        "reason": "Полная проверка GPU с моделью выполняется при настройке/запуске ASR"
+      }
+    },
+    "hardware": {
+      "adapters": [
+        "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+        "AMD Radeon 780M Graphics"
+      ],
+      "reason": ""
+    }
+  },
+  "smoke": {
+    "last_run": {
+      "status": "ok",
+      "version": "1.3",
+      "model": "large-v3",
+      "profile": {
+        "device": "cuda",
+        "compute_type": "int8_float16",
+        "vad_filter": true
+      },
+      "vad_parameters": {
+        "threshold": 0.25,
+        "neg_threshold": 0.1,
+        "min_silence_duration_ms": 3000,
+        "speech_pad_ms": 1600
+      },
+      "condition_on_previous_text": false,
+      "actual_compute_type": "int8_float16",
+      "actual_device": "cuda",
+      "load_s": 8.625,
+      "transcribe_s": 1.6570000000065193,
+      "info": {
+        "duration": 11.0,
+        "language": "en",
+        "duration_after_vad": 11.0
+      },
+      "process_wall_s": 11.204000000027008,
+      "fallback_reason": null
+    },
+    "transcript_nonempty": true
+  },
+  "source_commit": "ad130ef",
+  "qualified_scope": "Windows 11 x64 / RTX 3050 current host only",
+  "main_gui": {
+    "pid": 45336,
+    "title": "Lecture Pipeline · 1.9.5-beta.1",
+    "private_python_confirmed": true
+  },
+  "cold_wall_including_controlled_cancel_and_retry_seconds": 2184.940715,
+  "component_events": [
+    {
+      "stage": "components",
+      "message": "Проверка / установка: required"
+    },
+    {
+      "stage": "components",
+      "message": "Downloading: av-18.1.0-cp311-abi3-win_amd64.whl"
+    },
+    {
+      "stage": "components",
+      "message": "Verified download: av-18.1.0-cp311-abi3-win_amd64.whl"
+    },
+    {
+      "stage": "components",
+      "message": "Downloading: ctranslate2-4.8.2-cp311-cp311-win_amd64.whl"
+    },
+    {
+      "stage": "components",
+      "message": "Verified download: ctranslate2-4.8.2-cp311-cp311-win_amd64.whl"
+    },
+    {
+      "stage": "components",
+      "message": "Downloading: config.json"
+    },
+    {
+      "stage": "components",
+      "message": "Verified download: config.json"
+    },
+    {
+      "stage": "components",
+      "message": "Downloading: model.bin"
+    },
+    {
+      "stage": "cancelled",
+      "message": "Установка отменена. Проверенные файлы сохранены; можно повторить."
+    },
+    {
+      "stage": "components",
+      "message": "Проверка / установка: required"
+    },
+    {
+      "stage": "components",
+      "message": "Verified cache: config.json"
+    },
+    {
+      "stage": "components",
+      "message": "Resuming at 154140672: model.bin"
+    },
+    {
+      "stage": "components",
+      "message": "Retry in 1s: model.bin"
+    },
+    {
+      "stage": "components",
+      "message": "Resuming at 1518213274: model.bin"
+    },
+    {
+      "stage": "components",
+      "message": "Retry in 2s: model.bin"
+    },
+    {
+      "stage": "components",
+      "message": "Resuming at 3086882970: model.bin"
+    },
+    {
+      "stage": "components",
+      "message": "Verified download: model.bin"
+    },
+    {
+      "stage": "components",
+      "message": "Downloading: preprocessor_config.json"
+    },
+    {
+      "stage": "components",
+      "message": "Verified download: preprocessor_config.json"
+    },
+    {
+      "stage": "components",
+      "message": "Downloading: tokenizer.json"
+    },
+    {
+      "stage": "components",
+      "message": "Verified download: tokenizer.json"
+    },
+    {
+      "stage": "components",
+      "message": "Downloading: vocabulary.json"
+    },
+    {
+      "stage": "components",
+      "message": "Verified download: vocabulary.json"
+    },
+    {
+      "stage": "components",
+      "message": "pyav: already verified\nctranslate2: already verified\nImported verified large-v3"
+    },
+    {
+      "stage": "components",
+      "message": "Проверка / установка: cuda"
+    },
+    {
+      "stage": "components",
+      "message": "Downloading: nvidia_cublas_cu12-12.9.2.10-py3-none-win_amd64.whl"
+    },
+    {
+      "stage": "components",
+      "message": "Verified download: nvidia_cublas_cu12-12.9.2.10-py3-none-win_amd64.whl"
+    },
+    {
+      "stage": "components",
+      "message": "Downloading: nvidia_cudnn_cu12-9.10.2.21-py3-none-win_amd64.whl"
+    },
+    {
+      "stage": "components",
+      "message": "Verified download: nvidia_cudnn_cu12-9.10.2.21-py3-none-win_amd64.whl"
+    },
+    {
+      "stage": "components",
+      "message": "Imported private CUDA; driver unchanged"
+    },
+    {
+      "stage": "components",
+      "message": "Проверка / установка: required"
+    },
+    {
+      "stage": "components",
+      "message": "pyav: already verified\nctranslate2: already verified\nmodel: already verified"
+    },
+    {
+      "stage": "components",
+      "message": "Проверка / установка: cuda"
+    },
+    {
+      "stage": "components",
+      "message": "cuda: already verified"
+    }
+  ],
+  "cold": {
+    "completed_utc": "2026-10-04T11:35:02.2499833Z",
+    "elapsed_seconds": 195.4344241,
+    "exit": 130
+  },
+  "finish": {
+    "exit": 0,
+    "elapsed_seconds": 1968.0061469,
+    "completed_utc": "2026-10-04T12:08:11.6127715Z"
+  },
+  "warm": {
+    "elapsed_seconds": 53.9242599,
+    "completed_utc": "2026-10-04T12:09:35.4737996Z",
+    "exit": 0
+  },
+  "config_and_data_unchanged": true,
+  "preserved_files": {
+    "config/config.json": {
+      "sha256": "1b3eeb8f34266e32f938d3b1d83a69f27450cce4182aba80b9623b841839008a",
+      "mtime_ns": 1791115611602483400,
+      "bytes": 1528
+    },
+    "data/dictionary/vocabulary.xlsx": {
+      "sha256": "3127a2246798084b11c35089a982aef307524561f057a7dd52fff259b2ed90e0",
+      "mtime_ns": 1791115611551029300,
+      "bytes": 7275
+    },
+    "data/semester-1/system/ai_state.json": {
+      "sha256": "defef7cba50b0ef23323fb5edf09dadca62ddca0055eda68c6cf162cf738188e",
+      "mtime_ns": 1791115610297221500,
+      "bytes": 47
+    },
+    "data/semester-1/system/state.json": {
+      "sha256": "ec24c939abb31823e59b6362c9e77c9e62cf0b053ec5e10590e829a472c47d61",
+      "mtime_ns": 1791115610296223300,
+      "bytes": 39
+    },
+    "shortcut": {
+      "sha256": "71841c84dd994cb38c3a9934b0cfd996630fb02cdc90e23d60cb79eb22f155ac",
+      "mtime_ns": 1791115690426116400,
+      "bytes": 1992
+    }
+  },
+  "cache_hits": [
+    {
+      "component": "pyav",
+      "name": "av-18.1.0-cp311-abi3-win_amd64.whl",
+      "bytes": 27595679,
+      "sha256": "ea1480b7a8d5405cb5f382b344731bf125fd2c1c6fae3964f6c48595628387ff",
+      "events": [
+        "Verified cache: av-18.1.0-cp311-abi3-win_amd64.whl"
+      ],
+      "seconds": 0.030484799994155765
+    },
+    {
+      "component": "ctranslate2",
+      "name": "ctranslate2-4.8.2-cp311-cp311-win_amd64.whl",
+      "bytes": 19220522,
+      "sha256": "995938fcd24a1174a7abf9765e7fa216b5b91a1d8e8c4c8f383c7a186e8bab2e",
+      "events": [
+        "Verified cache: ctranslate2-4.8.2-cp311-cp311-win_amd64.whl"
+      ],
+      "seconds": 0.021661299979314208
+    },
+    {
+      "component": "model",
+      "name": "config.json",
+      "bytes": 2394,
+      "sha256": "a9306624f5ec14270a014b647e5c316b6e03a662c369758d1b90697a7b0655b9",
+      "events": [
+        "Verified cache: config.json"
+      ],
+      "seconds": 0.0011486000148579478
+    },
+    {
+      "component": "model",
+      "name": "model.bin",
+      "bytes": 3087284237,
+      "sha256": "69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1",
+      "events": [
+        "Verified cache: model.bin"
+      ],
+      "seconds": 2.8711381999892183
+    },
+    {
+      "component": "model",
+      "name": "preprocessor_config.json",
+      "bytes": 340,
+      "sha256": "7ccc62c6f2765af1f3b46c00c9b5894426835a05021c8b9c01eecb6dfb542711",
+      "events": [
+        "Verified cache: preprocessor_config.json"
+      ],
+      "seconds": 0.000888400012627244
+    },
+    {
+      "component": "model",
+      "name": "tokenizer.json",
+      "bytes": 2480617,
+      "sha256": "6d8cbd7cd0d8d5815e478dac67b85a26bbe77c1f5e0c6d76d1ce2abc0e5f21ca",
+      "events": [
+        "Verified cache: tokenizer.json"
+      ],
+      "seconds": 0.0036328999558463693
+    },
+    {
+      "component": "model",
+      "name": "vocabulary.json",
+      "bytes": 1068114,
+      "sha256": "c69260f2ab26d659b7c398f9a2b2b48ed0df16c3b47d7326782fd9cba71690c1",
+      "events": [
+        "Verified cache: vocabulary.json"
+      ],
+      "seconds": 0.0029125000000931323
+    },
+    {
+      "component": "cuda",
+      "name": "nvidia_cublas_cu12-12.9.2.10-py3-none-win_amd64.whl",
+      "bytes": 553162896,
+      "sha256": "623f43027d40d44ceadf0043f002bd25cf353e8f13ce90b9a87057019f560661",
+      "events": [
+        "Verified cache: nvidia_cublas_cu12-12.9.2.10-py3-none-win_amd64.whl"
+      ],
+      "seconds": 0.5573749999748543
+    },
+    {
+      "component": "cuda",
+      "name": "nvidia_cudnn_cu12-9.10.2.21-py3-none-win_amd64.whl",
+      "bytes": 692992268,
+      "sha256": "c6288de7d63e6cf62988f0923f96dc339cea362decb1bf5b3141883392a7d65e",
+      "events": [
+        "Verified cache: nvidia_cudnn_cu12-9.10.2.21-py3-none-win_amd64.whl"
+      ],
+      "seconds": 0.7297841000254266
+    }
+  ],
+  "native_cancel_prefix": {
+    "partial_bytes": 154140672,
+    "metadata": {
+      "schema": 1,
+      "url": "https://huggingface.co/Systran/faster-whisper-large-v3/resolve/edaa852ec7e145841d8ffdb056a99866b5f0a478/model.bin",
+      "sha256": "69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1",
+      "name": "model.bin",
+      "size": 3087284237,
+      "offset": 154140672,
+      "prefix_sha256": "58cee8d160c93f7f54e2a3d52b38098700f2bf17e7c7a69d425ef8073fe721c6",
+      "etag": "\"28bbcc8f4671df0a8411524f1973dbc978d276b79cac96059a737abadf3c134a\""
+    },
+    "state": "cancelled",
+    "actual_prefix_sha256": "58cee8d160c93f7f54e2a3d52b38098700f2bf17e7c7a69d425ef8073fe721c6"
+  },
+  "shortcut_launch": {
+    "private_python_confirmed": true,
+    "unicode_shortcut_launched": true,
+    "main_window": "Lecture Pipeline · 1.9.5-beta.1",
+    "seconds": 1.4091543
+  },
+  "startup": [
+    {
+      "exit": 0,
+      "runtime": ".NET 10.0.12",
+      "seconds": 0.6689653,
+      "kind": "cold"
+    },
+    {
+      "exit": 0,
+      "runtime": ".NET 10.0.12",
+      "seconds": 0.5763427,
+      "kind": "warm"
+    }
+  ],
+  "shortcut": {
+    "target": "%INSTALL%\\runtime\\asr\\pythonw.exe",
+    "arguments": "-B -X utf8 \"%INSTALL%\\launcher/launch.py\" gui",
+    "working_directory": "%INSTALL%"
+  },
+  "final_executable": {
+    "bytes": 51806987,
+    "sha256": "329d63336793cbd74c32c0d642cccb975948d5efc9e015759243df7d4b9e3869"
+  }
+}
