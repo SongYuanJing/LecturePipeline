@@ -6,10 +6,12 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+from contextlib import redirect_stdout
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'installer'))
 import bootstrap_flow as flow
 import download_components as downloads
+import launch
 
 
 class Response(io.BytesIO):
@@ -18,6 +20,40 @@ class Response(io.BytesIO):
 
 
 class BootstrapTests(unittest.TestCase):
+    def test_bridge_cuda_download_is_only_a_hint_and_cpu_skips_it(self):
+        app=Path(__file__).resolve().parents[1]/'src/app'
+        sys.path.insert(0,str(app))
+        import asr_device
+        import pipeline_config
+        for mode,adapters,expected in [('cpu',['NVIDIA'],['required']),('auto',[],['required']),
+            ('auto',['NVIDIA GeForce'],['required','cuda']),('gpu',[],['required','cuda'])]:
+            with self.subTest(mode=mode,adapters=adapters),tempfile.TemporaryDirectory() as temporary:
+                root=Path(temporary)/'app';root.mkdir();data=Path(temporary)/'data'
+                with patch.object(flow,'app_root',return_value=app), \
+                     patch.object(asr_device,'hardware',return_value=dict(adapters=adapters,reason='')), \
+                     patch.object(flow.download_components,'install',return_value='verified') as install, \
+                     patch.object(flow,'configure_resumable',return_value=root/'config/config.json'), \
+                     patch.object(pipeline_config,'Config') as config, \
+                     patch.object(flow.component_status,'status',return_value={'CPU ASR capability':{'status':'Available'}}),redirect_stdout(io.StringIO()):
+                    config.return_value.asr_selection.return_value={'device':'cpu'}
+                    flow.run(root,data,mode,root/'cancel')
+                    self.assertEqual([call.args[0] for call in install.call_args_list],expected)
+                    self.assertEqual(json.loads((root/'logs/bootstrap-health.json').read_text())['selection']['device'],'cpu')
+
+    def test_incomplete_install_blocks_launch_but_legacy_and_ready_enter_launcher(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            for status in ('installing','cancelled','failed'):
+                flow.write(root/'bootstrap-state.json',dict(status=status))
+                with patch.object(launch,'ROOT',root),patch.object(launch,'app_root') as enter:
+                    with self.assertRaisesRegex(RuntimeError,'не завершена'):launch.main()
+                    enter.assert_not_called()
+            for status in ('ready',None):
+                if status:flow.write(root/'bootstrap-state.json',dict(status=status))
+                else:(root/'bootstrap-state.json').unlink()
+                with patch.object(launch,'ROOT',root),patch.object(launch,'app_root',side_effect=RuntimeError('entered existing launcher')):
+                    with self.assertRaisesRegex(RuntimeError,'entered existing launcher'):launch.main()
+
     def test_cancel_download_removes_partial_and_preserves_verified_cache(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);payload=b'abcdef';sha=hashlib.sha256(payload).hexdigest();calls=[]
