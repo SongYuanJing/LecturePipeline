@@ -27,6 +27,17 @@ try
     try{await engine.Run(new(fresh,Path.Combine(folder,"fresh-data"),"auto"),cancel.Token);throw new Exception("Expected cancel");}catch(OperationCanceledException){tests++;}
     Check(JsonNode.Parse(File.ReadAllText(statePath))!["status"]!.GetValue<string>()=="ready");
     Console.WriteLine($"{tests} bootstrap assertions passed");
+    if(args.Length==2 && args[0]=="--screenshot")
+    {
+        var thread=new Thread(()=>{
+            Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
+            Application.EnableVisualStyles();
+            using var form=new SetupForm(new Dictionary<string,string>{["--install"]=Path.Combine(folder,"Программа 课程"),["--data"]=Path.Combine(folder,"Данные 课程")});
+            form.Shown+=(_,_)=>{using var bitmap=new System.Drawing.Bitmap(form.Width,form.Height);form.DrawToBitmap(bitmap,form.ClientRectangle with { Width=form.Width,Height=form.Height });bitmap.Save(args[1]);form.Close();};
+            Application.Run(form);
+        });
+        thread.SetApartmentState(ApartmentState.STA);thread.Start();thread.Join();
+    }
 }
 finally
 {

@@ -23,22 +23,22 @@ internal sealed class SetupForm:Form
     CancellationTokenSource? cancellation;bool running;public int ExitCode{get;private set;}
     public SetupForm(Dictionary<string,string> arguments)
     {
-        args=arguments;Text="Lecture Pipeline — Setup";ClientSize=new Size(740,540);MinimumSize=new Size(680,540);StartPosition=FormStartPosition.CenterScreen;AutoScaleMode=AutoScaleMode.Dpi;Font=new Font("Segoe UI",10);
+        SuspendLayout();args=arguments;Text="Lecture Pipeline — Setup";ClientSize=new Size(740,540);MinimumSize=new Size(680,540);StartPosition=FormStartPosition.CenterScreen;AutoScaleMode=AutoScaleMode.Dpi;Font=new Font("Segoe UI",10);
         install.Text=args.GetValueOrDefault("--install",Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Programs","LecturePipeline"));
         data.Text=args.GetValueOrDefault("--data",Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Lecture Pipeline Data"));
         mode.Items.AddRange(["Auto","CPU","GPU"]);mode.SelectedIndex=Array.IndexOf(new[]{"auto","cpu","gpu"},args.GetValueOrDefault("--mode","auto"));if(mode.SelectedIndex<0)mode.SelectedIndex=0;
-        var layout=new TableLayoutPanel{Dock=DockStyle.Fill,Padding=new Padding(20),ColumnCount=1,RowCount=9};
+        var layout=new TableLayoutPanel{Dock=DockStyle.Fill,Padding=new Padding(20),ColumnCount=1,RowCount=9};layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100));
         for(int i=0;i<6;i++)layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,30));layout.RowStyles.Add(new RowStyle(SizeType.Percent,100));layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         layout.Controls.Add(new Label{Text="Lecture Pipeline · Windows 11 x64",AutoSize=true,Font=new Font(Font,FontStyle.Bold)});
-        layout.Controls.Add(new Label{Text="Приложение, private runtime и компоненты загрузятся автоматически.\nМодель и GPU: около 4,4 ГБ загрузки; оставьте 15 ГБ свободного места.",AutoSize=true,Margin=new Padding(3,8,3,12)});
+        layout.Controls.Add(new Label{Text="Приложение и необходимые компоненты загрузятся автоматически.\nМодель и GPU: около 4,4 ГБ загрузки; оставьте 15 ГБ свободного места.",AutoSize=true,MaximumSize=new Size(660,0),Margin=new Padding(3,8,3,12)});
         layout.Controls.Add(LocationRow("Установка",install));layout.Controls.Add(LocationRow("Данные",data));
-        var choice=new FlowLayoutPanel{AutoSize=true,Dock=DockStyle.Fill};choice.Controls.Add(new Label{Text="Режим ASR",AutoSize=true,Padding=new Padding(0,5,8,0)});choice.Controls.Add(mode);choice.Controls.Add(new Label{Text="Auto: GPU только после полной проверки",AutoSize=true,Padding=new Padding(8,5,0,0)});layout.Controls.Add(choice);
+        var choice=new FlowLayoutPanel{AutoSize=true,Dock=DockStyle.Fill};choice.Controls.Add(new Label{Text="Режим ASR",AutoSize=true,Padding=new Padding(0,5,8,0)});choice.Controls.Add(mode);choice.Controls.Add(new Label{Text="Auto: видеокарта только после проверки",AutoSize=true,Padding=new Padding(8,5,0,0)});layout.Controls.Add(choice);
         layout.Controls.Add(stage);layout.Controls.Add(progress);layout.Controls.Add(log);
         var buttons=new FlowLayoutPanel{AutoSize=true,Dock=DockStyle.Fill,FlowDirection=FlowDirection.RightToLeft};buttons.Controls.Add(start);buttons.Controls.Add(cancel);buttons.Controls.Add(advanced);layout.Controls.Add(buttons);Controls.Add(layout);
         start.Click+=async(_,_)=>await Run();cancel.Click+=(_,_)=>RequestCancel();
         advanced.Click+=(_,_)=>{if(Directory.Exists(install.Text))Process.Start(new ProcessStartInfo("explorer.exe"){ArgumentList={install.Text},UseShellExecute=true});MessageBox.Show(this,"В папке установки доступны ImportPyAV.cmd, ImportCTranslate2.cmd, ImportModel.cmd, ImportCUDA.cmd с проверкой pinned SHA-256. После импорта нажмите Retry.","Offline / advanced");};
         FormClosing+=(_,e)=>{if(running){e.Cancel=true;RequestCancel();}};
-        Shown+=async(_,_)=>{if(args.TryGetValue("--startup-report",out var path)){File.WriteAllText(path,JsonSerializer.Serialize(new{framework=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}));Close();}else if(args.ContainsKey("--run"))await Run();};
+        Shown+=async(_,_)=>{if(args.TryGetValue("--startup-report",out var path)){File.WriteAllText(path,JsonSerializer.Serialize(new{framework=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}));Close();}else if(args.ContainsKey("--run"))await Run();};AutoScaleDimensions=new SizeF(96,96);ResumeLayout(true);
     }
     Control LocationRow(string title,TextBox box)
     {
@@ -66,3 +66,4 @@ internal sealed class SetupForm:Form
         if(args.ContainsKey("--run"))Close();else if(ExitCode!=0)start.Enabled=true;
     }
 }
+
