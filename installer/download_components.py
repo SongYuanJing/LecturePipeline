@@ -46,8 +46,10 @@ def open_url(url):
         urllib.request.Request(url, headers={'User-Agent': 'LecturePipeline-bootstrap'}), timeout=60)
 
 
-def fetch(url, sha256, name, cache, *, limit, progress=lambda message: None):
+def fetch(url, sha256, name, cache, *, limit, progress=lambda message: None,
+          checkpoint=lambda: None, transfer=lambda name, done, total: None):
     """Only complete verified bytes become cache hits. Interrupted bytes are removed."""
+    checkpoint()
     filename(name)
     if not isinstance(sha256, str) or not re.fullmatch('[0-9a-f]{64}', sha256):
         raise ValueError('Invalid pinned SHA256')
@@ -71,16 +73,21 @@ def fetch(url, sha256, name, cache, *, limit, progress=lambda message: None):
             total = 0
             h = hashlib.sha256()
             progress('Downloading: ' + name)
+            length = response.headers.get('Content-Length') if hasattr(response, 'headers') else None
+            expected = int(length) if length and length.isdigit() else None
             for block in iter(lambda: response.read(1024 * 1024), b''):
+                checkpoint()
                 total += len(block)
                 if total > limit:
                     raise ValueError('Component exceeds pinned size limit: ' + name)
                 output.write(block)
                 h.update(block)
+                transfer(name, total, expected)
             if h.hexdigest() != sha256:
                 raise ValueError('SHA256 mismatch: ' + name)
             output.flush()
             os.fsync(output.fileno())
+        checkpoint()
         os.replace(pending, target)
         progress('Verified download: ' + name)
         return target
@@ -117,11 +124,14 @@ def extract_cuda(wheels, spec, target):
         raise ValueError('Missing pinned CUDA DLLs: ' + ', '.join(sorted(set(expected) - found)))
 
 
-def install(kind, root=ROOT, progress=lambda message: None):
+def install(kind, root=ROOT, progress=lambda message: None, *,
+            checkpoint=lambda: None, transfer=lambda name, done, total: None):
     """Download one component or the CPU prerequisites. CUDA is explicit opt-in."""
     root = Path(root)
+    checkpoint()
+    hooks = dict(progress=progress, checkpoint=checkpoint, transfer=transfer)
     if kind == 'required':
-        return '\n'.join(install(k, root, progress) for k in ('pyav', 'ctranslate2', 'model'))
+        return '\n'.join(install(k, root, **hooks) for k in ('pyav', 'ctranslate2', 'model'))
     if kind not in ('pyav', 'ctranslate2', 'model', 'cuda'):
         raise ValueError('Unknown component')
     import component_status
@@ -142,7 +152,8 @@ def install(kind, root=ROOT, progress=lambda message: None):
     cache = root / 'cache/downloads'
     if kind in ('pyav', 'ctranslate2'):
         source = fetch(spec['official_source'], spec['sha256'], spec['filename'], cache,
-                       limit=100_000_000, progress=progress)
+                       limit=100_000_000, **hooks)
+        checkpoint()
         return module.install(source, root)
     # Private temporary source directory. Existing staged import owns publication.
     cache.mkdir(parents=True, exist_ok=True)
@@ -154,7 +165,7 @@ def install(kind, root=ROOT, progress=lambda message: None):
             for name, sha256 in spec['files'].items():
                 filename(name)
                 url = 'https://huggingface.co/' + spec['model'] + '/resolve/' + spec['revision'] + '/' + name
-                cached = fetch(url, sha256, name, cache, limit=spec['bytes'], progress=progress)
+                cached = fetch(url, sha256, name, cache, limit=spec['bytes'], **hooks)
                 # Same volume; fall back to copy on filesystems without hard links.
                 try:
                     os.link(cached, source / name)
@@ -162,9 +173,10 @@ def install(kind, root=ROOT, progress=lambda message: None):
                     shutil.copy2(cached, source / name)
         else:
             wheels = [fetch(item['official_source'], item['sha256'], name, cache,
-                            limit=item['bytes'], progress=progress)
+                            limit=item['bytes'], **hooks)
                       for name, item in spec['wheels'].items()]
             extract_cuda(wheels, spec, source)
+        checkpoint()
         return module.install(source, root)
 
 

@@ -12,6 +12,9 @@ def app_root(root=ROOT):
   if app not in p.parents or hashlib.sha256(p.read_bytes()).hexdigest()!=h:raise ValueError('Release checksum mismatch: '+name)
  return app
 def main():
+ state=ROOT/'bootstrap-state.json'
+ if state.exists() and json.loads(state.read_text(encoding='utf8')).get('status')!='ready':
+  raise RuntimeError('Установка не завершена. Запустите Setup.exe и нажмите Retry. Проверенные файлы сохранены.')
  mode=sys.argv[1] if len(sys.argv)>1 else 'gui';app=app_root();cfg=ROOT/'config/config.json'
  if mode=='gui' and not cfg.exists():
   from setup_gui import first_run
