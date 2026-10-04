@@ -1,0 +1,31 @@
+name: Build Windows 11 bootstrap candidate
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ['bootstrap/**', 'installer/**', 'src/**', 'components/**', 'scripts/**', 'tests/**', '.github/workflows/bootstrap.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_GENERATE_ASPNET_CERTIFICATE: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: bootstrap/global.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - shell: pwsh
+        run: ./scripts/publish_bootstrap.ps1
+      - shell: pwsh
+        run: dotnet run --project tests/bootstrap/Bootstrap.Tests.csproj -c Release
+      - shell: pwsh
+        run: python -B -m unittest discover -s tests -p test_bootstrap_flow.py -v
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-Setup-candidate
+          path: dist/bootstrap/Setup.*
