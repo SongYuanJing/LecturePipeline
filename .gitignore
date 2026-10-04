@@ -28,4 +28,6 @@ queue.json
 bootstrap/bin/
 bootstrap/obj/
 bootstrap/payload/
+tests/bootstrap/bin/
+tests/bootstrap/obj/
 

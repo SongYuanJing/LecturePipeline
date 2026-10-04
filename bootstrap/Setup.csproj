@@ -15,4 +15,10 @@
     <AssemblyName>Setup</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Bootstrap.Tests" />
+    <EmbeddedResource Include="base.json" LogicalName="base.json" />
+    <EmbeddedResource Include="payload/application.zip" LogicalName="application.zip" />
+    <EmbeddedResource Include="payload/application.json" LogicalName="application.json" />
+  </ItemGroup>
 </Project>
