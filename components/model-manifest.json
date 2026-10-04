@@ -3,6 +3,7 @@
   "model": "Systran/faster-whisper-large-v3",
   "revision": "edaa852ec7e145841d8ffdb056a99866b5f0a478",
   "bytes": 3090835702,
+  "file_sizes": {"model.bin": 3087284237},
   "files": {
     "config.json": "a9306624f5ec14270a014b647e5c316b6e03a662c369758d1b90697a7b0655b9",
     "model.bin": "69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1",
