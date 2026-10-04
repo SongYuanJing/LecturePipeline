@@ -28,4 +28,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: unsigned-Setup-candidate
-          path: dist/bootstrap/Setup.*
+          path: dist/bootstrap/

@@ -18,6 +18,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Bootstrap.Tests" />
     <EmbeddedResource Include="base.json" LogicalName="base.json" />
+    <EmbeddedResource Include="notices/*.txt" LogicalName="notices.%(Filename)%(Extension)" />
     <EmbeddedResource Include="payload/application.zip" LogicalName="application.zip" />
     <EmbeddedResource Include="payload/application.json" LogicalName="application.json" />
   </ItemGroup>

@@ -12,4 +12,7 @@ try {
  if($LASTEXITCODE -ne 0){throw 'Self-contained publish failed'}
 } finally {Pop-Location}
 $exe=Join-Path $Output 'Setup.exe'
+$notices=Join-Path $Output 'notices'
+New-Item -ItemType Directory -Force -Path $notices | Out-Null
+Get-ChildItem -LiteralPath (Join-Path $repo 'bootstrap/notices') -File | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $notices $_.Name) -Force }
 @{bytes=(Get-Item -LiteralPath $exe).Length;sha256=(Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant()} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $Output 'Setup.sha256.json') -Encoding utf8
