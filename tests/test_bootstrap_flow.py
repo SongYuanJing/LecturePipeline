@@ -20,6 +20,18 @@ class Response(io.BytesIO):
 
 
 class BootstrapTests(unittest.TestCase):
+    def test_slow_windows_inventory_can_finish_without_granting_gpu_readiness(self):
+        sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src/app'))
+        import asr_device
+        import subprocess
+        def inventory(command,**kwargs):
+            if kwargs['timeout'] < 20:raise subprocess.TimeoutExpired(command,20)
+            return subprocess.CompletedProcess(command,0,stdout='["NVIDIA GeForce RTX 3050"]',stderr='')
+        with patch.object(asr_device.subprocess,'run',side_effect=inventory):
+            value=asr_device.hardware()
+        self.assertEqual(value['adapters'],['NVIDIA GeForce RTX 3050'])
+        self.assertNotIn('available',value)
+
     def test_bridge_cuda_download_is_only_a_hint_and_cpu_skips_it(self):
         app=Path(__file__).resolve().parents[1]/'src/app'
         sys.path.insert(0,str(app))

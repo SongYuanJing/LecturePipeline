@@ -51,7 +51,10 @@ def hardware():
         result = subprocess.run([str(system / 'WindowsPowerShell/v1.0/powershell.exe'),
             '-NoProfile', '-NonInteractive', '-Command',
             "[Console]::OutputEncoding=[Text.UTF8Encoding]::new(); @(Get-CimInstance Win32_VideoController -ErrorAction Stop | Select-Object -ExpandProperty Name) | ConvertTo-Json -Compress"],
-            capture_output=True, text=True, encoding='utf8', errors='replace', timeout=15,
+            # WMI inventory took ~20 s on the native Windows 11 gate host.
+            # This remains informational; only the separate inference probe
+            # grants GPU readiness. Allow that inventory to finish first.
+            capture_output=True, text=True, encoding='utf8', errors='replace', timeout=30,
             creationflags=0x08000000 if os.name == 'nt' else 0)
         if result.returncode:
             raise RuntimeError(result.stderr.strip()[-300:])
