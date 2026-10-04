@@ -25,4 +25,7 @@ state*.json
 ai_state*.json
 queue.json
 .env
+bootstrap/bin/
+bootstrap/obj/
+bootstrap/payload/
 
