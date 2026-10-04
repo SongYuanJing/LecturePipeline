@@ -193,21 +193,27 @@ internal sealed class InstallEngine(Action<Update> report)
         if (process.ExitCode == 130 || cancel.IsCancellationRequested) throw new OperationCanceledException(cancel);
         if (process.ExitCode != 0) throw new IOException("Python setup не завершён. См. сообщение выше и logs/bootstrap-python.log. " + error);
     }
-    static string Shortcut(string root, string? customDirectory)
+    internal static string Shortcut(string root, string? customDirectory)
     {
         var folder = customDirectory ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs),"Lecture Pipeline");
         Directory.CreateDirectory(folder);
         var id = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(root.ToUpperInvariant())))[..8];
         string path = Path.Combine(folder,"Lecture Pipeline — " + id + ".lnk");
-        dynamic shell = Activator.CreateInstance(Type.GetTypeFromProgID("WScript.Shell")!)!;
-        dynamic link = shell.CreateShortcut(path);
-        string target = Path.Combine(root,"runtime/asr/pythonw.exe");
+        string target = Path.Combine(root,"runtime","asr","pythonw.exe");
         string arguments = "-B -X utf8 \"" + Path.Combine(root,"launcher/launch.py") + "\" gui";
-        if (File.Exists(path) && (!string.Equals((string)link.TargetPath,target,StringComparison.OrdinalIgnoreCase)
-            || (string)link.Arguments != arguments || !string.Equals((string)link.WorkingDirectory,root,StringComparison.OrdinalIgnoreCase)))
-            throw new IOException("Конфликт ярлыка; существующий ярлык сохранён: " + path);
-        link.TargetPath=target;link.Arguments=arguments;link.WorkingDirectory=root;
-        link.Description="Lecture Pipeline";link.Save(); return path;
+        if (File.Exists(path))
+        {
+            using var existing=new ShellShortcut(path);
+            if(!string.Equals(existing.Target,target,StringComparison.OrdinalIgnoreCase)
+                || existing.Arguments!=arguments || !string.Equals(existing.Directory,root,StringComparison.OrdinalIgnoreCase))
+                throw new IOException("Конфликт ярлыка; существующий ярлык сохранён: " + path);
+            return path;
+        }
+        using var link=new ShellShortcut {Target=target,Arguments=arguments,Directory=root};
+        string temporary=path+".pending";
+        try {link.Save(temporary);File.Move(temporary,path);}
+        finally {if(File.Exists(temporary))File.Delete(temporary);}
+        return path;
     }
     public async Task<object> Run(InstallOptions options, CancellationToken cancel)
     {

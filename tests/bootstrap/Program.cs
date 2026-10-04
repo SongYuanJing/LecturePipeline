@@ -1,6 +1,13 @@
 using LecturePipeline.Setup;
 using System.Text.Json.Nodes;
 
+if(args.Length==2 && args[0]=="--inspect-shortcut")
+{
+    using var inspected=new ShellShortcut(args[1]);
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new {target=inspected.Target,arguments=inspected.Arguments,working_directory=inspected.Directory}));
+    return;
+}
+
 var folder=Path.Combine(Path.GetTempPath(),"lp-bootstrap-tests-"+Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(folder);int tests=0;
 void Check(bool result) {if(!result)throw new Exception("Assertion failed");tests++;}
@@ -26,6 +33,19 @@ try
     var statePath=Path.Combine(fresh,"bootstrap-state.json");var state=JsonNode.Parse(File.ReadAllText(statePath))!;state["status"]="ready";File.WriteAllText(statePath,state.ToJsonString());
     try{await engine.Run(new(fresh,Path.Combine(folder,"fresh-data"),"auto"),cancel.Token);throw new Exception("Expected cancel");}catch(OperationCanceledException){tests++;}
     Check(JsonNode.Parse(File.ReadAllText(statePath))!["status"]!.GetValue<string>()=="ready");
+    var shortcutRoot=Path.Combine(folder,"Программа 课程");Directory.CreateDirectory(Path.Combine(shortcutRoot,"runtime","asr"));
+    File.WriteAllText(Path.Combine(shortcutRoot,"runtime","asr","pythonw.exe"),"test placeholder, never executed");
+    var shortcutFolder=Path.Combine(folder,"Ярлыки 课程");
+    var shortcut=InstallEngine.Shortcut(shortcutRoot,shortcutFolder);
+    Check(File.Exists(shortcut));
+    Check(InstallEngine.Shortcut(shortcutRoot,shortcutFolder)==shortcut);
+    using(var link=new ShellShortcut(shortcut))
+    {
+        Check(link.Target==Path.Combine(shortcutRoot,"runtime","asr","pythonw.exe"));
+        link.Arguments="conflicting user shortcut";link.Save(shortcut);
+    }
+    await Reject(()=>{InstallEngine.Shortcut(shortcutRoot,shortcutFolder);return Task.CompletedTask;});
+    using(var preserved=new ShellShortcut(shortcut))Check(preserved.Arguments=="conflicting user shortcut");
     Console.WriteLine($"{tests} bootstrap assertions passed");
     if(args.Length==2 && args[0]=="--screenshot")
     {
