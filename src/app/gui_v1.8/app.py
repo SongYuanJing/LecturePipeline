@@ -31,6 +31,8 @@ class App(Actions):
   header=tk.Frame(root,bg='#172c49');header.pack(fill='x')
   tk.Label(header,text='LECTURE PIPELINE',bg='#172c49',fg='white',font=('Segoe UI',19,'bold'),padx=24,pady=14).pack(side='left')
   tk.Label(header,text=os.environ.get('LP_APP_VERSION','1.8')+'  /  Панель управления',bg='#172c49',fg='#b7cce8',font=('Segoe UI',11)).pack(side='right',padx=24)
+  from updates import UpdateControls
+  self.updates=UpdateControls(self,root)
   self.banner=tk.StringVar(value='Загрузка конфигурации…');ttk.Label(root,textvariable=self.banner,wraplength=self.px(1150),padding=(22,10)).pack(fill='x')
   self.tabs=ttk.Notebook(root);self.tabs.pack(fill='both',expand=True,padx=18,pady=(0,10))
   self.pages={}

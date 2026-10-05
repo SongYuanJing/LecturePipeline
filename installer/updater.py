@@ -239,6 +239,23 @@ def apply(root, release, progress=print):
                 raise
 
 
+def check(root=ROOT):
+    from launch import app_root
+    app_root(root)
+    current=json.loads((Path(root)/'current.json').read_text())['app_version']
+    release=discover(current,releases())
+    return dict(current=current,tag=release['tag_name'] if release else None,
+                status='available' if release else 'no-update')
+
+
+def apply_tag(root, tag, progress=print):
+    from launch import app_root
+    app_root(root)
+    found=[r for r in releases() if r.get('tag_name')==tag and not r.get('draft')]
+    if len(found)!=1:raise ValueError('Specify an existing tagged release from CheckUpdates')
+    return apply(root,found[0],progress)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('command',choices=('check','apply','recover'))
@@ -247,17 +264,9 @@ def main():
     if args.command=='recover':
         with locked(ROOT/'run/update.lock'):print(json.dumps(dict(recovered=recover(ROOT))))
         return
-    from launch import app_root
-    app_root(ROOT)
-    current=json.loads((ROOT/'current.json').read_text())['app_version']
-    rows=releases()
     if args.command=='check':
-        release=discover(current,rows)
-        print(json.dumps(dict(current=current,tag=release['tag_name'] if release else None,
-            status='available' if release else 'no-update'),ensure_ascii=False));return
-    found=[r for r in rows if r.get('tag_name')==args.tag and not r.get('draft')]
-    if len(found)!=1:raise ValueError('Specify an existing tagged release from CheckUpdates')
-    print(json.dumps(apply(ROOT,found[0]),ensure_ascii=False))
+        print(json.dumps(check(),ensure_ascii=False));return
+    print(json.dumps(apply_tag(ROOT,args.tag),ensure_ascii=False))
 
 
 if __name__=='__main__':
