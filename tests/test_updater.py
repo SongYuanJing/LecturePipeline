@@ -67,6 +67,35 @@ class UpdateTests(unittest.TestCase):
 
     def apply(self,**kwargs):return u.apply(self.root,self.release,progress=lambda _:None,**kwargs)
 
+    def replace_asset(self,name,data):
+        item=next(a for a in self.release['assets'] if a['name']==name)
+        item.update(size=len(data),digest='sha256:'+hashlib.sha256(data).hexdigest())
+        self.payload[item['browser_download_url']]=data
+
+    def test_missing_bad_or_incompatible_manifest_refused(self):
+        original=json.loads(json.dumps(self.release))
+        variants=[None,b'not json',json.dumps(dict(self.manifest,migration_required=True)).encode(),
+                  json.dumps(dict(self.manifest,repository='someone/else')).encode()]
+        for data in variants:
+            self.release=json.loads(json.dumps(original))
+            if data is None:self.release['assets']=[a for a in self.release['assets'] if a['name']!=u.MANIFEST]
+            else:self.replace_asset(u.MANIFEST,data)
+            with self.subTest(data=data),patch.object(u.downloads,'open_url',side_effect=self.network),patch.object(u,'health') as health:
+                with self.assertRaises(ValueError):self.apply()
+                health.assert_not_called()
+            self.assertEqual((self.root/'current.json').read_bytes(),self.previous)
+            self.assertEqual(self.snapshot(),self.before)
+
+    def test_invalid_zip_with_matching_outer_hash_refused(self):
+        data=b'not a ZIP';name=self.manifest['artifact']['name']
+        self.replace_asset(name,data)
+        self.manifest['artifact'].update(bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+        self.replace_asset(u.MANIFEST,json.dumps(self.manifest).encode())
+        with patch.object(u.downloads,'open_url',side_effect=self.network):
+            with self.assertRaises(zipfile.BadZipFile):self.apply()
+        self.assertEqual((self.root/'current.json').read_bytes(),self.previous)
+        self.assertEqual(self.snapshot(),self.before)
+
     def test_discovery_no_update_newer_and_semver_channels(self):
         self.assertIsNone(u.discover('1.1.0',[self.release]))
         self.assertEqual(u.discover('1.0.0',[self.release]),self.release)
@@ -134,6 +163,15 @@ class UpdateTests(unittest.TestCase):
         with state.locked(self.root/'run/update.lock'):self.assertTrue(state.recover(self.root))
         self.assertEqual((self.root/'current.json').read_bytes(),self.previous)
         self.assertEqual(self.snapshot(),self.before)
+
+    def test_recovery_also_refuses_active_direct_worker(self):
+        import base64
+        state.atomic(state.journal(self.root),dict(previous=base64.b64encode(self.previous).decode(),token='test'))
+        state.atomic(self.root/'current.json',dict(app_version='1.1.0',path='versions/1.1.0'))
+        pending=(self.root/'current.json').read_bytes()
+        with state.locked(self.root/'run/workspaces/one/lecture_pipeline.lock'):
+            with self.assertRaises(RuntimeError):state.recover(self.root)
+        self.assertEqual((self.root/'current.json').read_bytes(),pending)
 
     def test_manifest_runtime_and_repository_binding(self):
         for edit in ('runtime','repository','url'):

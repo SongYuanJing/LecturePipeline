@@ -45,7 +45,7 @@ def recover(root):
     path = journal(root)
     if path.exists():
         state = json.loads(path.read_text(encoding='utf8'))
-        with idle_sessions(root):
+        with idle_sessions(root), idle_workers(root):
             atomic(Path(root)/'current.json', base64.b64decode(state['previous'], validate=True))
             path.unlink()
         return True
@@ -57,6 +57,24 @@ def idle_sessions(root):
     with ExitStack() as stack:
         for path in sorted((Path(root)/'run/sessions').glob('*.lock')):
             stack.enter_context(locked(path))
+        yield
+
+
+@contextmanager
+def idle_workers(root):
+    root=Path(root).resolve();path=root/'config/config.json'
+    cfg=json.loads(path.read_text(encoding='utf8'))
+    if 'application_home' not in cfg or (path.parent/cfg['application_home']).resolve()!=root:
+        raise ValueError('Updater requires this installation\'s packaged config')
+    paths=[w.get('worker_home','runtime/workspaces/'+key)+'/lecture_pipeline.lock'
+           for key,w in cfg['workspaces'].items()]
+    paths.append(cfg['dialogue'].get('runtime','dialogue_runtime')+'/dialogue.lock')
+    with ExitStack() as stack:
+        for value in paths:
+            target=(root/value).resolve()
+            if Path(value).is_absolute() or '..' in Path(value).parts or root not in target.parents:
+                raise ValueError('Worker lock must stay inside installation')
+            stack.enter_context(locked(target))
         yield
 
 

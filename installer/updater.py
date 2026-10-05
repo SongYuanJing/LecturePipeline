@@ -1,7 +1,6 @@
 """Phase 2a: manual, code-only tagged Releases updates. No runtime or data migration."""
 import argparse
 import base64
-from contextlib import ExitStack
 import hashlib
 import json
 import os
@@ -17,7 +16,7 @@ import uuid
 import zipfile
 
 import download_components as downloads
-from update_state import atomic, idle_sessions, journal, locked, recover
+from update_state import atomic, idle_sessions, idle_workers, journal, locked, recover
 
 ROOT = Path(__file__).resolve().parent.parent
 REPOSITORY = 'SongYuanJing/LecturePipeline'
@@ -219,12 +218,7 @@ def apply(root, release, progress=print):
     root=Path(root).resolve()
     with locked(root/'run/update.lock'):
         recover(root)
-        with idle_sessions(root),ExitStack() as workers:
-            # Also protect workers started directly, outside the stable launcher.
-            cfg=json.loads((root/'config/config.json').read_text(encoding='utf8'))
-            paths=[w.get('worker_home','runtime/workspaces/'+key)+'/lecture_pipeline.lock' for key,w in cfg['workspaces'].items()]
-            paths.append(cfg['dialogue'].get('runtime','dialogue_runtime')+'/dialogue.lock')
-            for path in paths:workers.enter_context(locked(safe_path(root,path)))
+        with idle_sessions(root),idle_workers(root):
             current=json.loads((root/'current.json').read_text(encoding='utf8'))
             if version(release['tag_name'][1:])<=version(current['app_version']):
                 return dict(status='no-update',current=current['app_version'])
