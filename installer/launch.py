@@ -11,7 +11,7 @@ def app_root(root=ROOT):
   p=(app/name).resolve()
   if app not in p.parents or hashlib.sha256(p.read_bytes()).hexdigest()!=h:raise ValueError('Release checksum mismatch: '+name)
  return app
-def main():
+def run():
  state=ROOT/'bootstrap-state.json'
  if state.exists() and json.loads(state.read_text(encoding='utf8')).get('status')!='ready':
   raise RuntimeError('Установка не завершена. Запустите Setup.exe и нажмите Retry. Проверенные файлы сохранены.')
@@ -36,6 +36,9 @@ def main():
  entry={'gui':'gui_v1.8/app.py','lecture':'lecture_worker.py','dialogue':'dialogue_v1.6/dialogue_worker.py'}[mode]
  sys.argv=[str(app/entry)]+(['--config',str(cfg)] if mode in ('gui','dialogue') else [])
  runpy.run_path(str(app/entry),run_name='__main__');return 0
+def main():
+ from update_state import launch_session
+ with launch_session(ROOT):return run()
 if __name__=='__main__':
  try:raise SystemExit(main())
  except Exception as e:

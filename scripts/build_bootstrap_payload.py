@@ -15,7 +15,7 @@ def build(repo, output):
                 files[prefix+'/'+path.relative_to(source).as_posix()] = path.read_bytes()
     def encoded(value):return (json.dumps(value,ensure_ascii=False,indent=2)+'\n').encode('utf8')
     prefix = 'versions/'+VERSION+'/'
-    files[prefix+'release.json'] = encoded(dict(manifest_schema_version=1,app_version=VERSION,
+    files[prefix+'release.json'] = encoded(dict(manifest_schema_version=1,updater_protocol=1,app_version=VERSION,
         config_schema_version=1,migration_required=False,
         files={n[len(prefix):]:hashlib.sha256(v).hexdigest() for n,v in files.items() if n.startswith(prefix)}))
     files['current.json'] = encoded(dict(app_version=VERSION,path='versions/'+VERSION))

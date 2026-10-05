@@ -240,5 +240,10 @@ def visual_status(value):
 def main():
  p=argparse.ArgumentParser();p.add_argument('--config',type=Path,default=Path(__file__).resolve().parent.parent/'config.json');p.add_argument('--log-dir',type=Path);a=p.parse_args()
  enable_system_dpi()
- root=tk.Tk();app=App(root,a.config,a.log_dir);root.mainloop()
+ root=tk.Tk();app=App(root,a.config,a.log_dir)
+ if os.environ.get('LP_UPDATE_TOKEN'):
+  from update_state import gui_ready
+  from pipeline_config import Config
+  root.after_idle(lambda:gui_ready(Config(a.config).home))
+ root.mainloop()
 if __name__=='__main__':main()

@@ -14,13 +14,20 @@ def child(root,value):
  p=Path(value);need(not p.is_absolute() and '..' not in p.parts,'Ожидается относительный путь без ..: '+value)
  result=(root/p).resolve();need(inside(result,root),'Путь выходит за разрешённый корень: '+value);return result
 class Config:
- def __init__(self,path=None):
+ def __init__(self,path=None,*,code_root=None):
   self.path=Path(path or os.environ.get('LECTURE_CONFIG') or Path(__file__).with_name('config.json')).resolve()
   try:self.bytes=self.path.read_bytes();self.data=json.loads(self.bytes.decode('utf-8-sig'))
   except (OSError,ValueError) as e:raise ConfigError('Не читается config: '+str(self.path)+'; '+str(e)) from e
   d=self.data;need(d.get('schema_version')==1,'Неизвестная версия config; миграция должна быть явной')
   self.install=(self.path.parent/Path(d.get('install_root','.'))).resolve()
   self.home=(self.path.parent/Path(d.get('application_home',d.get('install_root','.')))).resolve()
+  if 'application_home' in d and (self.home/'current.json').is_file():
+   pointer=read(self.home/'current.json');selected=child(self.home,pointer['path'])
+   need((self.home/'versions').resolve() in selected.parents,'Invalid current version path')
+   self.install=selected
+  if code_root is not None:
+   need('application_home' in d,'Staged health requires packaged config')
+   self.install=Path(code_root).resolve()
   need(inside(self.install,self.home),'Application code must be inside application_home')
   self.data_root=Path(d['data_root']).expanduser().resolve();need(Path(d['data_root']).is_absolute(),'data_root должен быть абсолютным')
   need(not inside(self.home,self.data_root) and not inside(self.data_root,self.home),'install_root и data_root не должны пересекаться')
@@ -61,7 +68,8 @@ class Config:
  def local(self,value):return child(self.home,value)
  def runtime(self,key,default):
   value=self.data.get('runtimes',{}).get(key,default);p=Path(value).expanduser();return p.resolve() if p.is_absolute() else self.local(value)
- def assert_current(self):need(self.path.read_bytes()==self.bytes,'Config изменён: остановите и перезапустите workers; горячее переключение workspace запрещено')
+ def assert_current(self):
+  need(self.path.read_bytes()==self.bytes,'Config изменён: остановите и перезапустите workers; горячее переключение workspace запрещено')
  def subjects(self):
   out={}
   for s in self.workspace['subjects']:
