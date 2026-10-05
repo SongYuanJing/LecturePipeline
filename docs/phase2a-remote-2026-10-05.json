@@ -1,0 +1,218 @@
+{
+  "gate": "%TEMP%/LP2a-remote-20261005",
+  "release_a": {
+    "id": 403310079,
+    "tag": "v1.9.6-gate.1"
+  },
+  "setup_asset": {
+    "url": "https://github.com/SongYuanJing/LecturePipeline/releases/download/v1.9.6-gate.1/Setup.exe",
+    "name": "Setup.exe",
+    "sha256": "412691c37781f6804d63414d5ca32466e73971577ffd04077dca69d2a5e7ccb5",
+    "bytes": 51814685
+  },
+  "setup_seconds": 283.530999999959,
+  "window_a": [
+    "Lecture Pipeline · 1.9.6-gate.1"
+  ],
+  "reused_supplier_cache": [
+    {
+      "name": "nvidia_cublas_cu12-12.9.2.10-py3-none-win_amd64.whl",
+      "bytes": 553162896
+    },
+    {
+      "name": "model.bin",
+      "bytes": 3087284237
+    },
+    {
+      "name": "tokenizer.json",
+      "bytes": 2480617
+    },
+    {
+      "name": "preprocessor_config.json",
+      "bytes": 340
+    },
+    {
+      "name": "ctranslate2-4.8.2-cp311-cp311-win_amd64.whl",
+      "bytes": 19220522
+    },
+    {
+      "name": "config.json",
+      "bytes": 2394
+    },
+    {
+      "name": "nvidia_cudnn_cu12-9.10.2.21-py3-none-win_amd64.whl",
+      "bytes": 692992268
+    },
+    {
+      "name": "vocabulary.json",
+      "bytes": 1068114
+    },
+    {
+      "name": "av-18.1.0-cp311-abi3-win_amd64.whl",
+      "bytes": 27595679
+    }
+  ],
+  "snapshot_before": {
+    "config": {
+      "sha256": "1595c3e38bc3242669f2ed37eea7097377e91526c7cf825d7c738eab39ccb93e",
+      "mtime_ns": 1791166607688725700
+    },
+    "data/dictionary/vocabulary.xlsx": {
+      "sha256": "8d904ebebf850725cf366954e9eb282b68657f9a7fa68c9084c892eaaab6a278",
+      "mtime_ns": 1791166607648448200
+    },
+    "data/semester-1/SUBJECT/word/gate.docx": {
+      "sha256": "a3a93614a4d00c059fc7433baf439dc1b1e1dba28d85193db7d524c6ade529ff",
+      "mtime_ns": 1791166642947976800
+    },
+    "data/semester-1/system/ai_state.json": {
+      "sha256": "defef7cba50b0ef23323fb5edf09dadca62ddca0055eda68c6cf162cf738188e",
+      "mtime_ns": 1791166606456066500
+    },
+    "data/semester-1/system/state.json": {
+      "sha256": "ec24c939abb31823e59b6362c9e77c9e62cf0b053ec5e10590e829a472c47d61",
+      "mtime_ns": 1791166606455066800
+    }
+  },
+  "pointer_before": {
+    "app_version": "1.9.6-gate.1",
+    "path": "versions/1.9.6-gate.1"
+  },
+  "initial_check": "{\"current\": \"1.9.6-gate.1\", \"tag\": null, \"status\": \"no-update\"}\n",
+  "discovery": "{\"current\": \"1.9.6-gate.1\", \"tag\": \"v1.9.6-gate.2\", \"status\": \"available\"}\n",
+  "release_b": {
+    "id": 403567397,
+    "tag": "v1.9.6-gate.2",
+    "assets": [
+      {
+        "name": "LecturePipeline-app-1.9.6-gate.2.zip",
+        "size": 101933,
+        "digest": "sha256:dfdff9dd8aefed2d5fdd10a167752fbce7143431380538b38ff091e1b61299fa",
+        "url": "https://github.com/SongYuanJing/LecturePipeline/releases/download/v1.9.6-gate.2/LecturePipeline-app-1.9.6-gate.2.zip"
+      },
+      {
+        "name": "LecturePipeline-update.json",
+        "size": 1099,
+        "digest": "sha256:4c1f5ff658ea280d200414f1a770ed1123c04364667097eb4715506c350428b6",
+        "url": "https://github.com/SongYuanJing/LecturePipeline/releases/download/v1.9.6-gate.2/LecturePipeline-update.json"
+      }
+    ]
+  },
+  "update_output": "Downloading: LecturePipeline-update.json\nVerified download: LecturePipeline-update.json\nСкачать / проверить версию…\nDownloading: LecturePipeline-app-1.9.6-gate.2.zip\nVerified download: LecturePipeline-app-1.9.6-gate.2.zip\nStage / health check…\nПервый запуск новой версии…\n{\"status\": \"updated\", \"previous\": \"1.9.6-gate.1\", \"current\": \"1.9.6-gate.2\", \"application_pid\": 38252}\n",
+  "update_seconds": 21.29700000002049,
+  "window_b": [
+    "Lecture Pipeline · 1.9.6-gate.2"
+  ],
+  "pointer_after": {
+    "app_version": "1.9.6-gate.2",
+    "path": "versions/1.9.6-gate.2"
+  },
+  "snapshot_after": {
+    "config": {
+      "sha256": "1595c3e38bc3242669f2ed37eea7097377e91526c7cf825d7c738eab39ccb93e",
+      "mtime_ns": 1791166607688725700
+    },
+    "data/dictionary/vocabulary.xlsx": {
+      "sha256": "8d904ebebf850725cf366954e9eb282b68657f9a7fa68c9084c892eaaab6a278",
+      "mtime_ns": 1791166607648448200
+    },
+    "data/semester-1/SUBJECT/word/gate.docx": {
+      "sha256": "a3a93614a4d00c059fc7433baf439dc1b1e1dba28d85193db7d524c6ade529ff",
+      "mtime_ns": 1791166642947976800
+    },
+    "data/semester-1/system/ai_state.json": {
+      "sha256": "defef7cba50b0ef23323fb5edf09dadca62ddca0055eda68c6cf162cf738188e",
+      "mtime_ns": 1791166606456066500
+    },
+    "data/semester-1/system/state.json": {
+      "sha256": "ec24c939abb31823e59b6362c9e77c9e62cf0b053ec5e10590e829a472c47d61",
+      "mtime_ns": 1791166606455066800
+    }
+  },
+  "old_version_retained": true,
+  "final_check": "{\"current\": \"1.9.6-gate.2\", \"tag\": null, \"status\": \"no-update\"}\n",
+  "cache_unchanged_after_check": true,
+  "cache": {
+    "4c1f5ff658ea280d200414f1a770ed1123c04364667097eb4715506c350428b6/LecturePipeline-update.json": {
+      "bytes": 1099,
+      "sha256": "4c1f5ff658ea280d200414f1a770ed1123c04364667097eb4715506c350428b6",
+      "mtime_ns": 1791193622463169700
+    },
+    "dfdff9dd8aefed2d5fdd10a167752fbce7143431380538b38ff091e1b61299fa/.resume.lock": {
+      "bytes": 1,
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "mtime_ns": 1791193622543983000
+    },
+    "dfdff9dd8aefed2d5fdd10a167752fbce7143431380538b38ff091e1b61299fa/LecturePipeline-app-1.9.6-gate.2.zip": {
+      "bytes": 101933,
+      "sha256": "dfdff9dd8aefed2d5fdd10a167752fbce7143431380538b38ff091e1b61299fa",
+      "mtime_ns": 1791193626486648400
+    }
+  },
+  "source_commit": "2453e0a",
+  "api": "https://api.github.com/repos/SongYuanJing/LecturePipeline/releases",
+  "setup_health": {
+    "selection": {
+      "mode": "auto",
+      "device": "cuda",
+      "compute_type": "int8_float16",
+      "allow_cpu_fallback": true,
+      "reason": ""
+    },
+    "components": {
+      "Base runtime": {
+        "status": "Valid",
+        "reason": ""
+      },
+      "PyAV": {
+        "status": "Valid",
+        "reason": ""
+      },
+      "CTranslate2": {
+        "status": "Valid",
+        "reason": ""
+      },
+      "Whisper model": {
+        "status": "Valid",
+        "reason": ""
+      },
+      "CUDA": {
+        "status": "Valid",
+        "reason": ""
+      },
+      "CPU ASR capability": {
+        "status": "Available",
+        "reason": ""
+      },
+      "GPU ASR capability": {
+        "status": "Unverified",
+        "reason": "Полная проверка GPU с моделью выполняется при настройке/запуске ASR"
+      }
+    },
+    "hardware": {
+      "adapters": [
+        "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+        "AMD Radeon 780M Graphics"
+      ],
+      "reason": ""
+    }
+  },
+  "base_download": {
+    "url": "https://github.com/SongYuanJing/LecturePipeline/releases/download/v1.9.5-beta.1/LecturePipeline-1.9.5-beta.1-win-x64.zip",
+    "sha256": "8dd18ac260e40cb900d5b2e90a1ce9d3c54aeb6494cd9f22236ef7bad79e155b",
+    "bytes": 80109954,
+    "actual_sha256": "8dd18ac260e40cb900d5b2e90a1ce9d3c54aeb6494cd9f22236ef7bad79e155b"
+  },
+  "supplier_cache_hits": [
+    "Verified cache: av-18.1.0-cp311-abi3-win_amd64.whl",
+    "Verified cache: ctranslate2-4.8.2-cp311-cp311-win_amd64.whl",
+    "Verified cache: config.json",
+    "Verified cache: model.bin",
+    "Verified cache: preprocessor_config.json",
+    "Verified cache: tokenizer.json",
+    "Verified cache: vocabulary.json",
+    "Verified cache: nvidia_cublas_cu12-12.9.2.10-py3-none-win_amd64.whl",
+    "Verified cache: nvidia_cudnn_cu12-9.10.2.21-py3-none-win_amd64.whl"
+  ],
+  "transport": "Real public GitHub HTTPS, no mocks; Setup + private base + B manifest/archive downloaded. Supplier artifacts reused with full verification."
+}
