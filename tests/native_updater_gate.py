@@ -148,7 +148,12 @@ def run(gate):
     evidence['recovered_gui']=close(process.pid);process.wait(timeout=10)
     assert evidence['recovered_gui']==['Lecture Pipeline · 1.9.6-fixture.1']
     assert snapshot(root,data)==before
-    text=json.dumps(evidence,ensure_ascii=False,indent=2).replace(str(root),'%INSTALL%').replace(str(gate),'%GATE%')
+    def clean(value):
+        if isinstance(value,str):return value.replace(str(root),'%INSTALL%').replace(str(gate),'%GATE%')
+        if isinstance(value,dict):return {k:clean(v) for k,v in value.items()}
+        if isinstance(value,list):return [clean(v) for v in value]
+        return value
+    text=json.dumps(clean(evidence),ensure_ascii=False,indent=2)
     (gate/'evidence.json').write_text(text+'\n',encoding='utf8')
     print('NATIVE UPDATER GATE PASSED',flush=True)
 

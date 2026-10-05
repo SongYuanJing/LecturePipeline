@@ -8,6 +8,8 @@ existing Python downloader. The .NET shell does not resolve components.
 CUDA wheels already pin exact sizes. The model manifest adds the additive
 `file_sizes.model.bin=3087284237` field; revision and all SHA-256 pins are unchanged.
 Small downloads retain their existing unique temporary-file behavior.
+Phase 2a code-only update ZIPs explicitly opt in with `resume=True` plus a pinned
+size, including below 128 MiB. Component callers retain the threshold/default.
 
 Inside the artifact's SHA directory, `.partial` and `.partial.json` store an
 unfinished file, source URL/name/size/SHA identity, durable offset, prefix SHA-256

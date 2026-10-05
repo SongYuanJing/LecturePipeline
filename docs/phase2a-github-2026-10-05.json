@@ -1,0 +1,17 @@
+{
+  "observed_utc": "2026-10-05T00:49:21.801741+00:00",
+  "endpoint": "https://api.github.com/repos/SongYuanJing/LecturePipeline/releases",
+  "method": "GET",
+  "current": "1.9.5-beta.1",
+  "status": "no-update",
+  "releases": [
+    {
+      "id": 399655135,
+      "tag_name": "v1.9.5-beta.1",
+      "draft": false,
+      "prerelease": true,
+      "published_at": "2026-09-30T02:07:53Z",
+      "html_url": "https://github.com/SongYuanJing/LecturePipeline/releases/tag/v1.9.5-beta.1"
+    }
+  ]
+}

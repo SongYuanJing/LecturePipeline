@@ -52,7 +52,7 @@ does not certify a clean Windows VM, reboot/uninstall, or update recovery.
 | 8 | Optional AI API | Explicit opt-in provider/cost controls; secrets outside repo; validated identical output contract; retry/idempotency; manual ChatGPT remains available |
 | 9 | Licensing decision, separate from implementation | Threat model and distribution/access policy documented; compare private distribution with signed offline licenses; acknowledge offline revocation limits; no shared embedded secret; updates/recovery remain usable; no server introduced implicitly |
 
-Phases 2–9 are authorized roadmap work, not part of the first bootstrap commit.
+Phases 2–9 describe the roadmap; proceed only within the currently authorized slice.
 Licensing is a design decision, not a blocker for component download work.
 
 ## First-slice limitations and next work
@@ -77,4 +77,8 @@ Phase 1c is implementation-complete and native-qualified on this Windows 11 /
 RTX 3050 host, including real HTTP resume, GUI, ASR, warm rerun and shortcut.
 Implementation and native acceptance evidence are tracked in
 [PHASE_1C.md](PHASE_1C.md). Stop after Phase 1c; Phase 2 requires a separate
-instruction. Continue locally while GitHub write is blocked.
+instruction. Phase 2a was subsequently explicitly authorized and completed:
+see [PHASE_2A.md](PHASE_2A.md) for manual tagged Releases code updates, native
+fixture switch/rollback and real read-only GitHub discovery. Stop after 2a;
+do not start Phase 2b or background/polish work automatically. Continue locally
+while GitHub write is blocked.

@@ -1,0 +1,108 @@
+{
+  "gate": "%TEMP%/LP2a-20261005-d",
+  "transport": "disposable in-memory HTTP fixture; real downloader, health subprocess and GUI",
+  "events": [
+    "Downloading: LecturePipeline-update.json",
+    "Verified download: LecturePipeline-update.json",
+    "Скачать / проверить версию…",
+    "Downloading: LecturePipeline-app-1.9.6-fixture.1.zip",
+    "Retry in 1s: LecturePipeline-app-1.9.6-fixture.1.zip",
+    "Resuming at 65536: LecturePipeline-app-1.9.6-fixture.1.zip",
+    "Verified download: LecturePipeline-app-1.9.6-fixture.1.zip",
+    "Stage / health check…",
+    "Первый запуск новой версии…",
+    "Downloading: LecturePipeline-update.json",
+    "Verified download: LecturePipeline-update.json",
+    "Скачать / проверить версию…",
+    "Downloading: LecturePipeline-app-1.9.6-fixture.2.zip",
+    "Verified download: LecturePipeline-app-1.9.6-fixture.2.zip",
+    "Stage / health check…",
+    "Первый запуск новой версии…",
+    "Downloading: LecturePipeline-update.json",
+    "Verified download: LecturePipeline-update.json",
+    "Скачать / проверить версию…",
+    "Downloading: LecturePipeline-app-1.9.6-fixture.3.zip",
+    "Verified download: LecturePipeline-app-1.9.6-fixture.3.zip",
+    "Stage / health check…",
+    "Verified cache: LecturePipeline-update.json",
+    "Verified cache: LecturePipeline-app-1.9.6-fixture.1.zip"
+  ],
+  "switch": {
+    "status": "updated",
+    "previous": "1.9.5-beta.1",
+    "current": "1.9.6-fixture.1",
+    "application_pid": 42288,
+    "seconds": 6.296999999962281,
+    "window": [
+      "Lecture Pipeline · 1.9.6-fixture.1"
+    ]
+  },
+  "live_gui_blocks_switch": true,
+  "failed_first_launch": "New GUI exited before readiness",
+  "first_launch_rollback_exact": true,
+  "staged_health_failure": "Staged health failed: Traceback (most recent call last):\n  File \"%INSTALL%\\launcher\\update_health.py\", line 12, in <module>\n    compile(path.read_bytes(),str(path),'exec')\n  File \"%INSTALL%\\versions\\.stage-9y8naxyl\\fixture_broken.py\", line 1\n    syntax error !!!\n           ^^^^^\nSyntaxError: invalid syntax\n",
+  "staged_failure_pointer_unchanged": true,
+  "crash_recovery_exact": true,
+  "verified_cache_reused": true,
+  "config_data_unchanged": true,
+  "preserved_files": {
+    "config": {
+      "sha256": "f48521cf00f95177b299fbe4b8605fb33cd0cf89d17c89a307a008acc14fc631",
+      "mtime_ns": 1791162081587683200
+    },
+    "data/dictionary/vocabulary.xlsx": {
+      "sha256": "c7540f3b87e65e9599178b819abd9aa33db51747a70111467b9235985553c741",
+      "mtime_ns": 1791162081549089500
+    },
+    "data/semester-1/SUBJECT/word/fixture.docx": {
+      "sha256": "ad11ad08b6784f05344ef39bdd3ea92fa47d272b4d92983497ec67a2d23f0598",
+      "mtime_ns": 1791162082595548300
+    },
+    "data/semester-1/system/ai_state.json": {
+      "sha256": "defef7cba50b0ef23323fb5edf09dadca62ddca0055eda68c6cf162cf738188e",
+      "mtime_ns": 1791162080284026500
+    },
+    "data/semester-1/system/state.json": {
+      "sha256": "ec24c939abb31823e59b6362c9e77c9e62cf0b053ec5e10590e829a472c47d61",
+      "mtime_ns": 1791162080284026500
+    }
+  },
+  "old_version_retained": true,
+  "current": {
+    "app_version": "1.9.6-fixture.1",
+    "path": "versions/1.9.6-fixture.1"
+  },
+  "download_requests": [
+    {
+      "name": "LecturePipeline-update.json",
+      "offset": 0
+    },
+    {
+      "name": "LecturePipeline-app-1.9.6-fixture.1.zip",
+      "offset": 0
+    },
+    {
+      "name": "LecturePipeline-app-1.9.6-fixture.1.zip",
+      "offset": 65536
+    },
+    {
+      "name": "LecturePipeline-update.json",
+      "offset": 0
+    },
+    {
+      "name": "LecturePipeline-app-1.9.6-fixture.2.zip",
+      "offset": 0
+    },
+    {
+      "name": "LecturePipeline-update.json",
+      "offset": 0
+    },
+    {
+      "name": "LecturePipeline-app-1.9.6-fixture.3.zip",
+      "offset": 0
+    }
+  ],
+  "recovered_gui": [
+    "Lecture Pipeline · 1.9.6-fixture.1"
+  ]
+}
