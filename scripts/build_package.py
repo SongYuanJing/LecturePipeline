@@ -14,7 +14,7 @@ def build(repo,components,out):
  if out.exists():raise ValueError('Use a new output root')
  out.mkdir(parents=True);app=out/'versions'/VERSION
  shutil.copytree(repo/'src/app',app,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
- write(app/'release.json',dict(manifest_schema_version=1,app_version=VERSION,baseline='v1.8.1',distribution_status='beta',config_schema_version=1,data_schema_version={'lecture':1,'dialogue':1,'ai_state':1,'dictionary':'1.4'},migration_required=False,files={p.relative_to(app).as_posix():sha(p) for p in sorted(app.rglob('*')) if p.is_file()}))
+ write(app/'release.json',dict(manifest_schema_version=1,updater_protocol=1,app_version=VERSION,baseline='v1.8.1',distribution_status='beta',config_schema_version=1,data_schema_version={'lecture':1,'dialogue':1,'ai_state':1,'dictionary':'1.4'},migration_required=False,files={p.relative_to(app).as_posix():sha(p) for p in sorted(app.rglob('*')) if p.is_file()}))
  shutil.copytree(repo/'installer',out/'launcher',ignore=shutil.ignore_patterns('__pycache__','*.pyc','uninstall.py'))
  for name in ('config.example.json',):shutil.copy2(repo/name,out/'launcher'/name)
  for name in ('model-manifest.json','cuda-manifest.json','pyav-manifest.json','ctranslate2-manifest.json'):
@@ -33,7 +33,7 @@ def build(repo,components,out):
    # Replace source-component inventory: it must describe shipped files only.
    write(private/'component.json',dict(kind='asr-thin',files={p.relative_to(private).as_posix():{'sha256':sha(p)} for p in private.rglob('*') if p.is_file() and p.name!='component.json'}))
  write(out/'current.json',dict(app_version=VERSION,path='versions/'+VERSION))
- for name,script in [('Setup','setup.py'),('Preflight','launch.py preflight'),('ImportModel','import_model.py'),('ImportPyAV','import_pyav.py'),('ImportCTranslate2','import_ctranslate2.py'),('ImportCUDA','import_cuda.py'),('Components','component_status.py'),('DownloadComponents','download_components.py')]:
+ for name,script in [('Setup','setup.py'),('Preflight','launch.py preflight'),('CheckUpdates','updater.py check'),('Update','updater.py apply --tag'),('ImportModel','import_model.py'),('ImportPyAV','import_pyav.py'),('ImportCTranslate2','import_ctranslate2.py'),('ImportCUDA','import_cuda.py'),('Components','component_status.py'),('DownloadComponents','download_components.py')]:
   entry,*args=script.split();(out/(name+'.cmd')).write_text('@echo off\r\n"%~dp0runtime\\asr\\python.exe" -B -X utf8 "%~dp0launcher\\'+entry+'" '+ ' '.join(args)+' %*\r\n',encoding='ascii')
  for name,script in [('Integrate','Integrate.ps1'),('Uninstall','Uninstall.ps1')]:
   (out/(name+'.cmd')).write_text('@echo off\r\npowershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0launcher\\'+script+'" %*\r\n',encoding='ascii')

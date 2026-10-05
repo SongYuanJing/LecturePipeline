@@ -221,7 +221,10 @@ def fetch(url, sha256, name, cache, *, limit, progress=lambda message: None,
     if not isinstance(sha256, str) or not re.fullmatch('[0-9a-f]{64}', sha256):
         raise ValueError('Invalid pinned SHA256')
     parts = urllib.parse.urlsplit(url)
-    if parts.scheme != 'https' or parts.hostname not in SUPPLIERS or parts.username or parts.password:
+    release = (parts.hostname == 'github.com' and re.fullmatch(
+        r'/SongYuanJing/LecturePipeline/releases/download/v[0-9][A-Za-z0-9.\-]*/[A-Za-z0-9_.\-]+', parts.path))
+    if (parts.scheme != 'https' or (parts.hostname not in SUPPLIERS and not release)
+            or parts.username or parts.password or parts.query or parts.fragment):
         raise ValueError('Expected an official HTTPS supplier URL')
     target = Path(cache) / sha256 / name
     if expected_size is not None and (type(expected_size) is not int or not 0 < expected_size <= limit):
