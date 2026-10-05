@@ -1,7 +1,7 @@
 """Deterministic portable ZIP from source and validated private components. No download."""
 import argparse,hashlib,json,shutil,zipfile,sys
 from pathlib import Path
-VERSION='1.9.5-beta.1'
+VERSION='1.9.6-gate.1'
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from public_exclusions import forbidden,check,check_zip
 def sha(p):
