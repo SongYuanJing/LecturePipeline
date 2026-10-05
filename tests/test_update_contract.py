@@ -1,4 +1,5 @@
 import copy
+import ast
 import json
 from pathlib import Path
 import sys
@@ -20,6 +21,15 @@ class ConfigPointerTests(unittest.TestCase):
             original=path.read_bytes();mtime=path.stat().st_mtime_ns
             (root/'current.json').write_text(json.dumps(dict(path='versions/new',app_version='2.0.0')))
             self.assertEqual(Config(path).install,root/'versions/new')
+            tree=ast.parse((REPO/'src/app/gui_v1.8/app.py').read_text(encoding='utf8'))
+            function=next(node for node in tree.body if isinstance(node,ast.FunctionDef) and node.name=='bootstrap')
+            scope=dict(Path=Path,json=json,sys=sys)
+            exec(compile(ast.Module(body=[function],type_ignores=[]),'GUI bootstrap','exec'),scope)
+            previous=list(sys.path)
+            try:
+                scope['bootstrap'](path)
+                self.assertEqual(Path(sys.path[0]),root/'versions/new')
+            finally:sys.path[:]=previous
             self.assertEqual(Config(path,code_root=root/'versions/.stage-test').install,root/'versions/.stage-test')
             self.assertEqual(path.read_bytes(),original);self.assertEqual(path.stat().st_mtime_ns,mtime)
             legacy=copy.deepcopy(data);legacy.pop('application_home');legacy['install_root']=str(root/'versions/old')

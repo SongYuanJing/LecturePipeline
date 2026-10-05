@@ -9,7 +9,11 @@ from tkinter import ttk,messagebox
 def bootstrap(path):
  data=json.loads(Path(path).read_text(encoding='utf-8-sig'))
  root=Path(data['install_root']);root=root if root.is_absolute() else Path(path).resolve().parent/root
- sys.path.insert(0,str(root.resolve()))
+ # Standalone legacy entry may need Config located first; never prioritize old
+ # install_root over the version selected by the stable launcher/current.json.
+ sys.path.append(str(root.resolve()))
+ from pipeline_config import Config
+ sys.path.insert(0,str(Config(path).install))
 
 from actions import Actions
 from dpi import enable_system_dpi,configure_root
