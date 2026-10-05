@@ -5,6 +5,10 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+import argparse
+import os
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
 REPO=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(REPO/'src/app'))
@@ -12,6 +16,18 @@ from pipeline_config import Config
 
 
 class ConfigPointerTests(unittest.TestCase):
+    def test_failed_gui_initialization_cannot_send_readiness(self):
+        tree=ast.parse((REPO/'src/app/gui_v1.8/app.py').read_text(encoding='utf8'))
+        main=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='main')
+        root=Mock()
+        scope=dict(argparse=argparse,Path=Path,__file__=str(REPO/'src/app/gui_v1.8/app.py'),
+            enable_system_dpi=lambda:None,tk=SimpleNamespace(Tk=lambda:root),
+            App=lambda *args:SimpleNamespace(initialized=False),os=os)
+        exec(compile(ast.Module(body=[main],type_ignores=[]),'GUI main','exec'),scope)
+        with patch.object(sys,'argv',['gui']),patch.dict(os.environ,LP_UPDATE_TOKEN='trial'):
+            with self.assertRaisesRegex(RuntimeError,'GUI initialization failed'):scope['main']()
+        root.after_idle.assert_not_called();root.mainloop.assert_not_called();root.destroy.assert_called_once()
+
     def test_pointer_selects_code_without_rewriting_config_and_legacy_survives(self):
         with tempfile.TemporaryDirectory() as folder:
             base=Path(folder);root=base/'app';(root/'config').mkdir(parents=True)

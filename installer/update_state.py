@@ -108,3 +108,5 @@ def gui_ready(root):
             raise RuntimeError('Invalid update trial')
         atomic(Path(root)/'run'/('update-ready-'+token+'.json'),
                dict(token=token, version=os.environ['LP_APP_VERSION'], pid=os.getpid()))
+        # Future worker launches from this GUI must not inherit a completed trial.
+        os.environ.pop('LP_UPDATE_TOKEN',None)

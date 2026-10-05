@@ -43,7 +43,7 @@ if __name__=='__main__':
  try:raise SystemExit(main())
  except Exception as e:
   (ROOT/'logs').mkdir(exist_ok=True);(ROOT/'logs/launch-error.txt').write_text(str(e),encoding='utf8')
-  if len(sys.argv)<2 or sys.argv[1]=='gui':
+  if (len(sys.argv)<2 or sys.argv[1]=='gui') and not os.environ.get('LP_UPDATE_TOKEN'):
    import tkinter as tk
    from tkinter import messagebox
    r=tk.Tk();r.withdraw();messagebox.showerror('Lecture Pipeline',str(e));r.destroy()

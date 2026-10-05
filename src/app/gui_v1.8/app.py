@@ -20,7 +20,7 @@ from dpi import enable_system_dpi,configure_root
 
 class App(Actions):
  def __init__(self,root,config,log_dir=None):
-  self.root=root;self.path=Path(config).resolve();self.events=queue.Queue();self.busy=False;self.closed=False;self.view=None;self.preflight=None;self.controls_busy=False
+  self.root=root;self.path=Path(config).resolve();self.events=queue.Queue();self.busy=False;self.closed=False;self.view=None;self.preflight=None;self.controls_busy=False;self.initialized=False
   self.root.title('Lecture Pipeline · '+os.environ.get('LP_APP_VERSION','1.8'));self.px=configure_root(root)
   self.root.configure(bg='#eef2f7');self.root.protocol('WM_DELETE_WINDOW',self.close)
   style=ttk.Style(root);style.theme_use('clam')
@@ -49,7 +49,7 @@ class App(Actions):
    c=adapter.Config(self.path);logs=Path(log_dir) if log_dir else c.local('logs/gui');logs.mkdir(parents=True,exist_ok=True)
    logging.basicConfig(filename=logs/'gui.log',level=logging.INFO,encoding='utf8',format='%(asctime)s %(levelname)s %(message)s')
    self.manager=adapter.Manager(self.path)
-   self.refresh(full=True)
+   self.refresh(full=True);self.initialized=True
   except Exception as e:self.banner.set('Ошибка конфигурации: '+str(e));self.system.insert('1.0',traceback.format_exc())
   self.root.after(100,self.pump);self.root.after(3000,self.poll)
  def text_box(self,parent,height=8):
@@ -246,6 +246,8 @@ def main():
  enable_system_dpi()
  root=tk.Tk();app=App(root,a.config,a.log_dir)
  if os.environ.get('LP_UPDATE_TOKEN'):
+  if not app.initialized:
+   root.destroy();raise RuntimeError('GUI initialization failed; update trial rejected')
   from update_state import gui_ready
   from pipeline_config import Config
   root.after_idle(lambda:gui_ready(Config(a.config).home))
