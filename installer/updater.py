@@ -97,7 +97,7 @@ def runtime_contract(root):
 
 def obtain(root, item, progress):
     return downloads.fetch(item['url'],item['sha256'],item['name'],Path(root)/'cache/updates',
-        limit=item['bytes'],expected_size=item['bytes'],progress=progress)
+        limit=item['bytes'],expected_size=item['bytes'],resume=item['name'].endswith('.zip'),progress=progress)
 
 
 def manifest(root, release, progress):

@@ -214,7 +214,7 @@ def resumable_fetch(url, sha256, name, target, size, progress, checkpoint, trans
 
 
 def fetch(url, sha256, name, cache, *, limit, progress=lambda message: None,
-          checkpoint=lambda: None, transfer=lambda name, done, total: None, expected_size=None):
+          checkpoint=lambda: None, transfer=lambda name, done, total: None, expected_size=None, resume=False):
     """Only verified whole files are cache hits; large pinned files retain safe prefixes."""
     checkpoint()
     filename(name)
@@ -229,12 +229,14 @@ def fetch(url, sha256, name, cache, *, limit, progress=lambda message: None,
     target = Path(cache) / sha256 / name
     if expected_size is not None and (type(expected_size) is not int or not 0 < expected_size <= limit):
         raise ValueError('Invalid pinned size')
+    if resume and expected_size is None:
+        raise ValueError('Resume requires a pinned size')
     if (target.is_file() and (expected_size is None or target.stat().st_size == expected_size)
             and digest(target) == sha256):
         progress('Verified cache: ' + name)
         return target
     target.parent.mkdir(parents=True, exist_ok=True)
-    if expected_size is not None and expected_size >= RESUME_THRESHOLD:
+    if expected_size is not None and (resume or expected_size >= RESUME_THRESHOLD):
         return resumable_fetch(url, sha256, name, target, expected_size, progress, checkpoint, transfer)
     # Unique temporary file: parallel downloads cannot expose partial bytes.
     # The hash directory identifies the artifact. Repeating a long wheel name

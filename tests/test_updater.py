@@ -145,7 +145,7 @@ class UpdateTests(unittest.TestCase):
         def network(url,headers=None):
             offset=int(headers.get('Range','bytes=0-')[6:-1]);calls.append(offset)
             return Response(data,url,offset,fail=len(calls)==1)
-        with patch.object(u.downloads,'RESUME_THRESHOLD',1),patch.object(u.downloads,'open_url',side_effect=network),patch.object(u.downloads.time,'sleep'):
+        with patch.object(u.downloads,'open_url',side_effect=network),patch.object(u.downloads.time,'sleep'):
             result=u.obtain(self.root,item,lambda _:None)
         self.assertEqual(result.read_bytes(),data);self.assertEqual(calls,[0,32])
 

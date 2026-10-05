@@ -20,6 +20,8 @@ def build(repo, output):
         files={n[len(prefix):]:hashlib.sha256(v).hexdigest() for n,v in files.items() if n.startswith(prefix)}))
     files['current.json'] = encoded(dict(app_version=VERSION,path='versions/'+VERSION))
     files['launcher/config.example.json'] = (repo/'config.example.json').read_bytes()
+    for name,command in (('CheckUpdates','check'),('Update','apply --tag')):
+        files[name+'.cmd']=('@echo off\r\n"%~dp0runtime\\asr\\python.exe" -B -X utf8 "%~dp0launcher\\updater.py" '+command+' %*\r\n').encode('ascii')
     for path in sorted((repo/'components').glob('*-manifest.json')):
         files['launcher/'+path.name] = path.read_bytes()
     output.mkdir(parents=True,exist_ok=True)
