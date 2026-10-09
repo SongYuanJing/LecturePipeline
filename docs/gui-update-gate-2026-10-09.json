@@ -1,0 +1,107 @@
+{
+  "date": "2026-10-09",
+  "gate": "%TEMP%/LPgui-20261005",
+  "setup": {
+    "setup_asset": {
+      "url": "https://github.com/SongYuanJing/LecturePipeline/releases/download/v1.9.7-beta.1/Setup.exe",
+      "name": "Setup.exe",
+      "sha256": "2c0da40d774c17ab13eb4ba0901bebc8d61beb7ede29f18d0c7b5439911c471b",
+      "bytes": 51818448
+    },
+    "install_seconds": 338.1720000000205,
+    "source_release_id": 403583323
+  },
+  "beta1_source": "ecb4e15",
+  "beta2_source": "78325d3",
+  "pointer": {
+    "app_version": "1.9.7-beta.2",
+    "path": "versions/1.9.7-beta.2"
+  },
+  "update_result": {
+    "status": "success",
+    "result": {
+      "status": "updated",
+      "previous": "1.9.7-beta.1",
+      "current": "1.9.7-beta.2",
+      "application_pid": 28556
+    }
+  },
+  "observed_gui": [
+    "Lecture Pipeline · 1.9.7-beta.1",
+    "Проверка...",
+    "Установлена последняя версия",
+    "Текущая: 1.9.7-beta.1 → новая: 1.9.7-beta.2",
+    "Открытие окна обновления. Приложение будет перезапущено…",
+    "Lecture Pipeline — Обновление",
+    "Загрузка: LecturePipeline-app-1.9.7-beta.2.zip",
+    "Lecture Pipeline · 1.9.7-beta.2",
+    "Установлена последняя версия"
+  ],
+  "interaction": "Actual mouse clicks via Windows Computer Use; installed engine, real GitHub HTTPS; no updater mocks",
+  "snapshot_before": {
+    "config": {
+      "sha256": "8dda2d947ed296413241ee8141ccce6ac30e14f88dbfc860a96f6df815b0261d",
+      "mtime_ns": 1791195480980247500
+    },
+    "data/dictionary/vocabulary.xlsx": {
+      "sha256": "10af51ccfb2abc755575d9d2e5f16c5fa6ace4940d7163f1c84d2352282099be",
+      "mtime_ns": 1791195480926634200
+    },
+    "data/semester-1/system/ai_state.json": {
+      "sha256": "defef7cba50b0ef23323fb5edf09dadca62ddca0055eda68c6cf162cf738188e",
+      "mtime_ns": 1791195479532792000
+    },
+    "data/semester-1/system/state.json": {
+      "sha256": "ec24c939abb31823e59b6362c9e77c9e62cf0b053ec5e10590e829a472c47d61",
+      "mtime_ns": 1791195479531791200
+    }
+  },
+  "snapshot_after": {
+    "config": {
+      "sha256": "8dda2d947ed296413241ee8141ccce6ac30e14f88dbfc860a96f6df815b0261d",
+      "mtime_ns": 1791195480980247500
+    },
+    "data/dictionary/vocabulary.xlsx": {
+      "sha256": "10af51ccfb2abc755575d9d2e5f16c5fa6ace4940d7163f1c84d2352282099be",
+      "mtime_ns": 1791195480926634200
+    },
+    "data/semester-1/system/ai_state.json": {
+      "sha256": "defef7cba50b0ef23323fb5edf09dadca62ddca0055eda68c6cf162cf738188e",
+      "mtime_ns": 1791195479532792000
+    },
+    "data/semester-1/system/state.json": {
+      "sha256": "ec24c939abb31823e59b6362c9e77c9e62cf0b053ec5e10590e829a472c47d61",
+      "mtime_ns": 1791195479531791200
+    }
+  },
+  "cache": {
+    "480ade7c081fe066f213b7598dddfa7906a69b21fa3ecea66daa68edafa5b921/.resume.lock": {
+      "bytes": 1,
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "mtime_ns": 1791531473532915000
+    },
+    "480ade7c081fe066f213b7598dddfa7906a69b21fa3ecea66daa68edafa5b921/LecturePipeline-app-1.9.7-beta.2.zip": {
+      "bytes": 103725,
+      "sha256": "480ade7c081fe066f213b7598dddfa7906a69b21fa3ecea66daa68edafa5b921",
+      "mtime_ns": 1791531477924669600
+    },
+    "7bf6a809875f7533f882169bf5330863458bfa08397b7448b31d838f6b9350ef/LecturePipeline-update.json": {
+      "bytes": 1099,
+      "sha256": "7bf6a809875f7533f882169bf5330863458bfa08397b7448b31d838f6b9350ef",
+      "mtime_ns": 1791531473483899200
+    }
+  },
+  "cache_unchanged_after_final_check": true,
+  "old_version_retained": true,
+  "pending_transaction": false,
+  "dpi": 192,
+  "ux_fix": {
+    "commit": "cd13686",
+    "published_in_beta2": false,
+    "verification": "7 targeted tests + separate native error presentation fixture using saved real health traceback; engine not invoked in error fixture"
+  },
+  "limitations": [
+    "Beta.1 and beta.2 preserve original published artifacts; error-text fix is source-only pending a future build.",
+    "Existing missing worker-status diagnostics are visible outside updater controls; workers were not started for this gate."
+  ]
+}
