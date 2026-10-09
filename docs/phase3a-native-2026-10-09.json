@@ -1,0 +1,54 @@
+{
+  "gate": "%TEMP%/LP-inbox-20261009-161523",
+  "platform": "Windows",
+  "seconds": 36.21900000000005,
+  "while_copying_not_queued": true,
+  "paused_open_writer_not_queued": true,
+  "queued_count": 3,
+  "courses": [
+    {
+      "course_id": "microeconomics_2026",
+      "display_name": "中级微观经济学"
+    },
+    {
+      "course_id": "econometrics_2026",
+      "display_name": "计量经济学"
+    }
+  ],
+  "sources": [
+    {
+      "course_id": "microeconomics_2026",
+      "lecture_key": "01_2026-10-09",
+      "lecture_date": "2026-10-09",
+      "lecture_date_source": "filename",
+      "imported_at": "2026-10-09T08:15:23.883883+00:00",
+      "part_hint": 1
+    },
+    {
+      "course_id": "econometrics_2026",
+      "lecture_key": "01_2026-10-09",
+      "lecture_date": "2026-10-09",
+      "lecture_date_source": "filename",
+      "imported_at": "2026-10-09T08:15:23.889879+00:00",
+      "part_hint": 1
+    },
+    {
+      "course_id": "microeconomics_2026",
+      "lecture_key": "02_2026-09-11",
+      "lecture_date": "2026-09-11",
+      "lecture_date_source": "filename",
+      "imported_at": "2026-10-09T08:15:28.958597+00:00",
+      "part_hint": 1
+    }
+  ],
+  "unknown_date": null,
+  "unknown_status": "review",
+  "repeated_scan_unchanged": true,
+  "real_process_restart_unchanged": true,
+  "existing_worker_ready_accepted": true,
+  "existing_verified_input_snapshot": true,
+  "manual_import_key": "03_2026-10-08",
+  "original_sources_unchanged": true,
+  "archive_untouched": true,
+  "transport": "Generated PCM fixtures; native filesystem/locking/import/READY. No ASR, AI or network."
+}
