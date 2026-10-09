@@ -70,7 +70,8 @@ def main():
             sha256=[ux.sha(x) for x in parts]))
     def snapshot():
         return {x.name:[ux.sha(x),x.stat().st_mtime_ns] for x in subject['audio_dir'].iterdir() if x.is_file()}
-    before=snapshot();restart_process();inbox=Inbox(c);scan();assert snapshot()==before
+    before=snapshot();restart_process();inbox=Inbox(c);after_restart=scan();assert snapshot()==before
+    assert next(g for g in after_restart['groups'] if g['session_stem'].startswith('missing'))['status']=='review'
     manual=[audio('ManualFirst.wav',41),audio('ManualSecond.wav',42)]
     key=ux.add_lecture(c,'SUBJECT','2026-10-08',ux.next_number(c,'SUBJECT'),list(reversed(manual)))
     parts=p.collect_lectures(subject['audio_dir'])[key]

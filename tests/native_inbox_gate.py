@@ -48,7 +48,9 @@ def main():
         writer.write(payload[100:]);writer.flush();scan();time.sleep(5);scan();time.sleep(5)
         during=scan()
         assert not any(x['source_path']==str(slow) and x['status']=='queued' for x in during['sources'])
-    time.sleep(5);scan();time.sleep(5);scan();time.sleep(5);after=scan()
+    time.sleep(5);scan();time.sleep(5);scan();time.sleep(5);scan()
+    # Part-hinted sources now also require the VIC-22 group quiet window.
+    time.sleep(5);scan();time.sleep(5);after=scan()
     queued=[x for x in after['sources'] if x['status']=='queued'];assert len(queued)==3
     assert sum(x['course_id']=='microeconomics_2026' for x in queued)==2
     assert next(x for x in queued if x['source_path']==str(slow))['lecture_date']=='2026-09-11'

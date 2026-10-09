@@ -208,14 +208,16 @@ class Inbox:
                 self.group_observed.pop(gid,None)
                 mark('review','Ранее обнаруженная часть отсутствует');continue
             if changed:
-                g['member_ids']=ids;self.group_observed.pop(gid,None)
+                g['member_ids']=ids;self.group_observed.pop(gid,None);mark('waiting_parts')
             stable=True
             for row in items:
                 observed=self.observed.setdefault(row['source_id'],[self.clock(),0]);observed[1]+=1
                 if row['signature']['size']<=0 or observed[1]<course['stable_observations'] or self.clock()-observed[0]<course['settle_seconds']:
                     stable=False
             if not stable:
-                self.group_observed.pop(gid,None);mark('waiting_parts');continue
+                self.group_observed.pop(gid,None)
+                if g['status']!='review':mark('waiting_parts')
+                continue
             try:
                 from lecture_worker import closed_writer_read
                 with ExitStack() as stack:
@@ -224,7 +226,8 @@ class Inbox:
                         need(p.source_signature(path)==row['signature'],'Часть изменяется')
                     quiet=self.group_observed.setdefault(gid,self.clock())
                     if self.clock()-quiet<course['settle_seconds']:
-                        mark('waiting_parts');continue
+                        if g['status']!='review':mark('waiting_parts')
+                        continue
                     numbers=[r['part_hint'] for r in items]
                     dates={r['lecture_date'] for r in items}
                     error=None

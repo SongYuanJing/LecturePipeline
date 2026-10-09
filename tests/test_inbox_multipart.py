@@ -69,6 +69,8 @@ class MultipartTests(unittest.TestCase):
         self.write('foo20261009_1.wav','foo20261009_3.wav')
         r=self.scan(5);self.assertFalse(self.ready());self.assertEqual(r['groups'][0]['status'],'review')
         self.assertIn('пропущены',r['groups'][0]['error'])
+        self.restart();r=self.scan();self.assertEqual(r['groups'][0]['status'],'review')
+        self.assertIn('пропущены',r['groups'][0]['error'])
         self.write('foo20261009_2.wav');self.scan(5);self.assert_group()
 
     def test_duplicate_hint_review(self):
