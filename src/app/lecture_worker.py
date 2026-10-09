@@ -110,6 +110,7 @@ class Worker:
         self.stable_seconds = stable_seconds
         self.clock, self.monotonic = clock, monotonic
         self.observed = {}  # Restart deliberately requires a fresh full stability interval.
+        self.inbox = None
         self.rows = {}
         self.status_path = None
         self.model = None
@@ -283,6 +284,12 @@ class Worker:
             self.fail_job(identity, job, exc)
 
     def cycle(self):
+        if self.home.resolve() == p.CONFIG.worker_home.resolve() and any(x['enabled'] for x in p.CONFIG.courses().values()):
+            from lecture_inbox import Inbox
+            if self.inbox is None:
+                self.inbox=Inbox(p.CONFIG,monotonic=self.monotonic)
+            try:self.inbox.scan()
+            except Exception:logging.exception('Inbox scan failed; existing READY work is retained')
         state_file, log_file, subjects = p.discover_layout()
         self.status_path = state_file.parent / 'WORKER_STATUS.txt'
         state = p.load_state(state_file)
