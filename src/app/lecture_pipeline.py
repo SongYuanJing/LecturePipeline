@@ -227,7 +227,7 @@ def read_ready(cfg, key, parts):
     return data
 
 
-def prepare_ready(cfg, key, count):
+def prepare_ready(cfg, key, count, metadata=None):
     parts = collect_lectures(cfg["audio_dir"]).get(key, [])
     check_numbers(parts, count)
     before = [source_signature(p) for p in parts]
@@ -236,6 +236,7 @@ def prepare_ready(cfg, key, count):
         raise ValueError("файлы пусты или изменяются; дождитесь окончания загрузки")
     save_state(ready_path(cfg, key), {
         "version": 1, "lecture": key, "expected_parts": count, "files": files,
+        **({'intake': metadata} if metadata is not None else {}),
     })
 
 
@@ -432,6 +433,7 @@ def _process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, part
 
     combined_path.write_text("\n\n".join(all_sections), encoding="utf-8")
 
+    ready = read_ready(cfg, lecture_key, parts)
     manifest = {
         "lecture": lecture_key,
         "subject_code": subject_code,
@@ -441,6 +443,7 @@ def _process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, part
         "sources": [source_signature(p) for p in parts],
         "outputs": part_outputs,
         "combined_txt": combined_path.name,
+        **({'intake': ready['intake']} if 'intake' in ready else {}),
     }
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 

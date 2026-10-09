@@ -57,7 +57,7 @@ def backend_text(result,preferred='gpu'):
 def safe_open(c,path,opener=None):
  if not path:raise ValueError('Для этой записи путь отсутствует')
  p=Path(path).resolve()
- if not any(inside(p,r) for r in (c.data_root,c.home)):raise ValueError('Путь вне корней pipeline')
+ if not any(inside(p,r) for r in (c.data_root,c.home,*[x['output_folder'] for x in c.courses().values()])):raise ValueError('Путь вне корней pipeline')
  if not p.exists():raise FileNotFoundError('Путь недоступен: '+str(p))
  if p.is_file() and p.suffix.lower() not in {'.docx','.txt','.srt','.json','.log','.md'}:raise ValueError('Этот тип файла нельзя открыть из GUI')
  (opener or os.startfile)(str(p))

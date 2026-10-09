@@ -82,6 +82,8 @@ def refresh(c=None):
     t=dict(previous or {},id=identity,workspace=c.active,lecture_key=lecture,subject_code=code,subject_name=s['title'],lecture_date=lecture.split('_',1)[1] if '_' in lecture else None,manifest=str(manifest),instructions_version='1.7',status=previous['status'] if previous else 'waiting_ai')
     try:
      m=read(manifest);need(m['subject_code']==code and m['lecture']==lecture,'Manifest не соответствует предмету/лекции')
+     if 'intake' in m:
+      t.update({k:m['intake'].get(k) for k in ('lecture_date','lecture_date_source','imported_at','recorded_at')})
      t.update(raw=str(child(manifest.parent,m['combined_txt'])),srt=[str(child(manifest.parent,x['srt'])) for x in m['outputs']])
      if record:
       t.update(status='vocabulary_pending' if record.get('vocabulary_status')=='batch_pending' else 'completed',legacy_ai_record=True,vocabulary_status=record.get('vocabulary_status','legacy_unspecified'),source_packet=t.get('source_packet'))

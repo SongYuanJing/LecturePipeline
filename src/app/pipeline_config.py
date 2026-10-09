@@ -65,6 +65,7 @@ class Config:
   self.state=child(self.workspace_root,self.workspace['lecture_state']);self.ai_state=child(self.workspace_root,self.workspace['ai_state'])
   self.dictionary=child(self.data_root,d['dictionary']['book'])
   need(self.dictionary not in states and all(not inside(p,x) for p in states|{self.dictionary} for x in output_roots),'Служебные данные пересекаются с аудио/результатами')
+  self.courses() # Optional additive Inbox bindings; legacy configs remain disabled.
  def local(self,value):return child(self.home,value)
  def runtime(self,key,default):
   value=self.data.get('runtimes',{}).get(key,default);p=Path(value).expanduser();return p.resolve() if p.is_absolute() else self.local(value)
@@ -76,7 +77,50 @@ class Config:
    if not s['enabled']:continue
    root=child(self.workspace_root,s['folder']);paths=s['paths']
    out[s['subject_code']]=dict(title=s['subject_name'],subject_name=s['subject_name'],subject_dir=root,notes_dir=child(root,paths.get('notes','.')),audio_dir=child(root,paths['audio']),raw_dir=child(root,paths['raw']),ready_dir=child(root,paths['ready']),default_language=s.get('default_language',self.data['languages']['lecture']),prompt=s.get('asr_context',{}).get('prompt',''),hotwords=s.get('asr_context',{}).get('hotwords',''))
+   if s.get('inbox',{}).get('output_folder'):
+    output=Path(s['inbox']['output_folder']).resolve()
+    out[s['subject_code']].update(raw_dir=output/'raw',ready_dir=output/'word',notes_dir=output)
   return out
+ def courses(self):
+  """Course identity is the existing subject code, never a folder/file name."""
+  result={};bindings=[];managed=[];reserved=[self.dictionary]
+  for wid,w in self.data['workspaces'].items():
+   wr=child(self.data_root,w['folder'])
+   reserved.extend(child(wr,w[k]) for k in ('lecture_state','ai_state'))
+   for subject in w['subjects']:
+    sr=child(wr,subject['folder']);managed.append(sr)
+    binding=subject.get('inbox')
+    if binding is None:continue
+    need(isinstance(binding,dict),'inbox binding должен быть объектом')
+    need(type(binding.get('enabled',False)) is bool,'inbox.enabled должен быть boolean')
+    paths={}
+    for field in ('source_audio_folder','output_folder','archive_audio_folder'):
+     value=binding.get(field)
+     if field=='archive_audio_folder' and not value:paths[field]=None;continue
+     need(isinstance(value,str) and Path(value).is_absolute(),field+' должен быть абсолютным')
+     path=Path(value).resolve();need(path!=Path(path.anchor),field+': выберите отдельную папку')
+     need(not inside(path,self.home) and not inside(self.home,path),field+' пересекается с установкой')
+     need(not inside(self.data_root,path),field+' не должен включать весь data root')
+     paths[field]=path
+    settings={k:binding.get(k,v) for k,v in [('poll_seconds',10),('settle_seconds',120),('stable_observations',3)]}
+    for k,lo,hi in [('poll_seconds',5,300),('settle_seconds',10,86400),('stable_observations',2,20)]:
+     need(type(settings[k]) is int and lo<=settings[k]<=hi,'Недопустимый inbox '+k)
+    need(settings['settle_seconds']>=settings['poll_seconds'],'settle_seconds < poll_seconds')
+    row=dict(course_id=subject['subject_code'],display_name=subject['subject_name'],workspace=wid,
+             enabled=subject['enabled'] and binding.get('enabled',False),**paths,**settings)
+    bindings.append(row)
+    if wid==self.active:result[row['course_id']]=row
+  used=[]
+  for row in bindings:
+   for field in ('source_audio_folder','output_folder','archive_audio_folder'):
+    path=row[field]
+    if path is None:continue
+    need(all(not inside(path,p) and not inside(p,path) for p in managed),field+' пересекается с управляемым предметом')
+    need(all(not inside(path,p) and not inside(p,path) for p in used),'Inbox bindings не должны пересекаться')
+    need(all(not inside(p,path) and not inside(path,p) for p in reserved),'Inbox пересекается со служебными данными')
+    need(not inside(path,self.dialogue_root) and not inside(self.dialogue_root,path),'Inbox пересекается с Dialogue')
+    used.append(path)
+  return result
  def layout(self):
   self.assert_current();need(self.data_root.is_dir(),'Data root недоступен: '+str(self.data_root));need(self.workspace_root.is_dir(),'Workspace недоступен: '+str(self.workspace_root))
   subjects=self.subjects()

@@ -1,6 +1,6 @@
 """Small GUI actions over existing config/READY/AI contracts. No AI generation."""
 import copy,hashlib,json,os,re,shutil,subprocess,uuid,zipfile
-from datetime import date
+from datetime import date,datetime,timezone
 from pathlib import Path
 from pipeline_config import Config,need,read,child
 import ai_queue
@@ -19,15 +19,31 @@ def next_number(c,subject):
  p=pipeline(c);s=c.subjects()[subject];keys=set(p.collect_lectures(s['audio_dir']))|{k.split('/',1)[1] for k in read(c.state)['lectures'] if k.startswith(subject+'/')}
  return max([int(k.split('_',1)[0]) for k in keys if re.match(r'^\d+_',k)]+[0])+1
 
-def add_lecture(c,subject,day,number,files):
- c.assert_current();date.fromisoformat(day);need(type(number) is int and 1<=number<=999,'Номер лекции: 1–999')
+def add_lecture(c,subject,day,number,files,*,intake=None,reserve=None):
+ c.assert_current();date.fromisoformat(day)
+ need(number is None and intake is not None or type(number) is int and 1<=number<=999,'Номер лекции: 1–999')
  need(subject in c.subjects(),'Выберите действующий предмет');need(bool(files),'Выберите аудиофайлы')
- p=pipeline(c);s=c.subjects()[subject];key=f'{number:02d}_{day}';files=[Path(f).resolve() for f in files]
+ p=pipeline(c);s=c.subjects()[subject];files=[Path(f).resolve() for f in files]
  need(len(files)==len(set(files)),'Один файл выбран несколько раз')
- need(all(f.is_file() and f.suffix.lower() in p.AUDIO_EXTENSIONS for f in files),'Неподдерживаемый аудиофайл')
  # Separate producer lock: never waits on/stops the long-lived worker lock.
  with p.pipeline_lock(s['audio_dir']/'.ingest.lock'):
-  need(key not in p.collect_lectures(s['audio_dir']) and subject+'/'+key not in read(c.state)['lectures'] and not p.ready_path(s,key).exists(),'Лекция уже существует: выберите другой номер')
+  key=(intake or {}).get('lecture_key')
+  if key is None:
+   number=next_number(c,subject) if number is None else number
+   need(1<=number<=999,'Номер лекции: 1–999');key=f'{number:02d}_{day}'
+   if reserve:reserve(key)
+  need(re.fullmatch(r'\d{2,3}_\d{4}-\d{2}-\d{2}',key) is not None and key.split('_',1)[1]==day,'Некорректный intake lecture key')
+  if intake and p.ready_path(s,key).exists():
+   ready=p.read_ready(s,key,p.collect_lectures(s['audio_dir']).get(key,[]))
+   need(ready.get('intake',{}).get('source_id')==intake['source_id'],'READY принадлежит другому source')
+   need(all(sha(s['audio_dir']/e['name'])==e['sha256'] for e in ready['files']),'Повреждён опубликованный intake')
+   return key
+  need(all(f.is_file() and f.suffix.lower() in p.AUDIO_EXTENSIONS for f in files),'Неподдерживаемый аудиофайл')
+  if intake:
+   need(len(files)==1 and p.source_signature(files[0])==intake['signature'],'Source изменился после stability gate')
+  else:
+   need(key not in p.collect_lectures(s['audio_dir']),'Лекция уже существует: выберите другой номер')
+  need(subject+'/'+key not in read(c.state)['lectures'] and not p.ready_path(s,key).exists(),'Лекция уже существует: выберите другой номер')
   stage=s['audio_dir']/('.ingest-'+uuid.uuid4().hex);stage.mkdir();published=[]
   try:
    for i,source in enumerate(files,1):
@@ -37,8 +53,15 @@ def add_lecture(c,subject,day,number,files):
     with target.open('r+b') as f:os.fsync(f.fileno())
    c.assert_current()
    for f in sorted(stage.iterdir()):
-    dest=s['audio_dir']/f.name;need(not dest.exists(),'Файл уже появился: '+dest.name);f.rename(dest);published.append(dest)
-   p.prepare_ready(s,key,len(files)) # Existing atomic READY and exact contract.
+    dest=s['audio_dir']/f.name
+    if dest.exists():
+     need(intake is not None and sha(dest)==sha(f),'Файл уже появился: '+dest.name)
+     f.unlink() # Only our owned unpublished staging copy; keep existing input.
+    else:f.rename(dest)
+    published.append(dest)
+   metadata=intake or dict(course_id=subject,lecture_date=day,lecture_date_source='explicit',
+                           imported_at=datetime.now(timezone.utc).isoformat(),recorded_at=None)
+   p.prepare_ready(s,key,len(files),metadata=metadata)
    p.read_ready(s,key,p.collect_lectures(s['audio_dir'])[key])
    return key
   except Exception:
