@@ -13,6 +13,13 @@ def child(root,value):
  need(isinstance(value,str) and bool(value.strip()),'Пустой путь в config')
  p=Path(value);need(not p.is_absolute() and '..' not in p.parts,'Ожидается относительный путь без ..: '+value)
  result=(root/p).resolve();need(inside(result,root),'Путь выходит за разрешённый корень: '+value);return result
+
+def inbox_outputs(binding):
+ if 'raw_output_folder' in binding or 'final_output_folder' in binding:
+  need(bool(binding.get('raw_output_folder')) and bool(binding.get('final_output_folder')),'Укажите обе папки результатов')
+  return binding['raw_output_folder'],binding['final_output_folder']
+ need(bool(binding.get('output_folder')),'Укажите папки результатов')
+ return str(Path(binding['output_folder'])/'raw'),str(Path(binding['output_folder'])/'word')
 class Config:
  def __init__(self,path=None,*,code_root=None):
   self.path=Path(path or os.environ.get('LECTURE_CONFIG') or Path(__file__).with_name('config.json')).resolve()
@@ -77,9 +84,10 @@ class Config:
    if not s['enabled']:continue
    root=child(self.workspace_root,s['folder']);paths=s['paths']
    out[s['subject_code']]=dict(title=s['subject_name'],subject_name=s['subject_name'],subject_dir=root,notes_dir=child(root,paths.get('notes','.')),audio_dir=child(root,paths['audio']),raw_dir=child(root,paths['raw']),ready_dir=child(root,paths['ready']),default_language=s.get('default_language',self.data['languages']['lecture']),prompt=s.get('asr_context',{}).get('prompt',''),hotwords=s.get('asr_context',{}).get('hotwords',''))
-   if s.get('inbox',{}).get('output_folder'):
-    output=Path(s['inbox']['output_folder']).resolve()
-    out[s['subject_code']].update(raw_dir=output/'raw',ready_dir=output/'word',notes_dir=output)
+   if s.get('inbox'):
+    raw,final=inbox_outputs(s['inbox'])
+    notes=final if 'raw_output_folder' in s['inbox'] else s['inbox']['output_folder']
+    out[s['subject_code']].update(raw_dir=Path(raw).resolve(),ready_dir=Path(final).resolve(),notes_dir=Path(notes).resolve())
   return out
  def courses(self):
   """Course identity is the existing subject code, never a folder/file name."""
@@ -93,9 +101,11 @@ class Config:
     if binding is None:continue
     need(isinstance(binding,dict),'inbox binding должен быть объектом')
     need(type(binding.get('enabled',False)) is bool,'inbox.enabled должен быть boolean')
+    raw,final=inbox_outputs(binding)
+    effective=dict(binding,raw_output_folder=raw,final_output_folder=final)
     paths={}
-    for field in ('source_audio_folder','output_folder','archive_audio_folder'):
-     value=binding.get(field)
+    for field in ('source_audio_folder','raw_output_folder','final_output_folder','archive_audio_folder'):
+     value=effective.get(field)
      if field=='archive_audio_folder' and not value:paths[field]=None;continue
      need(isinstance(value,str) and Path(value).is_absolute(),field+' должен быть абсолютным')
      path=Path(value).resolve();need(path!=Path(path.anchor),field+': выберите отдельную папку')
@@ -107,12 +117,12 @@ class Config:
      need(type(settings[k]) is int and lo<=settings[k]<=hi,'Недопустимый inbox '+k)
     need(settings['settle_seconds']>=settings['poll_seconds'],'settle_seconds < poll_seconds')
     row=dict(course_id=subject['subject_code'],display_name=subject['subject_name'],workspace=wid,
-             enabled=subject['enabled'] and binding.get('enabled',False),**paths,**settings)
+             enabled=subject['enabled'] and binding.get('enabled',False),output_folder=Path(binding['output_folder']).resolve() if binding.get('output_folder') and 'raw_output_folder' not in binding else None,**paths,**settings)
     bindings.append(row)
     if wid==self.active:result[row['course_id']]=row
   used=[]
   for row in bindings:
-   for field in ('source_audio_folder','output_folder','archive_audio_folder'):
+   for field in ('source_audio_folder','raw_output_folder','final_output_folder','archive_audio_folder'):
     path=row[field]
     if path is None:continue
     need(all(not inside(path,p) and not inside(p,path) for p in managed),field+' пересекается с управляемым предметом')

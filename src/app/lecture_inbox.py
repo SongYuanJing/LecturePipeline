@@ -113,6 +113,7 @@ class Inbox:
                                        signature=signature, imported_at=self.now(), status='waiting_stable', **hints(path.name))
                             state['sources'][sid] = row
                             self.save(state)
+                        if row.pop('reset_stability',False):self.observed.pop(sid,None)
                         if row.get('part_hint') is not None:
                             row.update({k:v for k,v in hints(path.name).items() if k in ('session_stem','session_family')})
                             multipart.append(row)
@@ -179,6 +180,7 @@ class Inbox:
                 session_stem=items[0]['session_stem'],status='waiting_parts',member_ids=[],
                 imported_at=min(r['imported_at'] for r in items),recorded_at=None))
             ids=[r['source_id'] for r in items]
+            if g.pop('reset_stability',False):self.group_observed.pop(gid,None)
             def mark(status,error=None):
                 g.update(status=status,error=error)
                 for r in items:
@@ -235,7 +237,7 @@ class Inbox:
                         error='Конфликт дат частей; требуется ручная проверка'
                     elif None in dates:error='Дата неизвестна; требуется ручная проверка'
                     elif len(set(numbers))!=len(numbers):error='Повторяющийся номер части'
-                    elif numbers!=list(range(1,max(numbers)+1)):error='Неполная группа: пропущены части'
+                    elif numbers!=list(range(1,(g.get('expected_parts') or max(numbers))+1)):error='Неполная группа: состав не совпадает с ожидаемыми частями' if g.get('expected_parts') else 'Неполная группа: пропущены части'
                     if error:mark('review',error);continue
                     g.update(lecture_date=items[0]['lecture_date'],lecture_date_source=items[0]['lecture_date_source'],
                         members=[{k:r[k] for k in ('source_id','source_path','signature','part_hint')} for r in items])
@@ -249,6 +251,31 @@ class Inbox:
             except OSError as error:
                 self.group_observed.pop(gid,None);mark('waiting_parts',str(error))
             except (ValueError,KeyError) as error:mark('review',str(error))
+
+    def review(self,identity,*,lecture_date=None,expected_parts=None,retry=False):
+        """Explicit user override before publication, serialized with the producer."""
+        c=self.config;c.assert_current();p=human_ux.pipeline(c)
+        c.worker_home.mkdir(parents=True,exist_ok=True)
+        with p.pipeline_lock(c.worker_home/'inbox.lock'):
+            state=self.load();group=state.get('groups',{}).get(identity)
+            row=group or state['sources'].get(identity)
+            need(row is not None,'Запись больше не существует')
+            owner=state.get('groups',{}).get(row.get('group_id'))
+            need(row['status']!='queued' and not (owner and owner['status']=='queued'),'Лекция уже передана. Поздние части требуют ручной проверки.')
+            need(not row.get('lecture_key') or (lecture_date is None and expected_parts is None),'Передача уже началась: дату и состав менять нельзя')
+            members=[state['sources'][sid] for sid in group['member_ids']] if group else [row]
+            if lecture_date is not None:
+                day=date.fromisoformat(lecture_date).isoformat()
+                for r in [row,*members]:r.update(lecture_date=day,lecture_date_source='explicit')
+            if expected_parts is not None:
+                need(group is not None,'Число частей задаётся только для группы')
+                need(type(expected_parts) is int and 0<=expected_parts<=999,'Число частей: Auto или 1–999')
+                row['expected_parts']=expected_parts or None
+            need(retry or lecture_date is not None or expected_parts is not None,'Выберите действие')
+            for r in [row,*members]:
+                r.update(status='waiting_parts' if group else 'waiting_stable',reset_stability=True);r.pop('error',None)
+            self.save(state)
+        return 'Изменения сохранены. Worker повторно проверит исходные файлы.'
 
     def status(self):
         state = self.load(); c = self.config
@@ -268,7 +295,8 @@ class Inbox:
         courses=[]
         for code,course in c.courses().items():
             courses.append(dict(course_id=code,display_name=course['display_name'],enabled=course['enabled'],
-                source_audio_folder=str(course['source_audio_folder']),output_folder=str(course['output_folder']),
+                source_audio_folder=str(course['source_audio_folder']),output_folder=str(course['output_folder']) if course['output_folder'] else None,
+                raw_output_folder=str(course['raw_output_folder']),final_output_folder=str(course['final_output_folder']),
                 archive_audio_folder=str(course['archive_audio_folder']) if course['archive_audio_folder'] else None,
                 **state['courses'].get(code,{}),pending_count=sum(r['course_id']==code and r['status'] not in ('completed','superseded') for r in rows)))
         groups=[]
