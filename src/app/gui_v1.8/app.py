@@ -36,7 +36,7 @@ class App(Actions):
   self.banner=tk.StringVar(value='Загрузка конфигурации…');ttk.Label(root,textvariable=self.banner,wraplength=self.px(1150),padding=(22,10)).pack(fill='x')
   self.tabs=ttk.Notebook(root);self.tabs.pack(fill='both',expand=True,padx=18,pady=(0,10))
   self.pages={}
-  for name in ('Главная','Лекции','Dialogue','AI очередь','Workspace','Система'):
+  for name in ('Главная','Лекции','Курсы / Inbox','Dialogue','AI очередь','Workspace','Система'):
    f=ttk.Frame(self.tabs,padding=18);self.tabs.add(f,text=name);self.pages[name]=f
   self.status=tk.StringVar(value='Закрытие окна не останавливает workers. ChatGPT — внешний ручной этап.')
   ttk.Label(root,textvariable=self.status,padding=(22,8)).pack(fill='x')
@@ -44,6 +44,8 @@ class App(Actions):
   self.build_home();self.build_records('Лекции',[('subject','Предмет',240),('name','Лекция',180),('date','Дата',110),('status','ASR / worker',120),('ai','AI статус',165)])
   self.build_records('Dialogue',[('name','Запись',330),('status','Этап',160),('language','Язык',75),('duration','Аудио',100),('timing','ASR',100)])
   self.build_ai();self.build_workspace();self.build_system()
+  from courses import CoursePanel
+  self.course_panel=CoursePanel(self,self.pages['Курсы / Inbox'])
   try:
    bootstrap(self.path)
    global adapter
@@ -133,6 +135,9 @@ class App(Actions):
   self.busy=True;show=self.show_tests.get();self.status.set('Обновление…')
   def load():
    v=adapter.snapshot(self.path,show);p=adapter.preflight(v['config']) if full else None
+   import course_setup
+   try:v['course_view']=course_setup.view(v['config'])
+   except Exception as e:v['course_error']=str(e)
    try:
     v['scheduled_tasks']=adapter.Controls(v['config']).states()
     for kind in ('lecture','dialogue'):
@@ -145,6 +150,8 @@ class App(Actions):
   if self.controls_busy:return
   if error:self.banner.set('Данные недоступны: '+error);self.status.set('Показаны последние успешно прочитанные данные; они могут быть устаревшими.');return
   v,p,pending=result;self.view=v;c=v['config']
+  if v.get('course_view'):self.course_panel.render(v['course_view'],v['lecture_worker'])
+  else:self.course_panel.notice.set('Не удалось прочитать Inbox: '+v.get('course_error',''))
   if p is not None:self.preflight=p
   self.banner.set(('Незавершённое переключение — используйте восстановление. ' if pending else '')+(' | '.join(v['errors']) if v['errors'] else 'Данные обновлены · '+c.workspace['name']))
   pf='не выполнен' if not self.preflight else ('OK' if self.preflight['ok'] else 'ОШИБКА')

@@ -152,5 +152,19 @@ class CourseTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):manager(self.c).apply_config(data,before_commit=lambda:(_ for _ in ()).throw(ValueError('changed')))
         self.assertEqual(before,self.c.path.read_bytes())
 
+    def test_permanent_intake_failure_explicit_retry(self):
+        code=self.save();data=self.c.data
+        next(s for s in data['workspaces'][self.c.active]['subjects'] if s['subject_code']==code)['inbox'].update(settle_seconds=10,poll_seconds=5)
+        dump(self.c.path,data);c=Config(self.c.path);clock=[0];inbox=Inbox(c,monotonic=lambda:clock[0])
+        (Path(self.mapping['source_audio_folder'])/'20261009.wav').write_bytes(b'audio')
+        def scan():clock[0]+=5;return inbox.scan()
+        scan();scan()
+        with patch.object(ux,'add_lecture',side_effect=ValueError('Исправьте входной файл')):result=scan()
+        row=result['sources'][0];self.assertEqual(row['status'],'failed')
+        self.assertEqual(cs.view(c)['items'][0]['status_text'],'Ошибка')
+        inbox.review(row['source_id'],retry=True);scan();scan();result=scan()
+        self.assertEqual(result['sources'][0]['status'],'queued')
+        self.assertEqual(len(list(c.subjects()[code]['audio_dir'].glob('*.READY.json'))),1)
+
 
 if __name__=='__main__':unittest.main()

@@ -31,6 +31,9 @@ class Actions:
   ttk.Button(w,text='Сохранить',command=finish).grid(row=len(fields),column=1,pady=12,sticky='e')
  def new_workspace(self):self.form('Новый workspace',[('name','Название','',None)],lambda v:ux.add_workspace(self.config(),v['name'],self.manager))
  def subject_editor(self,new=False):
+  if new:
+   from courses import CourseEditor
+   CourseEditor(self);return
   c=self.config();subjects=c.subjects()
   if new:code='';name='';language='zh'
   else:
