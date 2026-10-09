@@ -29,7 +29,7 @@ class InboxTests(unittest.TestCase):
         return self.inbox.scan()
 
     def settled(self):
-        self.scan();self.scan();return self.scan()
+        self.scan();self.scan();self.scan();self.scan();return self.scan()
 
     def test_parser_hints_and_unknown(self):
         for stamp in ('2026_09_11','2026-09-11','20260911'):
@@ -51,7 +51,7 @@ class InboxTests(unittest.TestCase):
         p=ux.pipeline(self.c);s=self.c.subjects()['SUBJECT']
         for row in rows:
             ready=p.read_ready(s,row['lecture_key'],p.collect_lectures(s['audio_dir'])[row['lecture_key']])
-            self.assertEqual(ready['intake']['source_id'],row['source_id'])
+            self.assertEqual(ready['intake']['source_id'],row.get('group_id',row['source_id']))
             self.assertEqual(ready['intake']['lecture_date_source'],'filename')
         with patch.object(ux,'add_lecture',side_effect=AssertionError('duplicate')):
             self.scan();self.new_inbox();self.scan()
@@ -123,7 +123,7 @@ class InboxTests(unittest.TestCase):
             p.process_lecture(object(),'SUBJECT',s,key,p.collect_lectures(s['audio_dir'])[key],
                               p.load_state(self.c.state),self.c.state,self.base/'test.log')
         manifest=json.loads((s['raw_dir']/key/(key+'_manifest.json')).read_text(encoding='utf8'))
-        self.assertEqual(manifest['intake']['source_id'],row['source_id'])
+        self.assertEqual(manifest['intake']['source_id'],row.get('group_id',row['source_id']))
         task=ai_queue.refresh(self.c)['tasks'][self.c.active+'/SUBJECT/'+key]
         self.assertEqual(task['lecture_date'],'2026-10-09')
         self.assertEqual(task['lecture_date_source'],'filename')

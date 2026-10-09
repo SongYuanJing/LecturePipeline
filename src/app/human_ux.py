@@ -15,8 +15,16 @@ def pipeline(c):
  import lecture_pipeline as p
  return p
 
+def intake_reservations(c,subject):
+ path=c.worker_home/'inbox.json'
+ if not path.exists():return set()
+ state=read(path)
+ return {r['lecture_key'] for section in ('sources','groups') for r in state.get(section,{}).values()
+         if r.get('course_id')==subject and r.get('lecture_key')}
+
 def next_number(c,subject):
  p=pipeline(c);s=c.subjects()[subject];keys=set(p.collect_lectures(s['audio_dir']))|{k.split('/',1)[1] for k in read(c.state)['lectures'] if k.startswith(subject+'/')}
+ keys.update(intake_reservations(c,subject))
  return max([int(k.split('_',1)[0]) for k in keys if re.match(r'^\d+_',k)]+[0])+1
 
 def add_lecture(c,subject,day,number,files,*,intake=None,reserve=None):
@@ -36,12 +44,17 @@ def add_lecture(c,subject,day,number,files,*,intake=None,reserve=None):
   if intake and p.ready_path(s,key).exists():
    ready=p.read_ready(s,key,p.collect_lectures(s['audio_dir']).get(key,[]))
    need(ready.get('intake',{}).get('source_id')==intake['source_id'],'READY принадлежит другому source')
+   if 'members' in intake:
+    need(ready.get('intake',{}).get('members')==intake['members'],'READY содержит другой набор частей')
    need(all(sha(s['audio_dir']/e['name'])==e['sha256'] for e in ready['files']),'Повреждён опубликованный intake')
    return key
   need(all(f.is_file() and f.suffix.lower() in p.AUDIO_EXTENSIONS for f in files),'Неподдерживаемый аудиофайл')
   if intake:
-   need(len(files)==1 and p.source_signature(files[0])==intake['signature'],'Source изменился после stability gate')
+   members=intake.get('members',[intake])
+   need(len(files)==len(members) and all(p.source_signature(f)==m['signature'] and
+        str(f)==m['source_path'] for f,m in zip(files,members)),'Source изменился после stability gate')
   else:
+   need(key not in intake_reservations(c,subject),'Номер зарезервирован Inbox: выберите другой номер')
    need(key not in p.collect_lectures(s['audio_dir']),'Лекция уже существует: выберите другой номер')
   need(subject+'/'+key not in read(c.state)['lectures'] and not p.ready_path(s,key).exists(),'Лекция уже существует: выберите другой номер')
   stage=s['audio_dir']/('.ingest-'+uuid.uuid4().hex);stage.mkdir();published=[]
