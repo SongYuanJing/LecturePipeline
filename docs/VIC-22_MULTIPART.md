@@ -3,6 +3,9 @@
 Implemented on 2026-10-09 over Phase 3a. No GUI, release, version, updater,
 archive automation or processing schema change.
 
+Subsequent Course GUI and explicit date/count review controls are documented in
+[VIC-21](VIC-21_COURSE_GUI.md). They extend this baseline without replacing grouping.
+
 ## Architecture audit
 
 Manual `human_ux.add_lecture` already accepts an ordered file list. It copies

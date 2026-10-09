@@ -1,0 +1,43 @@
+{
+  "gate": "%TEMP%/LP-course-gui-20261009-213913",
+  "confirmation_previews": [
+    {
+      "title": "Создать папки и сохранить?",
+      "message": "Входящие аудио:\n%GATE%\\Drive Desktop 大学\\微观\\Inbox\n\nАрхив аудио (пока без переноса):\n%GATE%\\Drive Desktop 大学\\微观\\Lectures\\Audio\n\nЧерновики / TXT / SRT:\n%GATE%\\Drive Desktop 大学\\微观\\Lectures\\Raw\n\nГотовые лекции / Word:\n%GATE%\\Drive Desktop 大学\\微观\\Lectures\\Final\n\nWorkers будут безопасно остановлены и восстановлены. Существующие результаты не перемещаются."
+    },
+    {
+      "title": "Использовать эти папки?",
+      "message": "Входящие аудио:\n%GATE%\\Existing structure 计量\\00 — Входящие\n\nАрхив аудио (пока без переноса):\n%GATE%\\Existing structure 计量\\02 — Конспекты и разборы\\00 — Аудио лекций\n\nЧерновики / TXT / SRT:\n%GATE%\\Existing structure 计量\\02 — Конспекты и разборы\\01 — Черновые расшифровки\n\nГотовые лекции / Word:\n%GATE%\\Existing structure 计量\\02 — Конспекты и разборы\\02 — Готовые лекции\n\nWorkers будут безопасно остановлены и восстановлены. Существующие результаты не перемещаются."
+    },
+    {
+      "title": "Использовать эти папки?",
+      "message": "Входящие аудио:\n%GATE%\\Existing structure 计量\\00 — Входящие\n\nАрхив аудио (пока без переноса):\n%GATE%\\Existing structure 计量\\02 — Конспекты и разборы\\00 — Аудио лекций\n\nЧерновики / TXT / SRT:\n%GATE%\\Existing structure 计量\\02 — Конспекты и разборы\\01 — Черновые расшифровки\n\nГотовые лекции / Word:\n%GATE%\\Existing structure 计量\\02 — Конспекты и разборы\\02 — Готовые лекции\n\nWorkers будут безопасно остановлены и восстановлены. Существующие результаты не перемещаются."
+    }
+  ],
+  "scope": "Real Tk callbacks/config transaction/files/READY/raw/Word. Fixture scheduler + preflight + recognizer; no OS task or model access.",
+  "preview_before_creation": true,
+  "editor_footer_visible": true,
+  "created_course_id": "course-e5d3e141458d",
+  "recommended_tree_created": true,
+  "gui_restart_identity_bindings_unchanged": true,
+  "multipart_real_settle_seconds": 22.68699999999808,
+  "one_group_queued": true,
+  "worker_accepts": true,
+  "raw_in_split_folder": true,
+  "word_in_split_folder": true,
+  "unknown_date_review": true,
+  "gap_reason_visible": true,
+  "restart_no_duplicate": true,
+  "existing_structure_readonly_detection": true,
+  "existing_structure_confirmed": true,
+  "manual_editor_preserves_id": true,
+  "original_audio_unchanged": true,
+  "tk_dpi": 192.0,
+  "screen": [
+    2880,
+    1800
+  ],
+  "scheduler": "FixtureControls only; no Task Scheduler writes",
+  "visual": "Computer Use inspected main tab, Course editor and date dialog at Tk 192 DPI. Footer clipping fixed. Modal text injection unreliable; real Tk callback tests verify date/count saves.",
+  "status_footer_visible": true
+}

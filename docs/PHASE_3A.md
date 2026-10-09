@@ -5,6 +5,8 @@ or version change. GUI folder editor remains a separate iteration.
 
 This records the Phase 3a baseline. Automatic multipart grouping subsequently
 extends its one-file behavior; see [VIC-22](VIC-22_MULTIPART.md) for that contract.
+Split output bindings and Course setup/review GUI are documented in
+[VIC-21](VIC-21_COURSE_GUI.md); this baseline document is historical.
 
 ## Audit and integration decision
 
