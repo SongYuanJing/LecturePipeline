@@ -1,0 +1,72 @@
+{
+  "gate": "%TEMP%/LP-multipart-20261009-204725",
+  "platform": "Windows 11 x64",
+  "seconds": 46.73399999999674,
+  "unicode_course_folder": true,
+  "early_part_not_published": true,
+  "restart_during_accumulation": true,
+  "automatic_lecture_count": 3,
+  "main_group_parts": 3,
+  "ordered_ready_manifests": [
+    {
+      "lecture_key": "03_2026-10-09",
+      "expected_parts": 3,
+      "source_names": [
+        "微观2026_10_09_1.wav",
+        "微观2026_10_09_2.wav",
+        "微观2026_10_09_3.wav"
+      ],
+      "managed_names": [
+        "03_2026-10-09_1.wav",
+        "03_2026-10-09_2.wav",
+        "03_2026-10-09_3.wav"
+      ],
+      "sha256": [
+        "ec61e6b83abdde4542a5872f01575929da0a3e015c16a1bfb5e8f926a44f856d",
+        "8c69e8008031facc88a921c138c66b2327b5b6b507620de6de165ce919b7ec86",
+        "41db62f213db246dd5c5c65022a9f595058fc92fd9c385d67a605600b502f405"
+      ]
+    },
+    {
+      "lecture_key": "01_2026-10-09",
+      "expected_parts": 2,
+      "source_names": [
+        "A-2026_10_09_1.wav",
+        "A-2026_10_09_2.wav"
+      ],
+      "managed_names": [
+        "01_2026-10-09_1.wav",
+        "01_2026-10-09_2.wav"
+      ],
+      "sha256": [
+        "e9cb13e48621929dace9db11cf1a02c750e846bf739c70d5ab0b74925eaf3ec0",
+        "c609857a643af2f0b7e2e5f48c82535025de760fff03ae023fc29ac6f55259cc"
+      ]
+    },
+    {
+      "lecture_key": "02_2026-10-09",
+      "expected_parts": 2,
+      "source_names": [
+        "B-2026_10_09_1.wav",
+        "B-2026_10_09_2.wav"
+      ],
+      "managed_names": [
+        "02_2026-10-09_1.wav",
+        "02_2026-10-09_2.wav"
+      ],
+      "sha256": [
+        "e9cb13e48621929dace9db11cf1a02c750e846bf739c70d5ab0b74925eaf3ec0",
+        "c609857a643af2f0b7e2e5f48c82535025de760fff03ae023fc29ac6f55259cc"
+      ]
+    }
+  ],
+  "existing_worker_ready_accepted": true,
+  "verified_input_snapshots_match": true,
+  "restart_rescan_sha_mtime_unchanged": true,
+  "same_date_separate_sessions": true,
+  "missing_part_review": true,
+  "manual_multipart_preserves_order": true,
+  "originals_unchanged": true,
+  "archive_untouched": true,
+  "scope": "Generated PCM; real Windows filesystem, locks, ingestion, READY, worker acceptance. No ASR inference or AI."
+}

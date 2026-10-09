@@ -3,6 +3,9 @@
 Implemented and disposable Windows acceptance-tested on 2026-10-09. No release
 or version change. GUI folder editor remains a separate iteration.
 
+This records the Phase 3a baseline. Automatic multipart grouping subsequently
+extends its one-file behavior; see [VIC-22](VIC-22_MULTIPART.md) for that contract.
+
 ## Audit and integration decision
 
 The existing GUI calls `human_ux.add_lecture`, which copies selected audio into
