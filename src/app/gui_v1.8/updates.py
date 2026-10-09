@@ -1,5 +1,6 @@
 """Manual UI only. The installed stable updater owns all update decisions."""
 import json
+import logging
 import os
 from pathlib import Path
 import subprocess
@@ -52,7 +53,8 @@ class UpdateControls:
         self.pending = False
         self.check_button.configure(state='normal')
         if error:
-            self.status.set('Не удалось проверить обновления. Повторите проверку. '+error)
+            logging.error('Update check failed: %s', error)
+            self.status.set('Не удалось проверить обновления. Повторите проверку. Подробности в gui.log.')
         elif result['status'] == 'no-update':
             self.status.set('Установлена последняя версия')
         else:

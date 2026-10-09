@@ -34,6 +34,14 @@ def progress_text(text):
     return text
 
 
+def error_text(text):
+    if text.startswith('Staged health'):
+        return 'Новая версия не прошла проверку запуска. Подробности: logs/update-ui-result.json.'
+    if 'Traceback (most recent call last)' in text or len(text) > 350:
+        return 'Не удалось завершить обновление. Подробности: logs/update-ui-result.json.'
+    return text
+
+
 def perform_update(kernel, handle, tag, events):
     try:
         if kernel.WaitForSingleObject(handle, 30000) != 0:
@@ -88,7 +96,7 @@ def main():
                     else:
                         root.destroy()
                     return
-                status.set('Обновление не завершено. Предыдущая версия сохранена.\n'+value)
+                status.set('Обновление не завершено. Предыдущая версия сохранена.\n'+error_text(value))
                 ttk.Button(frame, text='Открыть приложение', command=reopen).pack(pady=10)
                 ttk.Button(frame, text='Закрыть', command=root.destroy).pack()
         root.after(100, pump)

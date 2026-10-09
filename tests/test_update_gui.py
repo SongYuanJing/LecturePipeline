@@ -39,6 +39,21 @@ class UpdateGuiTests(unittest.TestCase):
         panel.app.close.assert_not_called()
         panel.handed_off(True, None); panel.app.close.assert_called_once()
 
+    def test_native_health_traceback_stays_out_of_user_message(self):
+        import json
+        evidence = json.loads((REPO/'docs/phase2a-native-2026-10-05.json').read_text(encoding='utf8'))
+        raw = evidence['staged_health_failure']
+        self.assertIn('Traceback', raw)
+        shown = update_gui.error_text(raw)
+        self.assertIn('не прошла проверку', shown)
+        self.assertNotIn('Traceback', shown)
+        self.assertNotIn('fixture_broken.py', shown)
+        panel = self.controls()
+        with self.assertLogs(level='ERROR') as logs:
+            panel.checked(None, raw)
+        self.assertNotIn('Traceback', panel.status.set.call_args.args[0])
+        self.assertIn('Traceback', '\n'.join(logs.output))
+
     def test_parent_must_exit_before_engine(self):
         kernel = Mock(); kernel.WaitForSingleObject.return_value = 258
         events = queue.Queue()
