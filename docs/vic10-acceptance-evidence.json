@@ -1,0 +1,503 @@
+{
+  "generated_at": "2026-10-10T13:23:48.524068+00:00",
+  "groups": [
+    {
+      "id": "f981438fe0bc8055e562d23efff01a7301afcfcc04cf6f36b630c1f75b2a2515",
+      "course": "course-e83b245879a0",
+      "stem": "3_2026_09_16",
+      "key": "01_2026-09-16",
+      "status": "queued",
+      "ai_status": "completed",
+      "parts": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "ordered_ready_parts": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "filenames": [
+        "3_2026_09_16_1.m4a",
+        "3_2026_09_16_2.m4a",
+        "3_2026_09_16_3.m4a",
+        "3_2026_09_16_4.m4a",
+        "3_2026_09_16_5.m4a"
+      ],
+      "date": "2026-09-16",
+      "date_source": "filename",
+      "imported_at": "2026-10-10T01:56:54.769171+00:00",
+      "recorded_at": null,
+      "error": null,
+      "raw": "G:\\Мой диск\\test\\Raw\\01_2026-09-16",
+      "word": "G:\\Мой диск\\test\\Final\\01_2026-09-16\\lecture.docx",
+      "word_exists": true,
+      "srt_count": 5,
+      "transitions": [
+        {
+          "at": "2026-10-10T01:58:06.418436+00:00",
+          "status": "waiting_parts",
+          "parts": 5
+        },
+        {
+          "at": "2026-10-10T02:01:31.520322+00:00",
+          "status": "queued",
+          "parts": 5
+        }
+      ]
+    },
+    {
+      "id": "96ebf1ce972c9c463575ec1ce8d5e7953fb16b0284ea7477f7adc2476060a003",
+      "course": "course-e83b245879a0",
+      "stem": "3_2026_09_18",
+      "key": "02_2026-09-18",
+      "status": "queued",
+      "ai_status": "completed",
+      "parts": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "ordered_ready_parts": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "filenames": [
+        "3_2026_09_18_1.m4a",
+        "3_2026_09_18_2.m4a",
+        "3_2026_09_18_3.m4a",
+        "3_2026_09_18_4.m4a",
+        "3_2026_09_18_5.m4a"
+      ],
+      "date": "2026-09-18",
+      "date_source": "filename",
+      "imported_at": "2026-10-10T01:57:25.245620+00:00",
+      "recorded_at": null,
+      "error": null,
+      "raw": "G:\\Мой диск\\test\\Raw\\02_2026-09-18",
+      "word": "G:\\Мой диск\\test\\Final\\02_2026-09-18\\lecture.docx",
+      "word_exists": true,
+      "srt_count": 5,
+      "transitions": [
+        {
+          "at": "2026-10-10T01:58:06.418436+00:00",
+          "status": "waiting_parts",
+          "parts": 5
+        },
+        {
+          "at": "2026-10-10T02:01:31.520322+00:00",
+          "status": "ready",
+          "parts": 5
+        },
+        {
+          "at": "2026-10-10T02:01:36.522772+00:00",
+          "status": "queued",
+          "parts": 5
+        }
+      ]
+    },
+    {
+      "id": "5cad3dcd990c2d47736521ea072c3c59698c958206bc3387e91334218ce78d9e",
+      "course": "course-e83b245879a0",
+      "stem": "3_2026_09_21",
+      "key": "03_2026-09-21",
+      "status": "queued",
+      "ai_status": "completed",
+      "parts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "ordered_ready_parts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "filenames": [
+        "3_2026_09_21_1.m4a",
+        "3_2026_09_21_2.m4a",
+        "3_2026_09_21_3.m4a",
+        "3_2026_09_21_4.m4a",
+        "3_2026_09_21_5.m4a",
+        "3_2026_09_21_6.m4a",
+        "3_2026_09_21_7.m4a",
+        "3_2026_09_21_8.m4a"
+      ],
+      "date": "2026-09-21",
+      "date_source": "filename",
+      "imported_at": "2026-10-10T01:57:25.393797+00:00",
+      "recorded_at": null,
+      "error": null,
+      "raw": "G:\\Мой диск\\test\\Raw\\03_2026-09-21",
+      "word": "G:\\Мой диск\\test\\Final\\03_2026-09-21\\lecture.docx",
+      "word_exists": true,
+      "srt_count": 8,
+      "transitions": [
+        {
+          "at": "2026-10-10T01:58:06.418436+00:00",
+          "status": "waiting_parts",
+          "parts": 8
+        },
+        {
+          "at": "2026-10-10T02:01:36.522772+00:00",
+          "status": "queued",
+          "parts": 8
+        }
+      ]
+    },
+    {
+      "id": "7958427a2aa08cffa81393fa83cea6626a84e6237f6d5d4a1015c3d3a89fc964",
+      "course": "course-bd6a7390cc46",
+      "stem": "drivetest_2026_10_10",
+      "key": "01_2026-10-10",
+      "status": "queued",
+      "ai_status": "completed",
+      "parts": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "ordered_ready_parts": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "filenames": [
+        "DriveTest_2026_10_10_1.wav",
+        "DriveTest_2026_10_10_2.wav",
+        "DriveTest_2026_10_10_3.wav",
+        "DriveTest_2026_10_10_4.wav"
+      ],
+      "date": "2026-10-10",
+      "date_source": "filename",
+      "imported_at": "2026-10-10T13:08:04.871536+00:00",
+      "recorded_at": null,
+      "error": null,
+      "raw": "G:\\Мой диск\\test\\Staggered\\Raw\\01_2026-10-10",
+      "word": "G:\\Мой диск\\test\\Staggered\\Final\\01_2026-10-10\\lecture.docx",
+      "word_exists": true,
+      "srt_count": 4,
+      "transitions": [
+        {
+          "at": "2026-10-10T13:08:05.897011+00:00",
+          "status": "waiting_parts",
+          "parts": 2
+        },
+        {
+          "at": "2026-10-10T13:09:10.932566+00:00",
+          "status": "waiting_parts",
+          "parts": 4
+        },
+        {
+          "at": "2026-10-10T13:13:16.048205+00:00",
+          "status": "queued",
+          "parts": 4
+        }
+      ]
+    },
+    {
+      "id": "fb0a3203fdb23756d04bbf2a8c1dd3d49b4c04fdd9de9b0bc22a063b29d6923d",
+      "course": "course-bd6a7390cc46",
+      "stem": "gap_2026_10_10",
+      "key": null,
+      "status": "review",
+      "ai_status": null,
+      "parts": [
+        1,
+        3
+      ],
+      "ordered_ready_parts": [],
+      "filenames": [
+        "Gap_2026_10_10_1.wav",
+        "Gap_2026_10_10_3.wav"
+      ],
+      "date": "2026-10-10",
+      "date_source": "filename",
+      "imported_at": "2026-10-10T13:08:04.939500+00:00",
+      "recorded_at": null,
+      "error": "Неполная группа: пропущены части",
+      "raw": null,
+      "word": null,
+      "word_exists": false,
+      "srt_count": 0,
+      "transitions": [
+        {
+          "at": "2026-10-10T13:08:05.897011+00:00",
+          "status": "waiting_parts",
+          "parts": 2
+        },
+        {
+          "at": "2026-10-10T13:12:11.018869+00:00",
+          "status": "review",
+          "parts": 2
+        }
+      ]
+    }
+  ],
+  "original": [
+    {
+      "name": "3_2026_09_16_1.m4a",
+      "size": 26133269,
+      "mtime": 639255428569780000,
+      "attributes": "Normal",
+      "sha256": "169D35579B2CEE4636F6C5A2A4053377A69A3F65987A443B7AC8A7DF7E1082B7"
+    },
+    {
+      "name": "3_2026_09_16_2.m4a",
+      "size": 6225685,
+      "mtime": 639255423184700000,
+      "attributes": "Normal",
+      "sha256": "4D792B6B17CE744B2345E3AAF48CEA7BD1A441B7D0E39D2E9D7718777DD64786"
+    },
+    {
+      "name": "3_2026_09_16_3.m4a",
+      "size": 3776731,
+      "mtime": 639255423027050000,
+      "attributes": "Normal",
+      "sha256": "C3DABF8F44DC51DED0143CACCB4C148A6779AA4C5B5884EF37709FA3A383D012"
+    },
+    {
+      "name": "3_2026_09_16_4.m4a",
+      "size": 3473301,
+      "mtime": 639255422969620000,
+      "attributes": "Normal",
+      "sha256": "43569B157A3092BF05A2B5439E56CFADDC44057C43A3D5397596864F4555D48B"
+    },
+    {
+      "name": "3_2026_09_16_5.m4a",
+      "size": 103247,
+      "mtime": 639255422852070000,
+      "attributes": "Normal",
+      "sha256": "52606AD58DDD92FCFED48C8CF30AC22D090E400BA1EDF4FD3E3F6709FBF9B179"
+    },
+    {
+      "name": "3_2026_09_18_1.m4a",
+      "size": 46100041,
+      "mtime": 639254405796710000,
+      "attributes": "Normal",
+      "sha256": "35D72E38786862CCABD8650FA34CEA8D3CAF451045457953C33DB982D80ECB4C"
+    },
+    {
+      "name": "3_2026_09_18_2.m4a",
+      "size": 4771849,
+      "mtime": 639254404127060000,
+      "attributes": "Normal",
+      "sha256": "DEF356634DF27ECA84126C6B681809DE0EDEDFF3B9B3E4AF3B7D4C1FFC936356"
+    },
+    {
+      "name": "3_2026_09_18_3.m4a",
+      "size": 2498179,
+      "mtime": 639254403982990000,
+      "attributes": "Normal",
+      "sha256": "1A00164484A5A64A3C5B381C5198D5102B7BBDD0E55EF8A403FEB8DD60C90FDF"
+    },
+    {
+      "name": "3_2026_09_18_4.m4a",
+      "size": 3259339,
+      "mtime": 639254404092030000,
+      "attributes": "Normal",
+      "sha256": "C5679527ECB05024984C37B37A63D507BBF12FAFA926780846348AE71723F938"
+    },
+    {
+      "name": "3_2026_09_18_5.m4a",
+      "size": 4077474,
+      "mtime": 639254404103730000,
+      "attributes": "Normal",
+      "sha256": "BB50FC8A06814BA3229ACDEFB99959669FF454DC20AC467FBAC7E7811B45A041"
+    },
+    {
+      "name": "3_2026_09_21_1.m4a",
+      "size": 10336233,
+      "mtime": 639255821256520000,
+      "attributes": "Normal",
+      "sha256": "BCD3B20423CF64D670AA459D19665CA24CD54D642535C88DBEB7032DDFA660C4"
+    },
+    {
+      "name": "3_2026_09_21_2.m4a",
+      "size": 4453318,
+      "mtime": 639255821152200000,
+      "attributes": "Normal",
+      "sha256": "0C68AA2A38CFF9D040981324F57B21D795D307F24A93C50F92166B2A2C6C341D"
+    },
+    {
+      "name": "3_2026_09_21_3.m4a",
+      "size": 4393662,
+      "mtime": 639255821085250000,
+      "attributes": "Normal",
+      "sha256": "8BFEBF4984C27BAE2934C840FDCBC342A59177EAFEF42110FC7C767BD2DA1236"
+    },
+    {
+      "name": "3_2026_09_21_4.m4a",
+      "size": 2665574,
+      "mtime": 639255821025140000,
+      "attributes": "Normal",
+      "sha256": "A0C47344B0EBF1DC54AD61A84DDAF0E0E8F695A36DF0CEB1E70545A9245443D9"
+    },
+    {
+      "name": "3_2026_09_21_5.m4a",
+      "size": 4782927,
+      "mtime": 639255821187820000,
+      "attributes": "Normal",
+      "sha256": "A0319C4F7CFE130AD2CEA6F52AB593B9CAEF9F1D506A5DEA731EFFB5A1574365"
+    },
+    {
+      "name": "3_2026_09_21_6.m4a",
+      "size": 2609816,
+      "mtime": 639255821006190000,
+      "attributes": "Normal",
+      "sha256": "30556C97484CFEB2F1638F959591489951AF76CB1EA436EBE1BC398339E31D2E"
+    },
+    {
+      "name": "3_2026_09_21_7.m4a",
+      "size": 3487491,
+      "mtime": 639255821026820000,
+      "attributes": "Normal",
+      "sha256": "EE12ED9BCBF7C688AADDC8ACB752724C28F0A1B129B6B3FA5B9FB7FBDE553815"
+    },
+    {
+      "name": "3_2026_09_21_8.m4a",
+      "size": 2479171,
+      "mtime": 639255821001090000,
+      "attributes": "Normal",
+      "sha256": "4A71DDF680605554C1405495A9328D8878B61C11B2000197AC0D7956D6EC666B"
+    }
+  ],
+  "events": [
+    {
+      "event": "parts_1_2_visible",
+      "at": "2026-10-10T13:07:40.921013+00:00",
+      "files": [
+        {
+          "name": "DriveTest_2026_10_10_1.wav",
+          "size": 32044,
+          "mtime_ns": 1791637660886000000,
+          "attributes": 128
+        },
+        {
+          "name": "DriveTest_2026_10_10_2.wav",
+          "size": 32044,
+          "mtime_ns": 1791637660898000000,
+          "attributes": 128
+        },
+        {
+          "name": "Gap_2026_10_10_1.wav",
+          "size": 32044,
+          "mtime_ns": 1791637660910000000,
+          "attributes": 128
+        },
+        {
+          "name": "Gap_2026_10_10_3.wav",
+          "size": 32044,
+          "mtime_ns": 1791637660921000000,
+          "attributes": 128
+        }
+      ]
+    },
+    {
+      "event": "parts_3_4_visible",
+      "at": "2026-10-10T13:08:55.965040+00:00",
+      "files": [
+        {
+          "name": "DriveTest_2026_10_10_3.wav",
+          "size": 32044,
+          "mtime_ns": 1791637735948000000,
+          "attributes": 128
+        },
+        {
+          "name": "DriveTest_2026_10_10_4.wav",
+          "size": 32044,
+          "mtime_ns": 1791637735965000000,
+          "attributes": 128
+        }
+      ]
+    }
+  ],
+  "sync": "Google Drive Desktop history: green check / Файл загружен for lecture.docx, processing_report.json, source_packet.json, AI content and 01_2026-10-10_1/2 TXT/SRT. Home reported all files synchronized.",
+  "config_transaction": "committed",
+  "restart": {
+    "file_changes": [],
+    "groups_unchanged": true,
+    "source_ids_unchanged": true,
+    "original_audio_unchanged": true,
+    "control_result": "lecture worker перезапущен",
+    "files_checked": 104,
+    "before_at": "2026-10-10T13:20:38.993590+00:00",
+    "after_at": "2026-10-10T13:21:34.321230+00:00"
+  },
+  "worker_before_stop": {
+    "version": 1,
+    "worker": "RUNNING",
+    "message": "Проверка каждые 30 с; незавершённые комплекты ожидают",
+    "started_at": "2026-10-10T21:20:52+08:00",
+    "heartbeat": "2026-10-10T21:24:27+08:00",
+    "lectures": {
+      "course-e83b245879a0/01_2026-09-16": {
+        "status": "DONE",
+        "detail": "Завершённая лекция защищена; повторный READY игнорируется",
+        "updated_at": "2026-10-10T21:20:52+08:00"
+      },
+      "course-e83b245879a0/02_2026-09-18": {
+        "status": "DONE",
+        "detail": "Завершённая лекция защищена; повторный READY игнорируется",
+        "updated_at": "2026-10-10T21:20:52+08:00"
+      },
+      "course-e83b245879a0/03_2026-09-21": {
+        "status": "DONE",
+        "detail": "Завершённая лекция защищена; повторный READY игнорируется",
+        "updated_at": "2026-10-10T21:20:52+08:00"
+      },
+      "course-bd6a7390cc46/01_2026-10-10": {
+        "status": "DONE",
+        "detail": "Завершённая лекция защищена; повторный READY игнорируется",
+        "updated_at": "2026-10-10T21:20:52+08:00"
+      }
+    }
+  },
+  "candidate_workers_after": {
+    "lecture": {
+      "name": "LP-442c3683bf7a-Lecture",
+      "running": false,
+      "enabled": false
+    },
+    "dialogue": {
+      "name": "LP-442c3683bf7a-Dialogue",
+      "running": false,
+      "enabled": true
+    }
+  },
+  "tests": {
+    "unique_passed": 99,
+    "combined": {
+      "count": 80,
+      "initial_pass": 79,
+      "test_barrier_failure_fixed": true
+    },
+    "final_atomic_and_worker": {
+      "count": 23,
+      "passed": 23
+    }
+  },
+  "workbook_sha256": "c8d14a8913c25d544d6aee352e2c56c87a87ee7ad5cadcac1aec5ac3c5041af9"
+}

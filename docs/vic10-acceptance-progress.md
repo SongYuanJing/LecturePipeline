@@ -1,5 +1,8 @@
 # VIC-10 Google Drive Desktop acceptance — in progress
 
+Historical checkpoint, superseded by [final acceptance](vic10-acceptance.md).
+VIC-10 completed on 2026-10-10; the blockers below were resolved.
+
 Date: 2026-10-10. Not Done; no native acceptance claim.
 
 ## Audit and reproduced defect
