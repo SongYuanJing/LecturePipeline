@@ -1,6 +1,6 @@
 """Local AI boundary v1.7. No chat IDs, no network, no automatic AI/build/merge."""
 from __future__ import annotations
-import argparse,hashlib,importlib.util,json,os,re,shutil,uuid
+import argparse,hashlib,importlib.util,json,os,re,shutil,uuid,time
 from pathlib import Path
 from contextlib import contextmanager
 from datetime import datetime,timezone,date
@@ -10,8 +10,18 @@ STATES={'waiting_ai','ai_result_ready','building','vocabulary_pending','complete
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def atomic(p,value):
  p.parent.mkdir(parents=True,exist_ok=True);tmp=p.with_name(p.name+'.'+uuid.uuid4().hex[:8]+'.tmp')
- with tmp.open('w',encoding='utf8') as f:json.dump(value,f,ensure_ascii=False,indent=2,allow_nan=False);f.flush();os.fsync(f.fileno())
- os.replace(tmp,p)
+ try:
+  with tmp.open('w',encoding='utf8') as f:json.dump(value,f,ensure_ascii=False,indent=2,allow_nan=False);f.flush();os.fsync(f.fileno())
+  for attempt in range(6):
+   try:os.replace(tmp,p);break
+   except PermissionError as error:
+    # Windows readers briefly deny delete sharing. Never truncate the live
+    # journal; retry only this replacement, with a bounded 620 ms wait.
+    if os.name!='nt' or getattr(error,'winerror',None) not in (5,32,33) or attempt==5:raise
+    time.sleep(.02*(2**attempt))
+ finally:
+  try:tmp.unlink(missing_ok=True)
+  except OSError:pass
 @contextmanager
 def lock(c):
  c.queue_home.mkdir(parents=True,exist_ok=True)

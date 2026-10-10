@@ -24,13 +24,9 @@ SIGNAL = re.compile(r'^READY\s+(\d{1,3}_\d{4}-\d{2}-\d{2})\s+([1-9]\d{0,2})(?:\s
 
 
 def atomic_json(path, value):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + '.pending')
-    with tmp.open('w', encoding='utf-8') as f:
-        json.dump(value, f, ensure_ascii=False, indent=2)
-        f.flush()
-        os.fsync(f.fileno())
-    tmp.replace(path)
+    # Heartbeat and processing threads must not share one .pending filename.
+    from ai_queue import atomic
+    atomic(path, value)
 
 
 def remote_signals(audio_dir):
