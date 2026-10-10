@@ -59,6 +59,34 @@ class MultipartTests(unittest.TestCase):
         self.scan(5);self.assertEqual(len(self.ready()),2)
         self.assertTrue(all(json.loads(f.read_text())['expected_parts']==2 for f in self.ready()))
 
+    def test_same_family_independent_dates_drive_inventory(self):
+        # Actual VIC-10 Drive names: repeated course prefix, separate dated sessions.
+        for date,count in [('2026_09_16',5),('2026_09_18',5),('2026_09_21',8)]:
+            self.write(*[f'3_{date}_{n}.m4a' for n in range(count,0,-1)])
+        self.scan(5)
+        self.assertEqual(len(self.ready()),3)
+        sessions={}
+        for path in self.ready():
+            ready=json.loads(path.read_text(encoding='utf8'))
+            members=ready['intake']['members']
+            sessions[ready['intake']['lecture_date']]=[m['part_hint'] for m in members]
+        self.assertEqual(sessions,{'2026-09-16':list(range(1,6)),
+                                   '2026-09-18':list(range(1,6)),
+                                   '2026-09-21':list(range(1,9))})
+        before={p.name:p.read_bytes() for p in self.ready()}
+        self.restart();self.scan(6)
+        self.assertEqual(before,{p.name:p.read_bytes() for p in self.ready()})
+
+    def test_same_family_missing_first_parts_stay_separate(self):
+        for date,parts in [('2026_09_16',range(2,6)),('2026_09_18',range(2,6)),
+                           ('2026_09_21',range(1,9))]:
+            self.write(*[f'3_{date}_{n}.m4a' for n in parts])
+        result=self.scan(5)
+        self.assert_group(8)
+        review=[g for g in result['groups'] if g['status']=='review']
+        self.assertEqual(len(review),2)
+        self.assertTrue(all('пропущены' in g['error'] for g in review))
+
     def test_slow_arrival_resets_group_window(self):
         self.write('foo20261009_1.wav');self.scan(3);self.assertFalse(self.ready())
         self.write('foo20261009_2.wav');self.scan(3);self.assertFalse(self.ready())

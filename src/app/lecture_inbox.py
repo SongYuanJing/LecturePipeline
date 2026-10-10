@@ -173,7 +173,7 @@ class Inbox:
         families={}
         for row in rows:
             if row['status']!='queued':
-                families.setdefault(row['session_family'],set()).add(row['lecture_date'])
+                families.setdefault(row['session_family'],{}).setdefault(row['session_stem'],set()).add(row['part_hint'])
         for gid,items in candidates.items():
             items.sort(key=lambda r:(r['part_hint'],r['source_path']))
             g=groups.setdefault(gid,dict(source_id=gid,group_id=gid,course_id=code,
@@ -233,7 +233,13 @@ class Inbox:
                     numbers=[r['part_hint'] for r in items]
                     dates={r['lecture_date'] for r in items}
                     error=None
-                    if len(families[items[0]['session_family']])>1 or len(dates)>1:
+                    # Reused course prefixes are normal across dates. Overlapping
+                    # part numbers distinguish those independent sessions; disjoint
+                    # dated fragments still require review rather than guessing.
+                    siblings=families[items[0]['session_family']]
+                    ambiguous=any(stem!=g['session_stem'] and set(numbers).isdisjoint(parts)
+                                  for stem,parts in siblings.items())
+                    if ambiguous or len(dates)>1:
                         error='Конфликт дат частей; требуется ручная проверка'
                     elif None in dates:error='Дата неизвестна; требуется ручная проверка'
                     elif len(set(numbers))!=len(numbers):error='Повторяющийся номер части'
