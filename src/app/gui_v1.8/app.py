@@ -41,7 +41,9 @@ class App(Actions):
   self.status=tk.StringVar(value='Закрытие окна не останавливает workers. ChatGPT — внешний ручной этап.')
   ttk.Label(root,textvariable=self.status,padding=(22,8)).pack(fill='x')
   self.show_tests=tk.BooleanVar(value=False);self.tables={};self.rows={};self.details={};self.ai_filter=False
-  self.build_home();self.build_records('Лекции',[('subject','Предмет',240),('name','Лекция',180),('date','Дата',110),('status','ASR / worker',120),('ai','AI статус',165)])
+  self.build_home()
+  from catalog import CatalogPanel
+  self.catalog=CatalogPanel(self,self.pages['Лекции'])
   self.build_records('Dialogue',[('name','Запись',330),('status','Этап',160),('language','Язык',75),('duration','Аудио',100),('timing','ASR',100)])
   self.build_ai();self.build_workspace();self.build_system()
   from courses import CoursePanel
@@ -134,7 +136,15 @@ class App(Actions):
   if self.busy or self.controls_busy or not hasattr(self,'manager'):return
   self.busy=True;show=self.show_tests.get();self.status.set('Обновление…')
   def load():
-   v=adapter.snapshot(self.path,show);p=adapter.preflight(v['config']) if full else None
+   from lecture_catalog import build
+   c=adapter.Config(self.path);catalog=build(c)
+   try:v=adapter.snapshot(self.path,show)
+   except (OSError,ValueError,KeyError,TypeError,AttributeError) as e:
+    # A damaged legacy dashboard record must not hide the observational catalog.
+    v=dict(config=c,lectures=[],dialogues=[],lecture_worker='Неизвестно',dialogue_worker='Неизвестно',
+           errors=['Сводка недоступна: '+str(e)],hidden=0,current='Проверьте состояния во вкладке Лекции')
+   p=adapter.preflight(c) if full else None
+   v['catalog']=catalog
    import course_setup
    try:v['course_view']=course_setup.view(v['config'])
    except Exception as e:v['course_error']=str(e)
@@ -161,7 +171,8 @@ class App(Actions):
   if v.get('progress') is not None:self.progress.configure(value=v['progress']*100)
   elif v.get('asr_active'):self.progress.configure(mode='indeterminate');self.progress.start(70)
   self.dialogue_head.set('Worker: '+v['dialogue_worker']+' · Обычный drop использует '+c.data['languages']['dialogue'])
-  self.fill('Лекции',v['lectures']);self.fill('Dialogue',v['dialogues']);self.fill('AI очередь',[r for r in v['lectures'] if r['ai']!='—'])
+  self.catalog.render(v['catalog'],c)
+  self.fill('Dialogue',v['dialogues']);self.fill('AI очередь',[r for r in v['lectures'] if r['ai']!='—'])
   self.subject_map={'Все предметы':None,**{k+' · '+s['title']:k for k,s in c.subjects().items()}};self.subject_box['values']=list(self.subject_map)
   if self.subject.get() not in self.subject_map:self.subject.set('Все предметы')
   if self.ai_filter:self.select_ai()
