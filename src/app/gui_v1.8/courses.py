@@ -136,7 +136,8 @@ class CoursePanel:
         try:r=self.selected_item()
         except ValueError:return
         parts=', '.join(str(x) for x in r['parts'] if x is not None) or 'без номера'
-        self.details.set(f"{r['status_text']} · Найдены части: {parts} · Ожидаются: {r.get('expected_parts') or 'автоматически'}\n"+explain(r.get('error') or ''))
+        from lecture_dates import describe
+        self.details.set(f"{r['status_text']} · Найдены части: {parts} · Ожидаются: {r.get('expected_parts') or 'автоматически'}\n"+describe(r)+'\n'+explain(r.get('error') or ''))
 
     def edit(self):
         selected=self.courses.selection()
@@ -164,5 +165,9 @@ class CoursePanel:
         def save():
             data={k:v.get().strip() for k,v in values.items()};w.destroy();self.app.control(lambda:apply(data))
         ttk.Button(w,text='Отмена',command=w.destroy).grid(row=len(fields),column=0,padx=12,pady=12)
-        ttk.Button(w,text='Сохранить',command=save).grid(row=len(fields),column=1,padx=12,pady=12,sticky='e')
+        ttk.Button(w,text='Сохранить',command=save,state='disabled' if r.get('lecture_key') else 'normal').grid(row=len(fields),column=1,padx=12,pady=12,sticky='e')
+        from lecture_dates import describe
+        note=describe(r)
+        if r.get('lecture_key'):note+='\nЛекция уже передана. Изменение даты требует отдельной безопасной операции; повторная обработка не запускается.'
+        ttk.Label(w,text=note,wraplength=500).grid(row=len(fields)+1,column=0,columnspan=2,padx=12,pady=8,sticky='w')
         w.update_idletasks();w.minsize(min(w.winfo_reqwidth(),w.winfo_screenwidth()-50),w.winfo_reqheight())

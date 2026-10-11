@@ -16,6 +16,7 @@ from pathlib import Path
 
 from lecture_asr import bounded_segments
 from pipeline_config import Config
+import lecture_dates
 CONFIG = Config()
 WhisperModel = CONFIG.new_model
 
@@ -463,6 +464,7 @@ def _process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, part
 
     state_key = lecture_state_key(subject_code, lecture_key)
     state.setdefault("lectures", {})[state_key] = {
+        **lecture_dates.metadata(manifest),
         "status": "completed",
         "model": MODEL_NAME,
         "processed_at": now_iso(),

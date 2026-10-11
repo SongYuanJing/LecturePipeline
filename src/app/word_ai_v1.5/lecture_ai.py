@@ -8,6 +8,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 import atomic_publish
+import lecture_dates
 import source_provenance as provenance
 
 VERSION='1.5'
@@ -157,6 +158,7 @@ def render_word(c,b,dest):
  d.styles['Title'].font.size=Pt(22);d.styles['Heading 1'].font.size=Pt(15);d.styles['Heading 2'].font.size=Pt(12)
  d.add_paragraph(c['title'],'Title');m=b['manifest']
  d.add_paragraph(f"{m['subject']} · {m['lecture']} · {len(m['outputs'])} частей",'Subtitle')
+ d.add_paragraph(lecture_dates.describe(m))
  d.add_paragraph('Учебный конспект для повторения лекции. Таймкоды отсчитываются от начала указанной части. Восстановленные записи формул и сомнительные места отмечены отдельно.')
  def block(x):
   if x.get('heading'):d.add_paragraph(x['heading'],'Heading 2')
@@ -211,7 +213,7 @@ def build(packet,content,out):
    term={k:v for k,v in t.items() if k in ('chinese','pinyin','russian','note','entry_id','sense_id')}
    term['occurrences']=sum(s['text'].count(t['chinese']) for s in b['segments']);terms.append(term)
   batch=dict(schema_version=1,source=b['source'],terms=terms);dump(stage/'vocabulary_batch.json',batch)
-  entry=dict(b['source'],lecture_date=b['manifest']['lecture'].split('_',1)[1],recording_parts=len(b['manifest']['outputs']),output_docx_name='lecture.docx',vocabulary_entries=len(terms),processed_at=utc(),word_ai_version=VERSION,vocabulary_status='batch_pending',output_docx_local_path=str(dest/'lecture.docx'))
+  entry=dict(b['source'],**lecture_dates.metadata(b['manifest']),recording_parts=len(b['manifest']['outputs']),output_docx_name='lecture.docx',vocabulary_entries=len(terms),processed_at=utc(),word_ai_version=VERSION,vocabulary_status='batch_pending',output_docx_local_path=str(dest/'lecture.docx'))
   patch=dict(schema_version=1,expected_ai_state_sha256=b['ai_state_sha256'],entry=entry,requires_real_cloud_receipt=b['source'].get('provenance',{}).get('kind')!='local',pilot=b['pilot']);patch.update({'source_key':provenance.key(b['source'])} if 'source_key' in b['source'] else {'source_file_id':provenance.key(b['source'])});dump(stage/'ai_state_patch.json',patch)
   shutil.copy2(content,stage/'ai_content.json');shutil.copy2(packet,stage/'source_packet.json')
   hashes={p.name:sha(p.read_bytes()) for p in stage.iterdir() if p.is_file()}

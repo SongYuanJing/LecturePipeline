@@ -6,6 +6,7 @@ from datetime import datetime,timezone
 from contextlib import contextmanager
 from pipeline_config import Config,ConfigError,preflight,read,inside
 from ai_queue import load_queue,select
+import lecture_dates
 
 TEST_TASKS={'2026-2027-s1/05/990_2026-09-25'}
 TASKS={'lecture':'LecturePipelineWorker','dialogue':'LecturePipelineDialogueWorker'}
@@ -92,7 +93,9 @@ def snapshot(config_path,show_tests=False):
   status=worker.get('status',state.get('lectures',{}).get(key,{}).get('status','waiting'))
   elapsed=age(worker.get('updated_at')) if status=='TRANSCRIBING' else None
   manifest=t.get('manifest');folder=str(Path(manifest).parent) if manifest else str(s.get('raw_dir',''))
-  row=dict(id=key,name=lecture,subject=code+' · '+s.get('title',t.get('subject_name','')),date=t.get('lecture_date',lecture.split('_',1)[-1]),status=status,ai=t.get('status','—'),test=test,
+  date_record=t if 'lecture_date' in t else state.get('lectures',{}).get(key,{})
+  resolved=lecture_dates.metadata(dict(date_record,lecture=lecture))
+  row=dict(id=key,name=lecture,subject=code+' · '+s.get('title',t.get('subject_name','')),date=resolved['lecture_date'] or 'не определена',status=status,ai=t.get('status','—'),test=test,
    word=next(iter(words)) if len(words)==1 else None,folder=folder,txt=t.get('raw'),srt=t.get('srt',[]),packet=str(Path(t['source_packet']).parent) if t.get('source_packet') else None,
    detail=error or worker.get('detail',''),elapsed=duration(elapsed) if elapsed is not None else '—',eta='ETA: нет измерений текущей задачи',part='Часть: worker не публикует счётчик')
   if t.get('status')=='completed':

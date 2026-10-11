@@ -1,9 +1,10 @@
 """Small GUI actions over existing config/READY/AI contracts. No AI generation."""
 import copy,hashlib,json,os,re,shutil,subprocess,uuid,zipfile
-from datetime import date,datetime,timezone
+from datetime import datetime,timezone
 from pathlib import Path
 from pipeline_config import Config,need,read,child
 import ai_queue
+import lecture_dates
 
 def sha(p):
  h=hashlib.sha256()
@@ -28,7 +29,11 @@ def next_number(c,subject):
  return max([int(k.split('_',1)[0]) for k in keys if re.match(r'^\d+_',k)]+[0])+1
 
 def add_lecture(c,subject,day,number,files,*,intake=None,reserve=None):
- c.assert_current();date.fromisoformat(day)
+ c.assert_current()
+ metadata=dict(intake) if intake is not None else lecture_dates.resolve([str(f) for f in files],override=day or None,imported_at=datetime.now(timezone.utc).isoformat(),same_session=False)
+ day=metadata.get('lecture_date')
+ need(day is not None,'Дата неизвестна или конфликтует; требуется ручная проверка')
+ lecture_dates.day(day)
  need(number is None and intake is not None or type(number) is int and 1<=number<=999,'Номер лекции: 1–999')
  need(subject in c.subjects(),'Выберите действующий предмет');need(bool(files),'Выберите аудиофайлы')
  p=pipeline(c);s=c.subjects()[subject];files=[Path(f).resolve() for f in files]
@@ -72,8 +77,7 @@ def add_lecture(c,subject,day,number,files,*,intake=None,reserve=None):
      f.unlink() # Only our owned unpublished staging copy; keep existing input.
     else:f.rename(dest)
     published.append(dest)
-   metadata=intake or dict(course_id=subject,lecture_date=day,lecture_date_source='explicit',
-                           imported_at=datetime.now(timezone.utc).isoformat(),recorded_at=None)
+   metadata.setdefault('course_id',subject)
    p.prepare_ready(s,key,len(files),metadata=metadata)
    p.read_ready(s,key,p.collect_lectures(s['audio_dir'])[key])
    return key

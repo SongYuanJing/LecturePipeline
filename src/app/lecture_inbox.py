@@ -6,7 +6,7 @@ No source moves/deletes, ASR engine, background service or new processing queue.
 import argparse
 import copy
 from contextlib import ExitStack
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 import hashlib
 import json
 import os
@@ -20,27 +20,21 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from pipeline_config import Config, need, read
 from ai_queue import atomic
 import human_ux
+import lecture_dates
 
 
 def hints(name, override=None):
     stem=Path(name).stem
-    matches=list(re.finditer(r'(?<!\d)(\d{4})(?:[_-]?)(\d{2})(?:[_-]?)(\d{2})(?!\d)',stem))
-    if override is not None:
-        day = date.fromisoformat(override).isoformat(); provenance = 'explicit'
-    else:
-        day = None; provenance = 'unknown'
-        for match in matches:
-            try:
-                day = date(*map(int, match.groups())).isoformat(); provenance = 'filename'; break
-            except ValueError:
-                pass
+    matches=list(lecture_dates.PATTERN.finditer(stem))
     tail=stem[matches[-1].end():] if matches else stem
     part = re.search(r'(?:[_ -](?:part|pt|p)?|part)(\d{1,3})$', tail, re.I)
     base=stem[:len(stem)-len(tail)+part.start()].rstrip(' _-') if part else stem
     session=unicodedata.normalize('NFC',base).casefold().strip()
     # Date-masked family is ONLY an ambiguity guard, never a merge key.
-    family=re.sub(r'(?<!\d)\d{4}[_-]?\d{2}[_-]?\d{2}(?!\d)','{date}',session)
-    return dict(lecture_date=day, lecture_date_source=provenance,
+    family=lecture_dates.PATTERN.sub('{date}',session)
+    resolved=lecture_dates.filename(name)
+    if override is not None:resolved=lecture_dates.resolve([resolved],override=override)
+    return dict(resolved,
                 part_hint=int(part[1]) if part and int(part[1]) > 0 else None, recorded_at=None,
                 session_stem=session, session_family=family)
 
@@ -132,7 +126,7 @@ class Inbox:
                         if signature['size'] <= 0 or old[1] < course['stable_observations'] or self.clock()-old[0] < course['settle_seconds']:
                             continue
                         if row['lecture_date'] is None:
-                            row['status']='review';row['error']='Дата неизвестна; требуется ручная проверка'
+                            row['status']='review';row['error']='Конфликт дат; требуется ручная проверка' if row.get('date_resolution')=='conflict' else 'Дата неизвестна; требуется ручная проверка'
                             continue
                         try:
                             # Reuse Windows deny-writer access from the existing worker.
@@ -231,7 +225,8 @@ class Inbox:
                         if g['status']!='review':mark('waiting_parts')
                         continue
                     numbers=[r['part_hint'] for r in items]
-                    dates={r['lecture_date'] for r in items}
+                    resolved=lecture_dates.resolve(items,imported_at=g['imported_at'])
+                    g.update(resolved)
                     error=None
                     # Reused course prefixes are normal across dates. Overlapping
                     # part numbers distinguish those independent sessions; disjoint
@@ -239,14 +234,13 @@ class Inbox:
                     siblings=families[items[0]['session_family']]
                     ambiguous=any(stem!=g['session_stem'] and set(numbers).isdisjoint(parts)
                                   for stem,parts in siblings.items())
-                    if ambiguous or len(dates)>1:
+                    if ambiguous or resolved['date_resolution']=='conflict':
                         error='Конфликт дат частей; требуется ручная проверка'
-                    elif None in dates:error='Дата неизвестна; требуется ручная проверка'
+                    elif resolved['lecture_date'] is None:error='Дата неизвестна; требуется ручная проверка'
                     elif len(set(numbers))!=len(numbers):error='Повторяющийся номер части'
                     elif numbers!=list(range(1,(g.get('expected_parts') or max(numbers))+1)):error='Неполная группа: состав не совпадает с ожидаемыми частями' if g.get('expected_parts') else 'Неполная группа: пропущены части'
                     if error:mark('review',error);continue
-                    g.update(lecture_date=items[0]['lecture_date'],lecture_date_source=items[0]['lecture_date_source'],
-                        members=[{k:r[k] for k in ('source_id','source_path','signature','part_hint')} for r in items])
+                    g.update(members=[{k:r[k] for k in ('source_id','source_path','signature','part_hint')} for r in items])
                     mark('ready');self.save(state)
                     def reserve(key):
                         g['lecture_key']=key;self.save(state)
@@ -270,15 +264,16 @@ class Inbox:
             need(row['status']!='queued' and not (owner and owner['status']=='queued'),'Лекция уже передана. Поздние части требуют ручной проверки.')
             need(not row.get('lecture_key') or (lecture_date is None and expected_parts is None),'Передача уже началась: дату и состав менять нельзя')
             members=[state['sources'][sid] for sid in group['member_ids']] if group else [row]
+            targets=[row,*[r for r in members if r is not row]]
             if lecture_date is not None:
-                day=date.fromisoformat(lecture_date).isoformat()
-                for r in [row,*members]:r.update(lecture_date=day,lecture_date_source='explicit')
+                for r in targets:
+                    r.update(lecture_dates.resolve([r],override=lecture_date,imported_at=r.get('imported_at')))
             if expected_parts is not None:
                 need(group is not None,'Число частей задаётся только для группы')
                 need(type(expected_parts) is int and 0<=expected_parts<=999,'Число частей: Auto или 1–999')
                 row['expected_parts']=expected_parts or None
             need(retry or lecture_date is not None or expected_parts is not None,'Выберите действие')
-            for r in [row,*members]:
+            for r in targets:
                 r.update(status='waiting_parts' if group else 'waiting_stable',reset_stability=True);r.pop('error',None)
             self.save(state)
         return 'Изменения сохранены. Worker повторно проверит исходные файлы.'

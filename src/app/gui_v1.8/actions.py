@@ -51,9 +51,9 @@ class Actions:
   if not subjects:messagebox.showinfo('Добавить лекцию','Сначала добавьте предмет во вкладке Workspace',parent=self.root);return
   w=tk.Toplevel(self.root);w.title('Добавить лекцию');w.transient(self.root)
   w.columnconfigure(0,weight=1);w.rowconfigure(3,weight=1)
-  choices={k+' · '+s['title']:k for k,s in subjects.items()};subject=tk.StringVar(value=next(iter(choices)));day=tk.StringVar(value=date.today().isoformat());number=tk.StringVar()
+  choices={k+' · '+s['title']:k for k,s in subjects.items()};subject=tk.StringVar(value=next(iter(choices)));day=tk.StringVar(value='');number=tk.StringVar()
   form=ttk.Frame(w,padding=14);form.grid(row=0,column=0,sticky='ew');form.columnconfigure(1,weight=1)
-  for row,(label,var) in enumerate([('Предмет',subject),('Дата YYYY-MM-DD',day),('Номер лекции',number)]):
+  for row,(label,var) in enumerate([('Предмет',subject),('Дата YYYY-MM-DD (пусто — из имени)',day),('Номер лекции',number)]):
    ttk.Label(form,text=label).grid(row=row,column=0,sticky='w',pady=5)
    entry=ttk.Combobox(form,textvariable=var,values=list(choices),state='readonly',width=50) if row==0 else ttk.Entry(form,textvariable=var,width=24)
    entry.grid(row=row,column=1,sticky='ew',padx=12)
@@ -75,7 +75,11 @@ class Actions:
   bar=ttk.Frame(w,padding=14);bar.grid(row=2,column=0,sticky='ew')
   for label,fn in [('Выбрать аудио',choose),('↑',lambda:move(-1)),('↓',lambda:move(1)),('Убрать',remove)]:ttk.Button(bar,text=label,command=fn).pack(side='left',padx=3)
   def finish():
-   try:n=int(number.get());d=day.get();date.fromisoformat(d);code=choices[subject.get()];selected=list(files)
+   try:
+    n=int(number.get());d=day.get().strip();code=choices[subject.get()];selected=list(files)
+    if d:
+     from lecture_dates import day as valid_day
+     valid_day(d)
    except ValueError:messagebox.showerror('Лекция','Проверьте номер и дату',parent=w);return
    if not selected:messagebox.showerror('Лекция','Выберите аудиофайлы',parent=w);return
    w.destroy();self.control(lambda:'Лекция добавлена: '+ux.add_lecture(c,code,d,n,selected)+'. Worker начнёт обработку автоматически.')

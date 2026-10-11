@@ -56,6 +56,8 @@ class CourseGuiTests(unittest.TestCase):
         next(w for w in dialog.winfo_children() if isinstance(w,ttk.Button) and w.cget('text')=='Сохранить').invoke()
         saved=Inbox(self.c).load()['sources'][row['id']]
         self.assertEqual((saved['lecture_date'],saved['lecture_date_source']),('2026-10-08','explicit'))
+        self.assertIsNone(saved['date_evidence'][0]['lecture_date'])
+        self.assertTrue(saved['date_override'])
 
     def test_expected_parts_through_actual_review_widgets(self):
         panel,dialog,row=self.prepare_panel('Gap20261009_1.wav')
