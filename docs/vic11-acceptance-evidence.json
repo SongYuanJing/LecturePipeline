@@ -1,0 +1,579 @@
+{
+  "status": "PASS",
+  "path": "%TEMP%/LP-vic11-rqp25mwq",
+  "today": "2026-10-11",
+  "yesterday": "2026-10-10",
+  "outputs": [
+    {
+      "key": "01_2026-10-10",
+      "metadata": {
+        "lecture_date": "2026-10-10",
+        "lecture_date_source": "filename",
+        "lecture_date_raw": "2026-10-10",
+        "imported_at": "2026-10-11T00:02:45.786150+00:00",
+        "recorded_at": null,
+        "recorded_at_source": "unknown",
+        "date_resolution": "resolved",
+        "date_evidence": [
+          {
+            "value": "2026-10-10",
+            "raw": "2026-10-10",
+            "source": "filename"
+          }
+        ],
+        "date_override": false
+      },
+      "word": "%TEMP%/LP-vic11-rqp25mwq\\Results 课程\\word\\01_2026-10-10\\lecture.docx"
+    },
+    {
+      "key": "02_2026-10-10",
+      "metadata": {
+        "lecture_date": "2026-10-10",
+        "lecture_date_source": "filename",
+        "lecture_date_raw": "2026-10-10",
+        "imported_at": "2026-10-11T00:02:45.770960+00:00",
+        "recorded_at": null,
+        "recorded_at_source": "unknown",
+        "date_resolution": "resolved",
+        "date_evidence": [
+          {
+            "lecture_date": "2026-10-10",
+            "source": "filename",
+            "raw": "2026-10-10",
+            "filename_hints": [
+              {
+                "value": "2026-10-10",
+                "raw": "2026-10-10",
+                "source": "filename"
+              }
+            ]
+          },
+          {
+            "lecture_date": "2026-10-10",
+            "source": "filename",
+            "raw": "2026-10-10",
+            "filename_hints": [
+              {
+                "value": "2026-10-10",
+                "raw": "2026-10-10",
+                "source": "filename"
+              }
+            ]
+          }
+        ],
+        "date_override": false
+      },
+      "word": "%TEMP%/LP-vic11-rqp25mwq\\Results 课程\\word\\02_2026-10-10\\lecture.docx"
+    },
+    {
+      "key": "03_2026-10-09",
+      "metadata": {
+        "lecture_date": "2026-10-09",
+        "lecture_date_source": "explicit",
+        "lecture_date_raw": "2026-10-09",
+        "imported_at": "2026-10-11T00:02:45.781484+00:00",
+        "recorded_at": null,
+        "recorded_at_source": "unknown",
+        "date_resolution": "resolved",
+        "date_evidence": [
+          {
+            "lecture_date": null,
+            "source": "unknown",
+            "raw": null,
+            "filename_hints": []
+          }
+        ],
+        "date_override": true
+      },
+      "word": "%TEMP%/LP-vic11-rqp25mwq\\Results 课程\\word\\03_2026-10-09\\lecture.docx"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-11T00:02:45.971747+00:00",
+      "items": [
+        {
+          "id": "b9e0e7f2873340c4346fa27842bc14ce580853ac2277e626e1a114e24f83fcb7",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "b1b15ceeea30219ae537cf90a7109cda680950e48748790f8b96c50b902c9004",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "21f43b85955ffc978a32437cbdeaed1eaed811287cb2efa3ced3076609a73a76",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "6b13c5931364dbbfa6db05b125f8c66ee11e059b695b847c5ecde534e5ed0e1d",
+          "status": "waiting_stable",
+          "date": null
+        },
+        {
+          "id": "a4dc58a67f90fdb329043c8e7d34f40ead598bb9ad3d131f388bd512b22afafd",
+          "status": "waiting_stable",
+          "date": "2026-10-10"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-11T00:02:51.023255+00:00",
+      "items": [
+        {
+          "id": "b9e0e7f2873340c4346fa27842bc14ce580853ac2277e626e1a114e24f83fcb7",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "b1b15ceeea30219ae537cf90a7109cda680950e48748790f8b96c50b902c9004",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "21f43b85955ffc978a32437cbdeaed1eaed811287cb2efa3ced3076609a73a76",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "6b13c5931364dbbfa6db05b125f8c66ee11e059b695b847c5ecde534e5ed0e1d",
+          "status": "waiting_stable",
+          "date": null
+        },
+        {
+          "id": "a4dc58a67f90fdb329043c8e7d34f40ead598bb9ad3d131f388bd512b22afafd",
+          "status": "waiting_stable",
+          "date": "2026-10-10"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-11T00:02:56.133734+00:00",
+      "items": [
+        {
+          "id": "b9e0e7f2873340c4346fa27842bc14ce580853ac2277e626e1a114e24f83fcb7",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "b1b15ceeea30219ae537cf90a7109cda680950e48748790f8b96c50b902c9004",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "21f43b85955ffc978a32437cbdeaed1eaed811287cb2efa3ced3076609a73a76",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "6b13c5931364dbbfa6db05b125f8c66ee11e059b695b847c5ecde534e5ed0e1d",
+          "status": "review",
+          "date": null
+        },
+        {
+          "id": "a4dc58a67f90fdb329043c8e7d34f40ead598bb9ad3d131f388bd512b22afafd",
+          "status": "queued",
+          "date": "2026-10-10"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-11T00:03:01.234947+00:00",
+      "items": [
+        {
+          "id": "b9e0e7f2873340c4346fa27842bc14ce580853ac2277e626e1a114e24f83fcb7",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "b1b15ceeea30219ae537cf90a7109cda680950e48748790f8b96c50b902c9004",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "21f43b85955ffc978a32437cbdeaed1eaed811287cb2efa3ced3076609a73a76",
+          "status": "waiting_parts",
+          "date": null
+        },
+        {
+          "id": "6b13c5931364dbbfa6db05b125f8c66ee11e059b695b847c5ecde534e5ed0e1d",
+          "status": "review",
+          "date": null
+        },
+        {
+          "id": "a4dc58a67f90fdb329043c8e7d34f40ead598bb9ad3d131f388bd512b22afafd",
+          "status": "queued",
+          "date": "2026-10-10"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-11T00:03:06.412438+00:00",
+      "items": [
+        {
+          "id": "b9e0e7f2873340c4346fa27842bc14ce580853ac2277e626e1a114e24f83fcb7",
+          "status": "review",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "b1b15ceeea30219ae537cf90a7109cda680950e48748790f8b96c50b902c9004",
+          "status": "review",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "21f43b85955ffc978a32437cbdeaed1eaed811287cb2efa3ced3076609a73a76",
+          "status": "queued",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "6b13c5931364dbbfa6db05b125f8c66ee11e059b695b847c5ecde534e5ed0e1d",
+          "status": "review",
+          "date": null
+        },
+        {
+          "id": "a4dc58a67f90fdb329043c8e7d34f40ead598bb9ad3d131f388bd512b22afafd",
+          "status": "queued",
+          "date": "2026-10-10"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-11T00:03:11.469036+00:00",
+      "items": [
+        {
+          "id": "b9e0e7f2873340c4346fa27842bc14ce580853ac2277e626e1a114e24f83fcb7",
+          "status": "review",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "b1b15ceeea30219ae537cf90a7109cda680950e48748790f8b96c50b902c9004",
+          "status": "review",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "21f43b85955ffc978a32437cbdeaed1eaed811287cb2efa3ced3076609a73a76",
+          "status": "queued",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "6b13c5931364dbbfa6db05b125f8c66ee11e059b695b847c5ecde534e5ed0e1d",
+          "status": "review",
+          "date": null
+        },
+        {
+          "id": "a4dc58a67f90fdb329043c8e7d34f40ead598bb9ad3d131f388bd512b22afafd",
+          "status": "queued",
+          "date": "2026-10-10"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-11T00:03:11.711356+00:00",
+      "items": [
+        {
+          "id": "b9e0e7f2873340c4346fa27842bc14ce580853ac2277e626e1a114e24f83fcb7",
+          "status": "review",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "b1b15ceeea30219ae537cf90a7109cda680950e48748790f8b96c50b902c9004",
+          "status": "review",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "21f43b85955ffc978a32437cbdeaed1eaed811287cb2efa3ced3076609a73a76",
+          "status": "queued",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "6b13c5931364dbbfa6db05b125f8c66ee11e059b695b847c5ecde534e5ed0e1d",
+          "status": "waiting_stable",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "a4dc58a67f90fdb329043c8e7d34f40ead598bb9ad3d131f388bd512b22afafd",
+          "status": "queued",
+          "date": "2026-10-10"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-11T00:03:16.797389+00:00",
+      "items": [
+        {
+          "id": "b9e0e7f2873340c4346fa27842bc14ce580853ac2277e626e1a114e24f83fcb7",
+          "status": "review",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "b1b15ceeea30219ae537cf90a7109cda680950e48748790f8b96c50b902c9004",
+          "status": "review",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "21f43b85955ffc978a32437cbdeaed1eaed811287cb2efa3ced3076609a73a76",
+          "status": "queued",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "6b13c5931364dbbfa6db05b125f8c66ee11e059b695b847c5ecde534e5ed0e1d",
+          "status": "waiting_stable",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "a4dc58a67f90fdb329043c8e7d34f40ead598bb9ad3d131f388bd512b22afafd",
+          "status": "queued",
+          "date": "2026-10-10"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-11T00:03:21.902685+00:00",
+      "items": [
+        {
+          "id": "b9e0e7f2873340c4346fa27842bc14ce580853ac2277e626e1a114e24f83fcb7",
+          "status": "review",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "b1b15ceeea30219ae537cf90a7109cda680950e48748790f8b96c50b902c9004",
+          "status": "review",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "21f43b85955ffc978a32437cbdeaed1eaed811287cb2efa3ced3076609a73a76",
+          "status": "queued",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "6b13c5931364dbbfa6db05b125f8c66ee11e059b695b847c5ecde534e5ed0e1d",
+          "status": "waiting_stable",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "a4dc58a67f90fdb329043c8e7d34f40ead598bb9ad3d131f388bd512b22afafd",
+          "status": "queued",
+          "date": "2026-10-10"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-11T00:03:27.126764+00:00",
+      "items": [
+        {
+          "id": "b9e0e7f2873340c4346fa27842bc14ce580853ac2277e626e1a114e24f83fcb7",
+          "status": "review",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "b1b15ceeea30219ae537cf90a7109cda680950e48748790f8b96c50b902c9004",
+          "status": "review",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "21f43b85955ffc978a32437cbdeaed1eaed811287cb2efa3ced3076609a73a76",
+          "status": "queued",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "6b13c5931364dbbfa6db05b125f8c66ee11e059b695b847c5ecde534e5ed0e1d",
+          "status": "queued",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "a4dc58a67f90fdb329043c8e7d34f40ead598bb9ad3d131f388bd512b22afafd",
+          "status": "queued",
+          "date": "2026-10-10"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-11T00:03:32.213968+00:00",
+      "items": [
+        {
+          "id": "b9e0e7f2873340c4346fa27842bc14ce580853ac2277e626e1a114e24f83fcb7",
+          "status": "review",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "b1b15ceeea30219ae537cf90a7109cda680950e48748790f8b96c50b902c9004",
+          "status": "review",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "21f43b85955ffc978a32437cbdeaed1eaed811287cb2efa3ced3076609a73a76",
+          "status": "queued",
+          "date": "2026-10-10"
+        },
+        {
+          "id": "6b13c5931364dbbfa6db05b125f8c66ee11e059b695b847c5ecde534e5ed0e1d",
+          "status": "queued",
+          "date": "2026-10-09"
+        },
+        {
+          "id": "a4dc58a67f90fdb329043c8e7d34f40ead598bb9ad3d131f388bd512b22afafd",
+          "status": "queued",
+          "date": "2026-10-10"
+        }
+      ]
+    }
+  ],
+  "completed_edit": "UI disabled; service rejected without mutation",
+  "restart": "fresh Inbox and Tk; same metadata, keys, READY/raw/Word hashes and mtime",
+  "original_sources_unchanged": true,
+  "config_unchanged": true,
+  "checks": 8,
+  "substitutions": [
+    "Whisper transcription",
+    "AI content"
+  ],
+  "real": [
+    "Windows filesystem",
+    "real monotonic wait",
+    "Tk widgets/callback",
+    "Inbox",
+    "READY",
+    "raw publisher",
+    "AI packet",
+    "Word finalizer"
+  ],
+  "scheduler": "not used",
+  "settle_seconds": 10,
+  "poll_seconds": 5,
+  "implementation_commit": "319da62",
+  "media_formats": {
+    "pyav": "18.1.0",
+    "path": "%TEMP%/LP-vic11-media-y5ogqgf4",
+    "injected_creation_time": "2020-01-02T03:04:05Z",
+    "injected_date": "1999-12-31",
+    "files": [
+      {
+        "suffix": "m4a",
+        "format": "mov,mp4,m4a,3gp,3g2,mj2",
+        "metadata": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2mp41",
+          "creation_time": "2020-01-02T03:04:05.000000Z",
+          "date": "1999-12-31",
+          "encoder": "Lavf62.12.102"
+        },
+        "streams": [
+          {
+            "creation_time": "2020-01-02T03:04:05.000000Z",
+            "language": "und",
+            "handler_name": "SoundHandler"
+          }
+        ]
+      },
+      {
+        "suffix": "mp4",
+        "format": "mov,mp4,m4a,3gp,3g2,mj2",
+        "metadata": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2mp41",
+          "creation_time": "2020-01-02T03:04:05.000000Z",
+          "date": "1999-12-31",
+          "encoder": "Lavf62.12.102"
+        },
+        "streams": [
+          {
+            "creation_time": "2020-01-02T03:04:05.000000Z",
+            "language": "und",
+            "handler_name": "SoundHandler"
+          }
+        ]
+      },
+      {
+        "suffix": "mov",
+        "format": "mov,mp4,m4a,3gp,3g2,mj2",
+        "metadata": {
+          "major_brand": "qt  ",
+          "minor_version": "512",
+          "compatible_brands": "qt  ",
+          "creation_time": "2020-01-02T03:04:05.000000Z",
+          "date": "1999-12-31",
+          "encoder": "Lavf62.12.102"
+        },
+        "streams": [
+          {
+            "creation_time": "2020-01-02T03:04:05.000000Z",
+            "handler_name": "SoundHandler",
+            "vendor_id": "[0][0][0][0]"
+          }
+        ]
+      },
+      {
+        "suffix": "wav",
+        "format": "wav",
+        "metadata": {
+          "date": "1999-12-31",
+          "encoder": "Lavf62.12.102"
+        },
+        "streams": [
+          {}
+        ]
+      },
+      {
+        "suffix": "mp3",
+        "format": "mp3",
+        "metadata": {
+          "encoder": "Lavf62.12.102",
+          "date": "1999-12-31",
+          "creation_time": "2020-01-02T03:04:05.000000Z"
+        },
+        "streams": [
+          {}
+        ]
+      },
+      {
+        "suffix": "aac",
+        "format": "aac",
+        "metadata": {},
+        "streams": [
+          {}
+        ]
+      },
+      {
+        "suffix": "flac",
+        "format": "flac",
+        "metadata": {
+          "creation_time": "2020-01-02T03:04:05Z",
+          "date": "1999-12-31",
+          "encoder": "Lavf62.12.102"
+        },
+        "streams": [
+          {}
+        ]
+      },
+      {
+        "suffix": "ogg",
+        "format": "ogg",
+        "metadata": {},
+        "streams": [
+          {
+            "creation_time": "2020-01-02T03:04:05Z",
+            "date": "1999-12-31",
+            "encoder": "Lavf62.12.102"
+          }
+        ]
+      },
+      {
+        "suffix": "opus",
+        "format": "ogg",
+        "metadata": {},
+        "streams": [
+          {
+            "creation_time": "2020-01-02T03:04:05Z",
+            "date": "1999-12-31",
+            "encoder": "Lavf62.12.102"
+          }
+        ]
+      }
+    ],
+    "trust": "none: generated tags are not recording timestamps"
+  }
+}

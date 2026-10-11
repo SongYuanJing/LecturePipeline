@@ -1,5 +1,7 @@
 # Architecture / authoritative boundaries
 
+Lecture dates use the additive shared [VIC-11 date contract](docs/VIC11_DATES.md): calendar lecture date, source-acceptance timestamp and optional recording timestamp are distinct. Published identities are immutable; no filesystem-date fallback or implicit migration.
+
 The authoritative version pointer is application-root `current.json`. Stable `launcher/launch.py` validates the selected `versions/<version>/release.json` and code hashes, reads `config/config.json`, performs preflight, then invokes existing modules. Packaged Config follows this pointer for code; `application_home` selects the outer mutable home. Stored `install_root` remains a legacy hint, not a second update pointer. Legacy schema-1 config without `application_home` still means home = install root.
 
 - **ASR:** `lecture_asr.py` retains v1.3 child isolation, large-v3, cuda/int8_float16/beam5/VAD and CPU int8/no-VAD. `asr_device.py` resolves schema-1 `asr.device_mode` (Auto/CPU/GPU) using isolated private-runtime probes. Only Auto permits CPU fallback; forced GPU fails with a recovery suggestion. `Config.new_model()` supplies the selected profile, fallback policy, private HF cache and CUDA path. See [Phase 1b contracts and validation](docs/PHASE_1B.md).
