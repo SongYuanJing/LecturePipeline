@@ -1,27 +1,69 @@
 {
-  "status": "visual_gate_pending",
-  "tests": {"unique_passed": 169, "regression_count": 168, "regression_seconds": 61.607, "legacy_followup_count": 1, "legacy_followup_seconds": 0.099},
-  "performance": {"entities": 300, "build_seconds": 3.003, "persistent_cache": false},
+  "status": "PASS",
+  "tests": {
+    "unique_passed": 170,
+    "regression_count": 168,
+    "regression_seconds": 61.607,
+    "legacy_followup_count": 1,
+    "legacy_followup_seconds": 0.099,
+    "post_fix_targeted_count": 5,
+    "post_fix_targeted_seconds": 0.756
+  },
+  "performance": {
+    "entities": 300,
+    "build_seconds": 3.003,
+    "persistent_cache": false
+  },
   "native_widget_gate": {
+    "fixture": true,
+    "refresh_seconds": 0.02173969999421388,
     "status": "PASS",
-    "path": "%TEMP%/LP-vic13-gui-ew6n_nl0/evidence.json",
-    "dpi": 192,
     "lectures": 8,
     "pending": 1,
-    "refresh_seconds": 0.024394999985815957,
+    "dpi": 192,
     "filters": true,
     "selection_details": true,
-    "horizontal_scroll_at_narrow_width": true,
-    "review_link_to_existing_group": true,
-    "resize_controls_visible": true,
-    "safe_open_with_recording_opener": true,
+    "scroll": true,
+    "review_link": true,
+    "resize": true,
+    "safe_open_guard": true,
     "config_data_sha_mtime_unchanged": true,
-    "journals_bytes_mtime_unchanged": true,
     "rebuild_identical": true,
+    "errors": [],
+    "os_open": "real Windows dispatch recorded",
+    "real_os_startfile_dispatches": [
+      "%TEMP%/LP-vic13-gui-tds6_264\\Данные 课程\\semester-1\\ECON\\word\\03_2026-10-05\\lecture.docx",
+      "%TEMP%/LP-vic13-gui-tds6_264\\Данные 课程\\semester-1\\ECON\\raw\\03_2026-10-05",
+      "%TEMP%/LP-vic13-gui-tds6_264\\Данные 课程\\semester-1\\ECON\\word\\03_2026-10-05",
+      "%TEMP%/LP-vic13-gui-tds6_264\\Данные 课程\\semester-1\\ECON\\audio"
+    ],
+    "post_interaction_invariance": true,
+    "path": "%TEMP%/LP-vic13-gui-tds6_264/evidence.json",
+    "journals_bytes_mtime_unchanged": true,
     "scheduler_preflight_substituted": true,
     "asr_run": false
   },
-  "remaining": ["visual inspection after Windows unlock", "real Word/folder OS open actions", "vertical scrolling visual check"],
+  "remaining": [],
   "protected_data_changed": false,
-  "published_or_pushed": false
+  "published_or_pushed": false,
+  "visual_inspection": {
+    "dpi": 192,
+    "russian_chinese_glyphs": true,
+    "headers_buttons_readable": true,
+    "vertical_scroll": true,
+    "horizontal_scroll_after_column_resize": true,
+    "normal_maximized_layout": true,
+    "reduced_width_widget_assertions": true,
+    "course_filter": true,
+    "multipart_details": true,
+    "pending_review": true,
+    "word_document_window_observed": true,
+    "word_page_content_reviewed": false,
+    "raw_txt_opened_in_notepad": true,
+    "result_source_explorer_paths": true
+  },
+  "gui_fix": {
+    "commit": "d4e8635",
+    "description": "Preserve selected details and scrolling on unchanged background refresh"
+  }
 }

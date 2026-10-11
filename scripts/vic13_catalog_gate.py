@@ -28,8 +28,16 @@ def main():
     (c.subjects()['RESEARCH']['ready_dir']/'02_2026-10-08/lecture.docx').unlink()
     sources={str(n):dict(source_id=str(n),course_id='ECON',source_path=str(base/f'20261010_{n}.wav'),part_hint=n,status='review',group_id='group',lecture_date='2026-10-10',lecture_date_source='filename') for n in (1,3)}
     dump(c.worker_home/'inbox.json',dict(schema_version=1,sources=sources,groups={'group':dict(group_id='group',course_id='ECON',session_stem='20261010',member_ids=['1','3'],status='review',error='Не хватает части 2',lecture_date='2026-10-10',lecture_date_source='filename')},courses={}))
+    dump(c.worker_home/'worker_status.json',dict(worker='STOPPED',lectures={}))
+    dump(c.dialogue_home/'status.json',dict(worker='STOPPED',files={}))
+    dump(c.dialogue_home/'dialogue_state.json',dict(jobs={}))
+    (c.dialogue_root/'00 — Входящие аудио').mkdir(parents=True)
     before={**fingerprints(c.data_root),'CONFIG':(c.path.read_bytes().hex(),c.path.stat().st_mtime_ns)}
     service_files={p:(p.read_bytes(),p.stat().st_mtime_ns) for root in (c.worker_home,c.queue_home) for p in root.rglob('*') if p.is_file()}
+    dispatches=[];real_startfile=os.startfile
+    def observed_startfile(path):
+        real_startfile(path)  # Delegate to the real Windows API; no recording-only opener.
+        dispatches.append(str(path));dump(base/'windows-open.json',dict(dispatched=dispatches))
     first=build(c);start=time.perf_counter();assert first==build(c);refresh=time.perf_counter()-start
     import tkinter as tk
     import adapter
@@ -40,7 +48,7 @@ def main():
         def __init__(self,c):pass
         def states(self):return {k:dict(running=False,enabled=False) for k in ('lecture','dialogue')}
     errors=[];root.report_callback_exception=lambda typ,value,tb:errors.append(str(value))
-    with patch.object(adapter,'Controls',Controls),patch.object(adapter,'preflight',lambda c:dict(ok=True,checks=[])):
+    with patch.object(adapter,'Controls',Controls),patch.object(adapter,'preflight',lambda c:dict(ok=True,checks=[])),patch.object(os,'startfile',observed_startfile):
         app=App(root,c.path);root.title('VIC-13 disposable catalog · 200%');app.tabs.select(app.pages['Лекции'])
         report=dict(base=str(base),fixture=True,refresh_seconds=refresh)
         def check():
@@ -71,6 +79,13 @@ def main():
                 try:adapter.safe_open(c,base/'does-not-exist')
                 except (ValueError,FileNotFoundError):pass
                 else:raise AssertionError('Missing path accepted')
+                outside=base/'outside.txt';outside.write_text('Disposable guard test',encoding='utf8')
+                invalid=c.data_root/'invalid.exe';invalid.write_bytes(b'not executable')
+                for path in (outside,invalid,c.data_root/'missing.txt'):
+                    try:adapter.safe_open(c,path,opener=opened.append)
+                    except (ValueError,FileNotFoundError):pass
+                    else:raise AssertionError('Unsafe path accepted: '+str(path))
+                invalid.unlink();assert len(opened)==4
                 after={**fingerprints(c.data_root),'CONFIG':(c.path.read_bytes().hex(),c.path.stat().st_mtime_ns)}
                 assert before==after and all((p.read_bytes(),p.stat().st_mtime_ns)==value for p,value in service_files.items())
                 assert build(c)==first and not errors,errors
@@ -83,6 +98,14 @@ def main():
                 app.close();return
             if not args.interactive:app.close()
         root.after(300,check);root.mainloop()
+    if report.get('status')=='PASS':
+        after={**fingerprints(c.data_root),'CONFIG':(c.path.read_bytes().hex(),c.path.stat().st_mtime_ns)}
+        assert before==after,'Data/config changed during interactive inspection'
+        assert all((p.read_bytes(),p.stat().st_mtime_ns)==value for p,value in service_files.items()),'Journal changed'
+        assert build(c)==first and not errors,errors
+        report.update(real_os_startfile_dispatches=dispatches,post_interaction_invariance=True,
+                      os_open='real Windows dispatch recorded' if dispatches else 'not exercised')
+        dump(base/'evidence.json',report);print(json.dumps(report,ensure_ascii=False),flush=True)
     assert report.get('status')=='PASS',report
 
 

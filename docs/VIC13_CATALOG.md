@@ -71,10 +71,12 @@ ambiguous AI completions are problems. Unknown extra fields are tolerated.
 
 ## Acceptance checkpoint (2026-10-11)
 
-**Implementation complete; final visual/OS-open gate pending. Do not mark VIC-13 Done.**
+**VIC-13 Done: final native visual/OS-open gate passed on Windows at 192 DPI.**
 
 - 168 affected regression tests passed in 61.607 s, plus one added legacy fallback
-  test passed in 0.099 s: 169 distinct tests, including 31 catalog cases.
+  test passed in 0.099 s. One new GUI regression brings the total to 170 distinct
+  passing tests, including 31 catalog cases. After the GUI fix, the new regression
+  and four DPI tests passed again (5 tests, 0.756 s).
 - Covers Inbox, multipart, Course GUI/DPI, dates, dedup/recovery, manual import,
   worker, AI/finalizer, pipeline and legacy/split output mapping.
 - 300 synthetic READY entities: 3.003 s build on this host. Grouping uses indexed
@@ -88,21 +90,38 @@ ambiguous AI completions are problems. Unknown extra fields are tolerated.
   eight lectures (one eight-part, five completed, AI pending, raw ready, missing Word)
   and one unresolved group missing part 2. Actual DOCX fixtures are openable; state
   records are synthetic. Task Scheduler/preflight are substituted; no ASR/network.
-- Latest native widget evidence: `%TEMP%/LP-vic13-gui-ew6n_nl0/evidence.json` PASS,
+- Final interactive evidence: `%TEMP%/LP-vic13-gui-tds6_264/evidence.json` PASS,
   192 DPI, filters, row/details, horizontal scrolling at reduced width, resize,
   exact existing Inbox selection, safe-open validation, no state mutation and
-  rebuild equivalence. Eight-row refresh: 0.024395 s.
+  rebuild equivalence. Eight-row refresh: 0.021740 s.
 - An initial harness assumed horizontal overflow at full width; all columns fit.
   The check was corrected to shrink the window first. A fixture Inbox schema was
   corrected and review-link assertion strengthened to check the actual group selection.
 
-The desktop was locked during Computer Use inspection. The capture showed the
-Windows lock screen, so no further OS input was attempted. The user was asked to
-unlock. Glyph rendering/visual clipping and real os.startfile dispatch remain OPEN;
-the helper was exercised with a recording opener, not claimed as a real Word launch.
-The interactive disposable window from `%TEMP%/LP-vic13-gui-l137jxls` remains available
-for inspection, but predates the corrected review-link fixture. Rerun the current
-gate with `--interactive` after unlock for the final visual pass.
+After desktop unlock, the corrected fixture was inspected through actual Windows
+input at 200% (192 DPI). Russian and Chinese glyphs, headers, buttons, pending
+reason, course filtering, eight-part selection/details and vertical scrolling were
+readable. Horizontal scrolling was visually exercised after widening a column;
+rightmost AI/Word headers remained reachable. Normal and maximized layouts were
+inspected; reduced-width geometry/visibility was also asserted by the native gate.
+
+The inspection found one small GUI defect: unchanged background refresh replayed
+table-selection events and could replace selected lecture details with pending
+details. Commit `d4e8635` skips unchanged catalog rendering; the regression verifies
+detail text, scroll position and selection retention. No architecture change.
+
+All four catalog buttons delegated to real `os.startfile`: DOCX, Raw folder, result
+folder and source folder. `windows-open.json` records exact disposable targets.
+Word opened a `lecture` document window (its page content was not visually reviewed).
+Raw TXT was additionally opened through Explorer in Notepad: Chinese text rendered
+correctly; the test tab was closed without edits. Result/source Explorer breadcrumbs
+matched the fixture paths. Missing paths, an existing outside TXT and an invalid
+inside EXE were rejected without dispatch.
+
+After closing the test GUI, the process exited 0: data/config SHA-256 and mtime,
+worker/queue bytes and mtime, and rebuilt catalog semantics remained unchanged.
+No Tk callback errors occurred. The repo evidence file preserves the final results;
+earlier locked/interrupted attempts are superseded by this completed gate.
 
 ## Limits / safety
 
