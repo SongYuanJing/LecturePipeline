@@ -1,0 +1,738 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "case": "single-reservation",
+      "killed": {
+        "point": "reservation",
+        "pid": 15088,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "2056dd2689cf8fe96e0934f6c6827ba9f0745e2907e84810d10616afc2c8d955",
+      "word_sha256": "d7e67c7b611e18c38a5fe562ff8bf0a4ae5c953189b7c6fbbbf2f61f3108a382",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "da0c08750cdfef3a6c3c11013f0597a867e7823a53992d364d2fd3b9ab6f7f5d",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "multipart-reservation",
+      "killed": {
+        "point": "reservation",
+        "pid": 7256,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 4,
+      "asr_calls": 4,
+      "ready_sha256": "95cd15c6f5792ac276794751bb6d0a8d8c4f116d30966ac91ddefa79f9e55360",
+      "word_sha256": "c17bf8fa94a518d26e4b7e5b4bee2b0bb44ecd19a8e8654b0d526c53a1d006ed",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_2.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_2.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_3.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_3.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_4.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_4.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "638a8f2ff8d4e4fb6652dffa114a9caea2e60c5cea6babfd18a0741601475b9a",
+        "01_2026-10-10_raw.txt": "0b8956f0856b5d67b6d6629fdb2e64a6a4488843b4ef8130fed9a2dce9db0128"
+      }
+    },
+    {
+      "case": "multipart-midcopy",
+      "killed": {
+        "point": "mid_copy",
+        "pid": 36588,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 4,
+      "asr_calls": 4,
+      "ready_sha256": "de2424c88dd2857910872969309dc7fbfb65d98a5264c02c27b5bea2ca2c4432",
+      "word_sha256": "05e73adfad3e6288fa18bc768dd35b5460d85922ee68c489a705a484cb3915e1",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_2.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_2.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_3.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_3.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_4.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_4.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "a87816a4c9d83844f53819ae95aad987601f0d5fd50a6460c73a7f82b000c99d",
+        "01_2026-10-10_raw.txt": "0b8956f0856b5d67b6d6629fdb2e64a6a4488843b4ef8130fed9a2dce9db0128"
+      }
+    },
+    {
+      "case": "multipart-copy",
+      "killed": {
+        "point": "copy",
+        "pid": 13760,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 4,
+      "asr_calls": 4,
+      "ready_sha256": "be6c108aa8edc989cadcdc5d56ccd6c328d0966ae4fc1a2d57a94026d31c4fbc",
+      "word_sha256": "7aecc2776b6f568f25cc5609e3fbcde6e9a28d068f589a7f32a278ef84f03696",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_2.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_2.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_3.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_3.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_4.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_4.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "f640edc1d53b526a646fb8e5f00d4f42274fc0f001b2094752373b5efd58cffb",
+        "01_2026-10-10_raw.txt": "0b8956f0856b5d67b6d6629fdb2e64a6a4488843b4ef8130fed9a2dce9db0128"
+      }
+    },
+    {
+      "case": "single-ready",
+      "killed": {
+        "point": "ready",
+        "pid": 35016,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "b4d9382bbc312babb60bf113b066b220699a41fcce989957e5138f5a94b0d2d4",
+      "word_sha256": "ef29f40efd282e38bdeb5bfe8b3c234e9ebbe105841512197ff72490a0628d29",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "266f492e4acc4015765b18c8b4919a22aadde48f7cf6b84bf959f3f0206bca93",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "multipart-ready",
+      "killed": {
+        "point": "ready",
+        "pid": 20736,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 4,
+      "asr_calls": 4,
+      "ready_sha256": "ad6def64e686d6e2bb093f7a91b5e9f3b0d1819cbb1e2c1383e56360c5a8b1b0",
+      "word_sha256": "e00550a2dca4a86902146979b3db071776d83459d82d62d3c6e08a393e99c198",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_2.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_2.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_3.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_3.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_4.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_4.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "7f5a456bb2d5aab0a9bb87765c6b2283f4e860597813e18a85744472bf569269",
+        "01_2026-10-10_raw.txt": "0b8956f0856b5d67b6d6629fdb2e64a6a4488843b4ef8130fed9a2dce9db0128"
+      }
+    },
+    {
+      "case": "asr",
+      "killed": {
+        "point": "during_asr",
+        "pid": 25296,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 2,
+      "ready_sha256": "8d457a1fd687403fc1ef576969ac76e3ae3cedd5745a4e8d77675fcfff3fc6b7",
+      "word_sha256": "dbf31460d6749bcc143665cbef14a73902a2efb3e04b8db23fd5114e811d6742",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "2afafb34ca7aa6de18b2583de3fde8418796a018d6574fdf58a59b8da50ccf46",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "spool",
+      "killed": {
+        "point": "spool_commit",
+        "pid": 30444,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "522662a3d9040a89d7f6b8fdc6314a168bf903607e8d735614ad03e7a85d548e",
+      "word_sha256": "75d03a6550584c7cbb1c16777be9423dd19de1b566c9125ea0a5fb8233324338",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "0567dd0da7c8ad78c3069292ede6f0656bdccaba9260e68521efe44be5cf5877",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "plan",
+      "killed": {
+        "point": "publish_plan",
+        "pid": 34944,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "13df1889ebb7d1620392f6ee0f670415e4253cbfe83583304cc9a96c1a005e83",
+      "word_sha256": "ffac8ae8536ec7280f4cbe09c7c8d3c9f458f1da98da5ecc6b7b1aeb4a36c642",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "d3099317c67b25b73ea41a6cc0bd158c307d6aab3ae106e97836a40649c1f768",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "raw",
+      "killed": {
+        "point": "raw_publication",
+        "pid": 31592,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "043ca0e964ffa7df64deea6690cfd98caaebd2b57912fa9d4725cb2ef1dc6a89",
+      "word_sha256": "5028ab2b90c33af8dfa9640342db00dab4efed1dc72a2783dfff766dce65d9f7",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "6bc7fe6ac7c6241aea08230db87d1df38b50047d5c1bb472bfb6dfc220aa28af",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "packet",
+      "killed": {
+        "point": "ai_packet",
+        "pid": 3660,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "908a9271c87b9e1f18240e62f1bd0302e0c6211207151fc23c2a8cdc1f002ff8",
+      "word_sha256": "f6474314c1b2da54e37343dcb1f0000ff3450a3000636edfe75852828bfb3f8a",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "9d41a1c292436e95d210565426c803596d510e6b3f2356c141b0d9943d4194c3",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "result",
+      "killed": {
+        "point": "ai_result",
+        "pid": 27028,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "ca8605c0bf843ece0a848efcaf892761c6b1a4bf32b7a3e5316ef3ab108a1e23",
+      "word_sha256": "36f2e34dad9241a021a1ea9fc1620912798eabb34de4ed38169169eb057cb77b",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "9699f77e22adb26850dbe7f9d77c2ca94fed54ddbc1dac24c80a2eba83173168",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "word-stage",
+      "killed": {
+        "point": "during_word",
+        "pid": 36916,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "80deae8827349b7f628c355378f2213d7849f63290d4ec0da5ade64acb92e898",
+      "word_sha256": "16f115ca8013998bf250956f7ba7c1618bedd4705654555479ea801258434683",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "c478749eb6047d4fcabd8325a15c86af85bc8db79a897de1cde82c4b276acdeb",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "word",
+      "killed": {
+        "point": "word_publication",
+        "pid": 23456,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "904bdb35367e0c9ce4f46930fbbb3ac95f0cf4fcb7460fde7cddfac08acf4ed8",
+      "word_sha256": "b5e61618de993408b274b8fe159bf0bbee45f1065728800e99d16018dfb3cfaf",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "365674204cdbeb2907ae581eb777bf48c20f8d52d8c8fd418eaa17e3c5c5caea",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "complete",
+      "killed": {
+        "point": "completion",
+        "pid": 34912,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "5662f4512767f3f7dd2d8f43b5d930eaa1ce31529af2e77b53a1a4130176e2a8",
+      "word_sha256": "8e78b42a8abdfd2faf4c280f894a1a388f08485bca8fc171c4ee34f9591671a4",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "01944beca3de4f9f19f6cde5076c9141dfecdf55ca8047f3c5ba485512be70a0",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "manual-reservation",
+      "killed": {
+        "point": "reservation",
+        "pid": 35908,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "6ac1cf226300ca50aac3bc7a8c87ff45f514158cc56b98e98e7a8d10e17d8d65",
+      "word_sha256": "f5db9b17a2eddcef665f25e20b2e1ee918558026160e575adc7c783aae436309",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "171f2f64ef9397f349d08ce1963dabe0d8c2f7140342f51e03e75934a5322276",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    },
+    {
+      "case": "manual-midcopy",
+      "killed": {
+        "point": "mid_copy",
+        "pid": 4444,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 4,
+      "asr_calls": 4,
+      "ready_sha256": "e041de8c7ae42401fd0df2279cd8dcd59cd7089882f052943316ba95424be876",
+      "word_sha256": "22c88593a7c31ded53d3ab8f132ad5a5f73c8fab38919aac42cd469096a2bac7",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_2.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_2.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_3.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_3.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_4.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_4.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "1230d0943e8c0b023bfd02b8c52087403cd9ef03955f0e22babc4a1ea0c50756",
+        "01_2026-10-10_raw.txt": "0b8956f0856b5d67b6d6629fdb2e64a6a4488843b4ef8130fed9a2dce9db0128"
+      }
+    },
+    {
+      "case": "manual-ready",
+      "killed": {
+        "point": "ready",
+        "pid": 30484,
+        "exit_code": 1
+      },
+      "key": "01_2026-10-10",
+      "parts": 1,
+      "asr_calls": 1,
+      "ready_sha256": "4aee6d70a0ca67bceed86345ae78ece0fab847b3521471395da84e418b03c43b",
+      "word_sha256": "35bb6d0337cbea81f4f485606de7b26de0e3a3abeb404fa724e6298cf0d876c1",
+      "counts": {
+        "ready": 1,
+        "raw": 1,
+        "ai_job": 1,
+        "ai_completion": 1,
+        "word": 1,
+        "state": 1,
+        "ai_packet": 1,
+        "ai_result": 1
+      },
+      "sources_unchanged": true,
+      "replay_unchanged": true,
+      "raw_hashes": {
+        "01_2026-10-10_1.srt": "eb5d126b6a6641d66d0cc717b97773e207a4e2ab4c644cdc7a2919b39fdb53fa",
+        "01_2026-10-10_1.txt": "5ddb5aa05f53adfc36c7f6e157cd2de8603925ca812385d11330c91e6064f602",
+        "01_2026-10-10_manifest.json": "26bafc5c6c97d90f2152f799fe302705ab5ff1c82ba660a67f5e2d5a5913071e",
+        "01_2026-10-10_raw.txt": "d44589eab5edf406d47bdc93d89a95795a2097e1f36aa42b92401fcc7800100b"
+      }
+    }
+  ],
+  "scheduler": [
+    {
+      "events": [
+        {
+          "lectures": {
+            "SUBJECT/01_2026-10-10": {
+              "status": "DONE",
+              "detail": "Завершённая лекция проверена; повторный READY игнорируется",
+              "updated_at": "2026-10-11T08:22:21+08:00"
+            }
+          },
+          "worker": "RUNNING",
+          "started_at": "2026-10-11T08:22:21+08:00",
+          "round": 1
+        },
+        {
+          "lectures": {
+            "SUBJECT/01_2026-10-10": {
+              "status": "DONE",
+              "detail": "Завершённая лекция проверена; повторный READY игнорируется",
+              "updated_at": "2026-10-11T08:26:27+08:00"
+            }
+          },
+          "worker": "RUNNING",
+          "started_at": "2026-10-11T08:26:27+08:00",
+          "round": 2
+        }
+      ],
+      "task": "LP-VIC12-aa4bf4a06e9a482fbc19fa71dedd933d",
+      "no_triggers": true,
+      "status": "PASS"
+    }
+  ],
+  "policy": {
+    "status": "PASS",
+    "path": "%TEMP%/LP-vic12-policy-xkls143j",
+    "same_course_copy": "review",
+    "changed_generation": "review",
+    "original_key": "01_2026-10-10",
+    "cross_course_key": "01_2026-10-10",
+    "courses_independent": true,
+    "gui_reopen_count": 2,
+    "gui_state_unchanged": true,
+    "rows": [
+      {
+        "source_id": "2ac426a8ba545f474820b4b7c6ca6e670f347d42b1ad24225f1bce75bd38fc57",
+        "course_id": "SUBJECT",
+        "source_path": "%TEMP%/LP-vic12-policy-xkls143j\\Audio 课程\\Lecture20261010.wav",
+        "signature": {
+          "name": "Lecture20261010.wav",
+          "size": 11,
+          "mtime_ns": 1791678486517487700
+        },
+        "imported_at": "2026-10-11T00:28:06.521902+00:00",
+        "status": "queued",
+        "lecture_date": "2026-10-10",
+        "lecture_date_source": "filename",
+        "lecture_date_raw": "20261010",
+        "date_resolution": "resolved",
+        "date_evidence": [
+          {
+            "value": "2026-10-10",
+            "raw": "20261010",
+            "source": "filename"
+          }
+        ],
+        "date_override": false,
+        "recorded_at": null,
+        "recorded_at_source": "unknown",
+        "part_hint": null,
+        "session_stem": "lecture20261010",
+        "session_family": "lecture{date}",
+        "source_hashes": [
+          "3d1cd44b5a80e2d3fcf00d9c7b01d2921264031746b089590fede1eaa18552e8"
+        ],
+        "lecture_key": "01_2026-10-10"
+      },
+      {
+        "source_id": "87e986b76392ab8875b590449b2fd4fded96707e1c1e233529ce44c9edeae779",
+        "course_id": "SUBJECT",
+        "source_path": "%TEMP%/LP-vic12-policy-xkls143j\\Audio 课程\\Copy20261010.wav",
+        "signature": {
+          "name": "Copy20261010.wav",
+          "size": 11,
+          "mtime_ns": 1791678486729902600
+        },
+        "imported_at": "2026-10-11T00:28:06.736458+00:00",
+        "status": "review",
+        "lecture_date": "2026-10-10",
+        "lecture_date_source": "filename",
+        "lecture_date_raw": "20261010",
+        "date_resolution": "resolved",
+        "date_evidence": [
+          {
+            "value": "2026-10-10",
+            "raw": "20261010",
+            "source": "filename"
+          }
+        ],
+        "date_override": false,
+        "recorded_at": null,
+        "recorded_at_source": "unknown",
+        "part_hint": null,
+        "session_stem": "copy20261010",
+        "session_family": "copy{date}",
+        "review_required": true,
+        "error": "duplicate_source_requires_review: комплект уже существует как 01_2026-10-10"
+      },
+      {
+        "source_id": "d1ccff523f3f53ab9a96bb1b5e8c88feed7234b165e7cc8a3e19a98c54a00c80",
+        "course_id": "SUBJECT",
+        "source_path": "%TEMP%/LP-vic12-policy-xkls143j\\Audio 课程\\Lecture20261010.wav",
+        "signature": {
+          "name": "Lecture20261010.wav",
+          "size": 18,
+          "mtime_ns": 1791678486919080700
+        },
+        "imported_at": "2026-10-11T00:28:06.924671+00:00",
+        "status": "review",
+        "lecture_date": "2026-10-10",
+        "lecture_date_source": "filename",
+        "lecture_date_raw": "20261010",
+        "date_resolution": "resolved",
+        "date_evidence": [
+          {
+            "value": "2026-10-10",
+            "raw": "20261010",
+            "source": "filename"
+          }
+        ],
+        "date_override": false,
+        "recorded_at": null,
+        "recorded_at_source": "unknown",
+        "part_hint": null,
+        "session_stem": "lecture20261010",
+        "session_family": "lecture{date}",
+        "review_required": true,
+        "error": "changed_source_requires_review: исходник изменён после резервирования/публикации"
+      }
+    ]
+  },
+  "tests_unique_passed": 123,
+  "boundary": "Windows process kill with durable state intact; no real reboot or power-loss simulation",
+  "fixture_asr": true,
+  "fixture_ai": true
+}
