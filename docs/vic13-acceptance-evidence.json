@@ -1,0 +1,27 @@
+{
+  "status": "visual_gate_pending",
+  "tests": {"unique_passed": 169, "regression_count": 168, "regression_seconds": 61.607, "legacy_followup_count": 1, "legacy_followup_seconds": 0.099},
+  "performance": {"entities": 300, "build_seconds": 3.003, "persistent_cache": false},
+  "native_widget_gate": {
+    "status": "PASS",
+    "path": "%TEMP%/LP-vic13-gui-ew6n_nl0/evidence.json",
+    "dpi": 192,
+    "lectures": 8,
+    "pending": 1,
+    "refresh_seconds": 0.024394999985815957,
+    "filters": true,
+    "selection_details": true,
+    "horizontal_scroll_at_narrow_width": true,
+    "review_link_to_existing_group": true,
+    "resize_controls_visible": true,
+    "safe_open_with_recording_opener": true,
+    "config_data_sha_mtime_unchanged": true,
+    "journals_bytes_mtime_unchanged": true,
+    "rebuild_identical": true,
+    "scheduler_preflight_substituted": true,
+    "asr_run": false
+  },
+  "remaining": ["visual inspection after Windows unlock", "real Word/folder OS open actions", "vertical scrolling visual check"],
+  "protected_data_changed": false,
+  "published_or_pushed": false
+}
