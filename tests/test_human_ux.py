@@ -17,7 +17,7 @@ class HumanUXTests(unittest.TestCase):
   with p.pipeline_lock(self.c.worker_home/'lecture_pipeline.lock'):
    key=ux.add_lecture(self.c,code,'2030-01-01',1,[source])
   s=self.c.subjects()[code];parts=p.collect_lectures(s['audio_dir'])[key];self.assertIsNotNone(p.read_ready(s,key,parts));self.assertEqual(ux.next_number(self.c,code),2)
-  with self.assertRaisesRegex(ValueError,'существует'):ux.add_lecture(self.c,code,'2030-01-01',1,[source])
+  self.assertEqual(ux.add_lecture(self.c,code,'2030-01-01',2,[source]),key)
   self.assertEqual(source.read_bytes(),b'disposable audio')
  def test_empty_or_changed_file_never_ready(self):
   p=ux.pipeline(self.c);code=next(iter(self.c.subjects()));source=self.c.home/'empty.wav';source.touch()

@@ -6,6 +6,9 @@ from pipeline_config import Config,need,read,child
 import ai_queue
 import lecture_dates
 
+class SourceReview(ValueError):
+ """Known content/lineage ambiguity; never allocate another key on retry."""
+
 def sha(p):
  h=hashlib.sha256()
  with Path(p).open('rb') as f:
@@ -18,10 +21,13 @@ def pipeline(c):
 
 def intake_reservations(c,subject):
  path=c.worker_home/'inbox.json'
- if not path.exists():return set()
- state=read(path)
- return {r['lecture_key'] for section in ('sources','groups') for r in state.get(section,{}).values()
-         if r.get('course_id')==subject and r.get('lecture_key')}
+ state=read(path) if path.exists() else {}
+ keys={r['lecture_key'] for section in ('sources','groups') for r in state.get(section,{}).values()
+       if r.get('course_id')==subject and r.get('lecture_key')}
+ for receipt in c.subjects()[subject]['audio_dir'].glob('.manual-handoff-*.json'):
+  row=read(receipt)
+  if row.get('lecture_key'):keys.add(row['lecture_key'])
+ return keys
 
 def next_number(c,subject):
  p=pipeline(c);s=c.subjects()[subject];keys=set(p.collect_lectures(s['audio_dir']))|{k.split('/',1)[1] for k in read(c.state)['lectures'] if k.startswith(subject+'/')}
@@ -29,6 +35,29 @@ def next_number(c,subject):
  return max([int(k.split('_',1)[0]) for k in keys if re.match(r'^\d+_',k)]+[0])+1
 
 def add_lecture(c,subject,day,number,files,*,intake=None,reserve=None):
+ if intake is not None:return _add_lecture(c,subject,day,number,files,intake=intake,reserve=reserve)
+ c.assert_current();need(subject in c.subjects(),'Выберите действующий предмет');need(bool(files),'Выберите аудиофайлы')
+ p=pipeline(c);s=c.subjects()[subject];paths=[Path(f).resolve() for f in files]
+ identity=hashlib.sha256(json.dumps([c.active,subject,[os.path.normcase(str(f)) for f in paths]]).encode()).hexdigest()
+ receipt=s['audio_dir']/('.manual-handoff-'+identity+'.json')
+ with p.pipeline_lock(s['audio_dir']/'.manual-ingest.lock'):
+  if receipt.exists():
+   row=read(receipt);need(row.get('source_id')==identity,'Manual handoff identity mismatch')
+   if day:need(lecture_dates.day(day)==row['lecture_date'],'Дата зарезервирована; изменение требует проверки')
+   need([p.source_signature(f) for f in paths]==[m['signature'] for m in row['members']],
+        'changed_source_requires_review: ручной источник изменился после резервирования')
+  else:
+   row=lecture_dates.resolve([str(f) for f in paths],override=day or None,imported_at=datetime.now(timezone.utc).isoformat(),same_session=False)
+   need(row['lecture_date'] is not None,'Дата неизвестна или конфликтует; требуется ручная проверка')
+   row.update(source_id=identity,course_id=subject,members=[dict(source_id=identity+'-'+str(i),source_path=str(f),signature=p.source_signature(f),part_hint=i) for i,f in enumerate(paths,1)])
+  def reserved(key):
+   need(key not in intake_reservations(c,subject) and key not in p.collect_lectures(s['audio_dir']),'Лекция уже существует или зарезервирована')
+   row['lecture_key']=key;ai_queue.atomic(receipt,row)
+  result=_add_lecture(c,subject,row['lecture_date'],number,paths,intake=row,reserve=reserved)
+  row.update(lecture_key=result,status='queued');ai_queue.atomic(receipt,row)
+  return result
+
+def _add_lecture(c,subject,day,number,files,*,intake=None,reserve=None):
  c.assert_current()
  metadata=dict(intake) if intake is not None else lecture_dates.resolve([str(f) for f in files],override=day or None,imported_at=datetime.now(timezone.utc).isoformat(),same_session=False)
  day=metadata.get('lecture_date')
@@ -41,19 +70,36 @@ def add_lecture(c,subject,day,number,files,*,intake=None,reserve=None):
  # Separate producer lock: never waits on/stops the long-lived worker lock.
  with p.pipeline_lock(s['audio_dir']/'.ingest.lock'):
   key=(intake or {}).get('lecture_key')
+  if key and p.ready_path(s,key).exists():
+   ready=p.read_ready(s,key,p.collect_lectures(s['audio_dir']).get(key,[]))
+   need(ready.get('intake',{}).get('source_id')==intake['source_id'],'READY принадлежит другому source')
+   if 'members' in intake:need(ready.get('intake',{}).get('members')==intake['members'],'READY содержит другой набор частей')
+   need(all(sha(s['audio_dir']/e['name'])==e['sha256'] for e in ready['files']),'Повреждён опубликованный intake')
+   intake['recovery_action']='recovered_existing_ready'
+   return key
+  need(all(f.is_file() and f.suffix.lower() in p.AUDIO_EXTENSIONS for f in files),'Неподдерживаемый аудиофайл')
+  need(all(f.stat().st_size>0 for f in files),'Аудио пусто: дождитесь завершения копирования')
+  hashes=[sha(f) for f in files]
+  if intake and intake.get('source_hashes') and hashes!=intake['source_hashes']:
+   raise SourceReview('changed_source_requires_review: содержимое изменилось после резервирования')
+  for sealed in s['audio_dir'].glob('*.READY.json'):
+   previous=read(sealed)
+   if previous.get('lecture')==key:continue
+   if sorted(hashes)==sorted(e['sha256'] for e in previous['files']):
+    raise SourceReview('duplicate_source_requires_review: комплект уже существует как '+previous['lecture'])
+  for pending in s['audio_dir'].glob('.manual-handoff-*.json'):
+   previous=read(pending)
+   if previous.get('source_id')!=(intake or {}).get('source_id') and sorted(previous.get('source_hashes',[]))==sorted(hashes):
+    raise SourceReview('duplicate_source_requires_review: тот же комплект уже зарезервирован')
+  metadata['source_hashes']=hashes
+  metadata['source_lineage']=[dict(source_path=str(f),signature=p.source_signature(f),sha256=h) for f,h in zip(files,hashes)]
+  if intake is not None:intake['source_hashes']=hashes
   if key is None:
    number=next_number(c,subject) if number is None else number
    need(1<=number<=999,'Номер лекции: 1–999');key=f'{number:02d}_{day}'
    if reserve:reserve(key)
+  elif intake is not None:intake['recovery_action']='resumed_reserved_handoff'
   need(re.fullmatch(r'\d{2,3}_\d{4}-\d{2}-\d{2}',key) is not None and key.split('_',1)[1]==day,'Некорректный intake lecture key')
-  if intake and p.ready_path(s,key).exists():
-   ready=p.read_ready(s,key,p.collect_lectures(s['audio_dir']).get(key,[]))
-   need(ready.get('intake',{}).get('source_id')==intake['source_id'],'READY принадлежит другому source')
-   if 'members' in intake:
-    need(ready.get('intake',{}).get('members')==intake['members'],'READY содержит другой набор частей')
-   need(all(sha(s['audio_dir']/e['name'])==e['sha256'] for e in ready['files']),'Повреждён опубликованный intake')
-   return key
-  need(all(f.is_file() and f.suffix.lower() in p.AUDIO_EXTENSIONS for f in files),'Неподдерживаемый аудиофайл')
   if intake:
    members=intake.get('members',[intake])
    need(len(files)==len(members) and all(p.source_signature(f)==m['signature'] and
@@ -67,7 +113,7 @@ def add_lecture(c,subject,day,number,files,*,intake=None,reserve=None):
    for i,source in enumerate(files,1):
     signature=p.source_signature(source);target=stage/f'{key}_{i}{source.suffix.lower()}'
     shutil.copy2(source,target)
-    need(target.stat().st_size>0 and signature==p.source_signature(source) and sha(source)==sha(target),'Аудио изменяется/пусто: дождитесь завершения копирования')
+    need(target.stat().st_size>0 and signature==p.source_signature(source) and sha(source)==sha(target)==hashes[i-1],'Аудио изменяется/пусто: дождитесь завершения копирования')
     with target.open('r+b') as f:os.fsync(f.fileno())
    c.assert_current()
    for f in sorted(stage.iterdir()):

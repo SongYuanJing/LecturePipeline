@@ -43,7 +43,7 @@ class InboxTests(unittest.TestCase):
 
     def test_binding_dates_queue_repeated_scan_and_restart(self):
         for name in ('3- 2026_09_11_1.m4a','微观2026_10_09_1.m4a'):
-            (self.source/name).write_bytes(b'fixture audio')
+            (self.source/name).write_bytes(name.encode('utf8'))
         result=self.settled();rows=result['sources']
         self.assertEqual({r['course_id'] for r in rows},{'SUBJECT'})
         self.assertEqual({r['lecture_date'] for r in rows},{'2026-09-11','2026-10-09'})

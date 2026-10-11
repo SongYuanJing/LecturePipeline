@@ -105,9 +105,13 @@ class Inbox:
                                     previous['status']='superseded';self.observed.pop(previous['source_id'],None)
                             row = dict(source_id=sid, course_id=code, source_path=str(path.resolve()),
                                        signature=signature, imported_at=self.now(), status='waiting_stable', **hints(path.name))
+                            prior=[r for r in state['sources'].values() if r['course_id']==code and os.path.normcase(r['source_path'])==os.path.normcase(str(path.resolve())) and
+                                   (r.get('lecture_key') or state.get('groups',{}).get(r.get('group_id'),{}).get('lecture_key'))]
+                            if prior:row.update(status='review',review_required=True,error='changed_source_requires_review: исходник изменён после резервирования/публикации')
                             state['sources'][sid] = row
                             self.save(state)
                         if row.pop('reset_stability',False):self.observed.pop(sid,None)
+                        if row.get('review_required'):continue
                         if row.get('part_hint') is not None:
                             row.update({k:v for k,v in hints(path.name).items() if k in ('session_stem','session_family')})
                             multipart.append(row)
@@ -143,6 +147,8 @@ class Inbox:
                         except OSError as error:
                             # Includes an open writer/sharing violation: restart settling.
                             self.observed.pop(sid,None);row.update(status='waiting_stable',error=str(error))
+                        except human_ux.SourceReview as error:
+                            row.update(status='review',review_required=True,error=str(error))
                         except (ValueError,KeyError) as error:
                             row.update(status='failed',error=str(error))
                     self.multipart(state,code,course,multipart)
@@ -162,6 +168,7 @@ class Inbox:
         # Missing/renamed members invalidate a pending group, even after restart.
         for gid,g in groups.items():
             if g['course_id']==code and g['status']!='queued' and gid not in candidates:
+                if any(state['sources'][sid].get('review_required') for sid in g['member_ids']):continue
                 g.update(status='review',error='Исходные части группы отсутствуют')
                 self.group_observed.pop(gid,None)
         families={}
@@ -250,6 +257,9 @@ class Inbox:
                     self.save(state)
             except OSError as error:
                 self.group_observed.pop(gid,None);mark('waiting_parts',str(error))
+            except human_ux.SourceReview as error:
+                mark('review',str(error))
+                for r in items:r['review_required']=True
             except (ValueError,KeyError) as error:mark('review',str(error))
 
     def review(self,identity,*,lecture_date=None,expected_parts=None,retry=False):
@@ -260,6 +270,8 @@ class Inbox:
             state=self.load();group=state.get('groups',{}).get(identity)
             row=group or state['sources'].get(identity)
             need(row is not None,'Запись больше не существует')
+            need(not row.get('review_required') and not any(state['sources'][sid].get('review_required') for sid in row.get('member_ids',[])),
+                 'Нужна ручная проверка изменённого или повторного источника; повторный импорт не разрешён')
             owner=state.get('groups',{}).get(row.get('group_id'))
             need(row['status']!='queued' and not (owner and owner['status']=='queued'),'Лекция уже передана. Поздние части требуют ручной проверки.')
             need(not row.get('lecture_key') or (lecture_date is None and expected_parts is None),'Передача уже началась: дату и состав менять нельзя')
