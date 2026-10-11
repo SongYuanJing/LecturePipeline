@@ -52,6 +52,10 @@ def read_bundle(manifest):
  compact=lambda s:re.sub(r'\s+','',s)
  need(compact(''.join(body))==compact(''.join(s['text'] for s in segments)),'raw and SRT content differ')
  hashes={str(p):sha(p.read_bytes()) for p in files}
+ if 'output_hashes' in m:
+  required={m['combined_txt']}|{o['srt'] for o in m['outputs']}|{o['txt'] for o in m['outputs'] if o.get('txt')}
+  need(set(m['output_hashes'])==required,'Incomplete raw commit hashes')
+  for name,h in m['output_hashes'].items():need(sha(local_file(root,name).read_bytes())==h,'Raw commit hash mismatch: '+name)
  return dict(manifest=m,manifest_path=str(manifest),raw_path=str(raw),segments=segments,input_hashes=hashes)
 def state_read(path):
  data=Path(path).read_bytes();s=json.loads(data.decode('utf-8-sig'))

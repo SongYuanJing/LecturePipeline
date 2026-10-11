@@ -90,18 +90,35 @@ def refresh(c=None):
     lecture=manifest.parent.name;key=code+'/'+lecture;identity=c.active+'/'+key;seen.add(identity)
     if state['lectures'].get(key,{}).get('status','').lower() not in ('completed','done'):continue
     previous=q['tasks'].get(identity);record=next((r for r in ai['processed'].values() if r.get('subject_code')==code and r.get('lecture_id')==lecture),None)
-    if previous and previous['status']=='completed':continue
     t=dict(previous or {},id=identity,workspace=c.active,lecture_key=lecture,subject_code=code,subject_name=s['title'],lecture_date=lecture.split('_',1)[1] if '_' in lecture else None,manifest=str(manifest),instructions_version='1.7',status=previous['status'] if previous else 'waiting_ai')
     try:
      m=read(manifest);need(m['subject_code']==code and m['lecture']==lecture,'Manifest не соответствует предмету/лекции')
      t.update(lecture_dates.metadata(m))
      t.update(raw=str(child(manifest.parent,m['combined_txt'])),srt=[str(child(manifest.parent,x['srt'])) for x in m['outputs']])
+     if previous and previous['status']=='completed':
+      need(record is not None,'Completed AI ledger missing; recovery requires review')
      if record:
+      out=s['ready_dir']/lecture;word=module(c)
+      word.read_bundle(manifest)
+      if (out/'processing_report.json').exists():
+       report=read(out/'processing_report.json')
+       for name,h in report['output_hashes'].items():need(sha(child(out,name))==h,'Completed output changed: '+name)
+       word.validate_docx(out/'lecture.docx')
+      else:
+       need(record.get('output_docx_local_path'),'Legacy completion has no verifiable Word path; review required')
+       word.validate_docx(Path(record['output_docx_local_path']))
       t.update(status='vocabulary_pending' if record.get('vocabulary_status')=='batch_pending' else 'completed',legacy_ai_record=True,vocabulary_status=record.get('vocabulary_status','legacy_unspecified'),source_packet=t.get('source_packet'))
      else:
       old_signature=t.get('source_signature');packet=bundle(c,manifest,t)
       need(old_signature in (None,t['source_signature']),'ASR источники изменились после постановки в AI queue; ручная проверка обязательна')
       t['source_packet']=str(packet/'source_packet.json')
+      if t['status']=='waiting_ai':
+       results=c.queue_home/'results'/hashlib.sha256(identity.encode()).hexdigest()[:24]
+       candidates=list(results.glob('ai_content-*.json'))
+       if candidates:
+        need(len(candidates)==1,'Several unacknowledged AI results; review required')
+        candidate=candidates[0];value=read(candidate);module(c).validate_content(value,verify_packet(packet))
+        t.update(status='ai_result_ready',ai_content=str(candidate),ai_content_sha256=sha(candidate),recovery_action='recovered_ai_completion')
      if t['status']!='failed':t.pop('error',None)
     except Exception as e:
      if previous:
@@ -111,7 +128,7 @@ def refresh(c=None):
     q['tasks'][identity]=t
   # Missing files never silently disappear from the ledger or trigger another subject.
   for identity,t in q['tasks'].items():
-   if t['workspace']==c.active and t['subject_code'] in subjects and identity not in seen and t['status']!='completed':t.update(status='failed',error='Исходный manifest недоступен')
+   if t['workspace']==c.active and t['subject_code'] in subjects and identity not in seen:t.update(status='failed',error='Исходный manifest недоступен')
   persist(c,q);return q
 def select(q,workspace,subject=None,lecture_date=None):
  tasks=[t for t in q['tasks'].values() if t['workspace']==workspace and t['status']=='waiting_ai' and (subject is None or t['subject_code']==subject) and (lecture_date is None or t['lecture_date']==lecture_date)]

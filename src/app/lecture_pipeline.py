@@ -82,10 +82,8 @@ def load_state(path: Path) -> dict:
 
 
 def save_state(path: Path, data: dict):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-    tmp.replace(path)
+    from ai_queue import atomic
+    atomic(path, data)
 
 
 def append_log(path: Path, text: str):
@@ -186,6 +184,37 @@ def digest(path):
         for block in iter(lambda: f.read(1024 * 1024), b""):
             h.update(block)
     return h.hexdigest()
+
+
+def committed_raw(cfg, key, record=None):
+    """Validate a committed bundle; missing/corrupt authority never means redo."""
+    folder=cfg['raw_dir']/key;path=folder/(key+'_manifest.json')
+    manifest=json.loads(path.read_text(encoding='utf8'))
+    if manifest.get('lecture')!=key:raise ValueError('Raw identity mismatch')
+    if record and record.get('raw_manifest_sha256') and digest(path)!=record['raw_manifest_sha256']:
+        raise ValueError('Raw manifest SHA-256 mismatch')
+    required={manifest['combined_txt']}
+    if not manifest.get('outputs'):raise ValueError('Raw outputs missing')
+    for item in manifest['outputs']:
+        required.add(item['srt'])
+        if item.get('txt'):required.add(item['txt'])
+    hashes=manifest.get('output_hashes')
+    if hashes is not None and set(hashes)!=required:raise ValueError('Incomplete raw hash contract')
+    for name in required:
+        if Path(name).name!=name:raise ValueError('Unsafe raw member')
+        file=folder/name
+        if not file.is_file() or file.stat().st_size==0:raise ValueError('Raw output missing: '+name)
+        if hashes is not None and digest(file)!=hashes[name]:raise ValueError('Raw SHA-256 mismatch: '+name)
+    if hashes is None:
+        from ai_queue import module
+        module(CONFIG).read_bundle(path)  # Legacy: prove structure/text agreement, not invented hashes.
+    if record is None:
+        if hashes is None or not manifest.get('sealed_ready'):raise ValueError('Legacy raw has no provable commit; review required')
+        ready=json.loads(ready_path(cfg,key).read_text(encoding='utf8'))
+        if ready!=manifest['sealed_ready']:raise ValueError('Raw/READY lineage mismatch')
+    return dict(**lecture_dates.metadata(manifest),status='completed',model=manifest.get('model'),
+                processed_at=manifest.get('processed_at'),sources=manifest.get('sources',[]),
+                output_dir=str(folder),combined_txt=str(folder/manifest['combined_txt']),raw_manifest_sha256=digest(path))
 
 
 def check_numbers(parts, count):
@@ -445,6 +474,8 @@ def _process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, part
         "outputs": part_outputs,
         "combined_txt": combined_path.name,
         **({'intake': ready['intake']} if 'intake' in ready else {}),
+        'sealed_ready': ready,
+        'output_hashes': {f.name:digest(f) for f in out_dir.iterdir() if f.is_file()},
     }
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -454,7 +485,7 @@ def _process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, part
         archive.parent.mkdir(parents=True, exist_ok=True)
         shutil.copytree(final_dir, archive)
     final_dir.mkdir(parents=True, exist_ok=True)
-    for output in out_dir.iterdir():
+    for output in sorted(out_dir.iterdir(),key=lambda f:(f.name.endswith('_manifest.json'),f.name)):
         target = final_dir / output.name
         temporary = target.with_name(target.name + ".pending")
         shutil.copyfile(output, temporary)
@@ -471,6 +502,7 @@ def _process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, part
         "sources": [source_signature(p) for p in parts],
         "output_dir": str(out_dir),
         "combined_txt": str(combined_path),
+        "raw_manifest_sha256": digest(final_dir / manifest_path.name),
     }
     state["model"] = MODEL_NAME
     state["updated_at"] = now_iso()

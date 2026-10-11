@@ -303,21 +303,48 @@ class Worker:
                 parts = groups.get(key, [])
                 record = state['lectures'].get(identity, {})
                 if record.get('status', '').lower() in {'completed', 'done'}:
-                    self.report(identity, 'DONE', 'Завершённая лекция защищена; повторный READY игнорируется')
+                    try:
+                        p.committed_raw(cfg,key,record)
+                        self.report(identity, 'DONE', 'Завершённая лекция проверена; повторный READY игнорируется')
+                    except (OSError,ValueError,KeyError) as exc:
+                        self.report(identity,'ERROR','completed_artifact_requires_review: '+str(exc))
                     continue
                 job = self.journal['jobs'].get(identity)
+                if job and job['phase']!='done' and not (self.spool(job)/'publish.json').exists():
+                    bundle=self.spool(job)/'raw'/key
+                    if (bundle/(key+'_manifest.json')).exists():
+                        try:
+                            recovered=p.committed_raw(dict(cfg,raw_dir=self.spool(job)/'raw'),key)
+                            files=sorted(bundle.iterdir(),key=lambda f:(f.name.endswith('_manifest.json'),f.name))
+                            atomic_json(self.spool(job)/'publish.json',dict(record=recovered,files=[dict(name=f.name,size=f.stat().st_size,sha256=p.digest(f)) for f in files if f.is_file()]))
+                        except (OSError,ValueError,KeyError) as exc:
+                            self.report(identity,'ERROR','spool_recovery_requires_review: '+str(exc));continue
+                if job and (self.spool(job)/'publish.json').exists() and job['phase']!='done':
+                    job['phase']='publishing'  # Durable plan precedes phase acknowledgment.
                 if job and job.get('retry_at', 0) > self.clock():
                     self.report(identity, 'ERROR', f'{job.get("error", "сбой")}; ожидаю повторной попытки')
                     continue
                 if job and job['phase'] == 'publishing':
                     try:
+                        if not (self.spool(job)/'publish.json').exists():
+                            recovered=p.committed_raw(cfg,key)
+                            state['lectures'][identity]=recovered;p.save_state(state_file,state)
+                            job['phase']='done';job['recovery_action']='reused_committed_raw';self.save()
+                            self.report(identity,'DONE','reused_committed_raw: внешняя публикация проверена после потери spool')
+                            continue
                         self.report(identity, 'READY', 'Восстанавливаю публикацию готовых результатов без Whisper')
                         self.publish_job(identity, job, cfg, key, state_file, state)
                     except Exception as exc:
                         self.fail_job(identity, job, exc)
                     continue
                 if not p.needs_processing(state, code, key, parts, cfg['raw_dir']):
-                    self.report(identity, 'ERROR', 'Есть прежние результаты без completed; автоматическая перезапись запрещена')
+                    try:
+                        recovered=p.committed_raw(cfg,key)
+                        if json.loads((cfg['raw_dir']/key/(key+'_manifest.json')).read_text(encoding='utf8'))['subject_code']!=code:raise ValueError('Raw course mismatch')
+                        state['lectures'][identity]=recovered;p.save_state(state_file,state)
+                        self.report(identity,'DONE','reused_committed_raw: восстановлен completed без ASR')
+                    except (OSError,ValueError,KeyError) as exc:
+                        self.report(identity,'ERROR','raw_recovery_requires_review: '+str(exc))
                     continue
                 ready, status, detail = self.stable_ready(cfg, key, parts, signals.get(key, set()))
                 self.report(identity, status, detail)

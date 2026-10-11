@@ -116,12 +116,12 @@ class WorkerTests(unittest.TestCase):
         self.assertEqual(self.calls, 2)
         self.assertEqual(self.status(), 'DONE')
 
-    def test_completed_ignores_signal_model_and_missing_audio(self):
+    def test_completed_missing_outputs_reports_error_without_asr(self):
         p.save_state(self.sf, {'version': 1, 'lectures': {self.identity: {'status': 'completed', 'model': 'old'}}})
         self.signal()
         self.cycle()
         self.assertEqual(self.calls, 0)
-        self.assertEqual(self.status(), 'DONE')
+        self.assertEqual(self.status(), 'ERROR')
 
     def test_whisper_error_backoff_restart_then_recover(self):
         self.parts(1, 2)
