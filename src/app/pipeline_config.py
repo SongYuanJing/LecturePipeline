@@ -78,10 +78,10 @@ class Config:
   value=self.data.get('runtimes',{}).get(key,default);p=Path(value).expanduser();return p.resolve() if p.is_absolute() else self.local(value)
  def assert_current(self):
   need(self.path.read_bytes()==self.bytes,'Config изменён: остановите и перезапустите workers; горячее переключение workspace запрещено')
- def subjects(self):
+ def subjects(self,*,include_disabled=False):
   out={}
   for s in self.workspace['subjects']:
-   if not s['enabled']:continue
+   if not s['enabled'] and not include_disabled:continue
    root=child(self.workspace_root,s['folder']);paths=s['paths']
    out[s['subject_code']]=dict(title=s['subject_name'],subject_name=s['subject_name'],subject_dir=root,notes_dir=child(root,paths.get('notes','.')),audio_dir=child(root,paths['audio']),raw_dir=child(root,paths['raw']),ready_dir=child(root,paths['ready']),default_language=s.get('default_language',self.data['languages']['lecture']),prompt=s.get('asr_context',{}).get('prompt',''),hotwords=s.get('asr_context',{}).get('hotwords',''))
    if s.get('inbox'):
