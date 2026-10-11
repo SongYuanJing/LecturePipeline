@@ -51,6 +51,10 @@ class CatalogPanel:
         return tree
 
     def render(self,data,config):
+        # Polling unchanged authorities must not replay both selection events or
+        # reset a user's scrolled details while they read/open a lecture.
+        if data==self.data and self.config is not None and self.config.path==config.path:
+            self.config=config;return
         self.data=data;self.config=config
         self.courses={'Все курсы':None,**{r['course_display_name']+' ['+r['course_id']+']':r['course_id'] for r in data['items']+data['pending'] if r.get('course_id')}}
         self.course_box['values']=list(self.courses)
