@@ -89,7 +89,11 @@ class CatalogPanel:
         self.notice.set(f"Лекций: {len(rows)} · Ожидают: {len(self.pending_rows)}"+(' · Ошибки чтения' if self.data['errors'] else ''))
         if preserve and owner=='pending':self.select_pending()
         else:self.select()
-        if preserve:self.detail.yview_moveto(detail_scroll[0])
+        if preserve:
+            # Text wrapping is recalculated at idle; restore against the new
+            # layout rather than the transient line count after replacement.
+            self.detail.update_idletasks()
+            self.detail.yview_moveto(detail_scroll[0])
 
     def text(self,value):
         self.detail.configure(state='normal');self.detail.delete('1.0','end');self.detail.insert('1.0',value);self.detail.configure(state='disabled')
