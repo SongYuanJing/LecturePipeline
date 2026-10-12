@@ -128,12 +128,14 @@ class Worker:
                               'updated_at': p.now_iso() if changed else previous['updated_at']}
             self.publish_status()
 
-    def publish_status(self):
+    def publish_status(self, local_only=False):
         with self.status_lock:
             data = {'version': 1, 'worker': self.worker_state, 'message': self.worker_message,
                     'started_at': self.started, 'heartbeat': p.now_iso(), 'lectures': copy.deepcopy(self.rows)}
             atomic_json(self.home / 'worker_status.json', data)
-            if self.status_path:
+            if self.status_path and not local_only:
+                data = copy.deepcopy(data)
+                for row in data["lectures"].values():row.pop("progress", None)
                 atomic_json(self.status_path.with_suffix('.json'), data)
                 text = [f'Lecture worker: {data["worker"]}', f'Последняя связь: {data["heartbeat"]}',
                         data['message'], '', 'Если время не обновляется более 3 минут, worker/Drive недоступен.', '']
@@ -257,14 +259,18 @@ class Worker:
                 if self.model is None:
                     self.model = p.WhisperModel(p.MODEL_NAME, device=p.DEVICE,
                                                compute_type=p.COMPUTE_TYPE, local_files_only=True)
-                if hasattr(self.model,'progress_callback'):
-                    self.model.progress_callback=lambda value:atomic_json(self.home/'asr_progress.json',dict(value,identity=identity))
+                from lecture_progress import Tracker, media_duration
+                def progress(value):
+                    with self.status_lock:
+                        self.rows[identity]['progress']=dict(value,job_token=job['token'],worker_started_at=self.started)
+                        self.publish_status(local_only=True)
+                tracker=Tracker(identity,[media_duration(f) for f in copies],progress,clock=self.monotonic,wall=self.clock)
                 spool = self.spool(job)
                 spool.mkdir(parents=True, exist_ok=True)
                 local_state = {'version': 1, 'lectures': {}}
                 local_cfg = dict(cfg, raw_dir=spool / 'raw')
                 p.process_lecture(self.model, identity.split('/')[0], local_cfg, key, copies,
-                                  local_state, spool / 'state.json', spool / 'pipeline.log')
+                                  local_state, spool / 'state.json', spool / 'pipeline.log', progress=tracker)
                 bundle = spool / 'raw' / key
                 outputs = sorted(bundle.iterdir(), key=lambda f: (f.name.endswith('_manifest.json'), f.name))
                 plan = {'files': [{'name': f.name, 'size': f.stat().st_size, 'sha256': p.digest(f)} for f in outputs],

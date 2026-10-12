@@ -82,6 +82,19 @@ class ASRTests(unittest.TestCase):
             with self.assertRaises(a.BackendError):
                 a.ProductionWhisperModel()._invoke('a.wav',{},a.GPU_PROFILE)
 
+    def test_damaged_telemetry_does_not_prevent_cuda_error_classification(self):
+        class Child:
+            returncode=1
+            def __init__(self,command,**kw):
+                request=json.loads(Path(command[-2]).read_text(encoding='utf8'))
+                Path(request['progress']).write_text('{broken',encoding='utf8')
+                Path(command[-1]).write_text(json.dumps(dict(status='error',error='CUDA failed',cuda_error=True)),encoding='utf8')
+            def communicate(self,timeout=None):return ('',None)
+            def poll(self):return 1
+        with patch.object(a.subprocess,'Popen',Child):
+            with self.assertRaises(a.BackendError) as result:a.ProductionWhisperModel()._invoke('a.wav',{},a.GPU_PROFILE)
+            self.assertTrue(result.exception.cuda)
+
     def test_cuda_exception_classifier(self):
         for e in [RuntimeError('CUDA failed'),RuntimeError('cuBLAS OOM'),ImportError('DLL load failed'),MemoryError()]:
             self.assertTrue(a.cuda_error(e))

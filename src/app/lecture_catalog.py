@@ -70,7 +70,8 @@ def build(c):
     inbox=reader.json(c.worker_home/'inbox.json',required=(c.worker_home/'inbox.initialized').exists())
     if inbox.get('schema_version',1)!=1:reader.errors.append('Неизвестная схема Inbox')
     jobs=reader.json(c.worker_home/'worker_jobs.json',section='jobs').get('jobs',{})
-    worker=reader.json(c.worker_home/'worker_status.json').get('lectures',{})
+    worker_status=reader.json(c.worker_home/'worker_status.json')
+    worker=worker_status.get('lectures',{})
     queue=reader.json(c.queue_home/'queue.json',required=(c.queue_home/'initialized').exists(),section='tasks').get('tasks',{})
     def entity(code,key):
         if not isinstance(key,str) or not KEY.fullmatch(key) or not isinstance(code,str):
@@ -144,7 +145,12 @@ def build(c):
             if e is not None:e['packets'].append(str(path))
     rows=[]
     for e in entities.values():
-        try:rows.append(project(c,subjects,e,reader.errors))
+        try:
+            row=project(c,subjects,e,reader.errors)
+            from lecture_progress import live, presentation
+            observation=live(e.get('worker',{}).get('progress'),worker_status,e.get('job',{}),row)
+            row['progress']=observation;row['progress_view']=presentation(observation)
+            rows.append(row)
         except (OSError,ValueError,KeyError,TypeError,AttributeError) as exc:
             rows.append(dict(id=e['id'],course_id=e['course_id'],course_display_name=subjects.get(e['course_id'],{}).get('title',e['course_id']),
                              lecture_key=e['lecture_key'],lecture_date=None,lecture_date_source='unknown',status='problem',

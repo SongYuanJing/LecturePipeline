@@ -276,6 +276,28 @@ class WorkerTests(unittest.TestCase):
         with p.pipeline_lock(lock):
             pass
 
+    def test_progress_is_local_and_heartbeat_mirror_strips_it(self):
+        self.worker.status_path=self.root/'Drive'/'WORKER_STATUS.txt'
+        self.worker.rows[self.identity]=dict(status='TRANSCRIBING',detail='fixture',progress=dict(percent=42))
+        self.worker.publish_status(local_only=True)
+        self.assertFalse(self.worker.status_path.exists())
+        local=json.loads((self.home/'worker_status.json').read_text(encoding='utf8'))
+        self.assertIn('progress',local['lectures'][self.identity])
+        self.worker.publish_status()
+        remote=json.loads(self.worker.status_path.with_suffix('.json').read_text(encoding='utf8'))
+        self.assertNotIn('progress',remote['lectures'][self.identity])
+
+    def test_progress_disk_failure_does_not_fail_raw_commit(self):
+        self.parts(1);self.signal(1);self.cycle()
+        real=self.worker.publish_status
+        def publish(local_only=False):
+            if local_only:raise OSError('disposable telemetry failure')
+            return real()
+        with patch.object(self.worker,'publish_status',side_effect=publish),self.assertLogs(level='ERROR'):
+            self.cycle(120)
+        self.assertEqual(self.status(),'DONE')
+        self.assertEqual(self.calls,1)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

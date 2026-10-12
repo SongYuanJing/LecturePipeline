@@ -14,6 +14,7 @@ import sys
 import tempfile
 import threading
 import time
+import uuid
 from types import SimpleNamespace
 
 VERSION = '1.3'
@@ -127,13 +128,17 @@ class ProductionWhisperModel:
                     process.communicate()
             data = json.loads(result.read_text(encoding='utf-8')) if result.exists() else None
             if process.returncode != 0 or not data or data.get('status') != 'ok':
-                phase = json.loads(progress.read_text(encoding='utf-8')).get('phase') if progress.exists() else None
+                try:phase = json.loads(progress.read_text(encoding='utf-8')).get('phase') if progress.exists() else None
+                except (OSError,ValueError,AttributeError):phase = None
                 message = data.get('error', '') if data else output[-4000:]
                 native = (process.returncode & 0xffffffff) in {0xc0000005, 0xc0000409, 0xc0000135, 0xc000007b, 0xc0000017}
                 is_cuda = profile['device'] == 'cuda' and (
                     bool(data and data.get('cuda_error')) or
                     (not data and (phase == 'cuda_setup' or native or cuda_error(RuntimeError(message)))))
                 raise BackendError(f"ASR {profile['device']} failed (exit={process.returncode}, phase={phase}): {message}", cuda=is_cuda)
+            if self.progress_callback and progress.exists():
+                try:self.progress_callback(dict(json.loads(progress.read_text(encoding='utf8')),**self.progress_context))
+                except Exception:pass
             data['process_wall_s'] = time.monotonic() - started
             return data
 
@@ -186,14 +191,15 @@ def _watch_parent(pid):
 def _child(request_file, result_file):
     request = json.loads(Path(request_file).read_text(encoding='utf-8'))
     profile = request['profile']; started = time.monotonic(); phase = 'start'
+    session=uuid.uuid4().hex
     last_emit=0.0;audio_duration=0.0;processed=0.0;language=request.get('options',{}).get('language') or 'auto'
     def set_phase(name,force=True):
         nonlocal phase,last_emit
         phase=name;now=time.monotonic()
         if not force and now-last_emit<1:return
         last_emit=now
-        try:_write_json(request['progress'],dict(phase=name,audio_duration_sec=audio_duration,processed_audio_sec=min(processed,audio_duration),elapsed_sec=now-started,backend=profile['device'],model=MODEL,language=language,updated_at=time.time()))
-        except OSError:pass
+        try:_write_json(request['progress'],dict(session=session,phase=name,audio_duration_sec=audio_duration,processed_audio_sec=min(processed,audio_duration),elapsed_sec=now-started,backend=profile['device'],model=MODEL,language=language,updated_at=time.time()))
+        except Exception:pass  # Telemetry must not fail native transcription.
     try:
         _watch_parent(request['parent_pid'])
         if profile['device'] == 'cuda':

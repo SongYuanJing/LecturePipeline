@@ -25,3 +25,21 @@ class CatalogGuiTests(unittest.TestCase):
         panel.render(copy.deepcopy(data),self.c);root.update()
         self.assertEqual(before,(panel.detail.get('1.0','end'),panel.detail.yview(),panel.table.selection()))
         self.assertIn('8.',before[0])
+
+    def test_changing_progress_preserves_selection_and_scroll(self):
+        fixtures.add(self.c,parts=8)
+        root=tk.Tk();self.addCleanup(root.destroy)
+        frame=ttk.Frame(root);frame.pack(fill='both',expand=True)
+        panel=CatalogPanel(SimpleNamespace(root=root,refresh=lambda:None,add_lecture=lambda:None),frame)
+        data=fixtures.catalog.build(self.c)
+        panel.render(data,self.c);root.update()
+        panel.table.selection_set('0');root.update();panel.detail.yview_moveto(1);root.update()
+        before=(panel.table.selection(),panel.detail.yview()[0],panel.table.yview(),panel.table.xview())
+        for n in range(10):
+            changed=copy.deepcopy(data)
+            changed['items'][0]['progress_view']=dict(compact=f'Распознавание · 3/8 · {n}%',details=f'ETA ASR: ~{n+10} мин')
+            panel.render(changed,self.c);root.update()
+            self.assertEqual(panel.table.selection(),before[0])
+            self.assertAlmostEqual(panel.detail.yview()[0],before[1],delta=.035)
+            self.assertEqual((panel.table.yview(),panel.table.xview()),before[2:])
+            self.assertIn('ETA ASR:',panel.detail.get('1.0','end'))

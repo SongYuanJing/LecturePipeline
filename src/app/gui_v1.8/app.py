@@ -138,7 +138,7 @@ class App(Actions):
   def load():
    from lecture_catalog import build
    c=adapter.Config(self.path);catalog=build(c)
-   try:v=adapter.snapshot(self.path,show)
+   try:v=adapter.snapshot(self.path,show,catalog=catalog)
    except (OSError,ValueError,KeyError,TypeError,AttributeError) as e:
     # A damaged legacy dashboard record must not hide the observational catalog.
     v=dict(config=c,lectures=[],dialogues=[],lecture_worker='Неизвестно',dialogue_worker='Неизвестно',

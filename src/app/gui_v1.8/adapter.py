@@ -63,7 +63,7 @@ def safe_open(c,path,opener=None):
  if p.is_file() and p.suffix.lower() not in {'.docx','.txt','.srt','.json','.log','.md'}:raise ValueError('Этот тип файла нельзя открыть из GUI')
  (opener or os.startfile)(str(p))
 
-def snapshot(config_path,show_tests=False):
+def snapshot(config_path,show_tests=False,catalog=None):
  c=Config(config_path);errors=[]
  def load(path,default):
   try:return read(path)
@@ -119,20 +119,18 @@ def snapshot(config_path,show_tests=False):
    if p.is_file() and p.suffix.lower() in {'.m4a','.mp3','.wav','.aac','.flac','.mp4','.mov','.ogg','.opus','.wma'} and p.name not in known and p.name not in ds.get('files',{}):
     rows.append(dict(id='drop:'+p.name,name=p.name,status='waiting',language=c.data['languages']['dialogue'],duration='—',timing='—',detail='Ожидается проверка стабильности worker; GUI не запускает ASR.',folder=str(incoming),srt=[]))
  except OSError as e:errors.append(str(e))
- active=[r for r in lectures if r['status'] not in ('DONE','completed','done')]
- current='Нет активной локальной обработки'
- if active:current='\n'.join(r['subject']+' / '+r['name']+' · '+r['status']+' · '+r['detail']+'\nПрошло: '+r['elapsed']+' · '+r['eta']+' · '+r['part'] for r in active)
+ from lecture_catalog import build
+ if catalog is None:catalog=build(c)
+ live_rows=[r for r in catalog['items'] if r.get('progress')]
+ progress=None;asr_active=bool(live_rows)
+ if live_rows:
+  current='\n\n'.join(r['course_display_name']+' / '+r['lecture_key']+'\n'+r['progress_view']['details'] for r in live_rows)
+  if len(live_rows)==1:progress=live_rows[0]['progress_view']['fraction']
+ else:
+  current='\n'.join(r['course_display_name']+' / '+r['lecture_key']+' · '+r['status_text'] for r in catalog['items'] if r['status'] not in ('done','waiting')) or 'Нет активной локальной обработки'
  if ds.get('active'):current+='\nDialogue: '+ds['active']+' · '+ds.get('files',{}).get(ds['active'],'processing')+' · ETA: недостаточно данных'
- progress=None;asr_active=any(r['status']=='TRANSCRIBING' for r in lectures)
- if asr_active:
-  try:
-   from human_ux import progress_view
-   v=read(c.worker_home/'asr_progress.json')
-   if time.time()-v['updated_at']<10 and any(r['id']==v['identity'] and r['status']=='TRANSCRIBING' for r in lectures):
-    result=progress_view(v);progress=result['progress'];phase={'cuda_setup':'Подготовка GPU','model_load':'Загрузка модели','transcribe':'Распознавание','asr_complete':'TXT/SRT: подготовка'}.get(v['phase'],v['phase'])
-    current=f"{v['identity']} · {phase} · часть {v.get('part','?')}/{v.get('parts','?')}\n{v['backend']} · {v['model']} · {v['language']}\nОбработано: {duration(v['processed_audio_sec'])} / {duration(v['audio_duration_sec'])}\nПрошло: {duration(v['elapsed_sec'])} · Осталось: "+('≈ '+duration(result['eta'])+' (оценка)' if result['eta'] is not None else 'рассчитывается…')
-  except (OSError,ValueError,KeyError):pass
- return dict(progress=progress,asr_active=asr_active,config=c,lectures=lectures,dialogues=rows,lecture_worker=heartbeat(ls),dialogue_worker=heartbeat(ds),lecture_status=ls,dialogue_status=ds,errors=errors,hidden=hidden,current=current,queue=q)
+
+ return dict(catalog=catalog,progress=progress,asr_active=asr_active,config=c,lectures=lectures,dialogues=rows,lecture_worker=heartbeat(ls),dialogue_worker=heartbeat(ds),lecture_status=ls,dialogue_status=ds,errors=errors,hidden=hidden,current=current,queue=q)
 
 class Controls:
  def __init__(self,c):

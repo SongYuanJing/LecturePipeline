@@ -396,13 +396,13 @@ def write_srt(path: Path, segments):
             f.write(text + "\n\n")
 
 
-def process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, parts: list[Path], state: dict, state_file: Path, log_file: Path):
+def process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, parts: list[Path], state: dict, state_file: Path, log_file: Path, progress=None):
     with tempfile.TemporaryDirectory(prefix="lecture-output-") as folder:
         return _process_lecture(model, subject_code, dict(cfg, _staging_dir=folder),
-                                lecture_key, parts, state, state_file, log_file)
+                                lecture_key, parts, state, state_file, log_file, progress)
 
 
-def _process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, parts: list[Path], state: dict, state_file: Path, log_file: Path):
+def _process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, parts: list[Path], state: dict, state_file: Path, log_file: Path, progress=None):
     final_dir = cfg["raw_dir"] / lecture_key
     out_dir = Path(cfg["_staging_dir"])
 
@@ -424,6 +424,9 @@ def _process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, part
         safe_print(f"[{idx}/{len(parts)}] {audio.name}")
         safe_print("Распознаю... large-v3 работает локально. Жди сообщения о прогрессе.")
 
+        if progress is not None:
+            progress.begin(idx)
+            if hasattr(model,'progress_callback'):model.progress_callback=progress.observe
         if hasattr(model,'progress_context'):model.progress_context=dict(part=idx,parts=len(parts))
         segments, info = transcribe_one(
             model,
@@ -432,6 +435,8 @@ def _process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, part
             cfg["hotwords"],
             **({"language": cfg["default_language"]} if cfg.get("default_language", "zh") != "zh" else {}),
         )
+
+        if progress is not None:progress.complete_part(getattr(info,'duration',None))
 
         srt_path = out_dir / f"{audio.stem}.srt"
         part_txt_path = out_dir / f"{audio.stem}.txt"
@@ -461,6 +466,7 @@ def _process_lecture(model, subject_code: str, cfg: dict, lecture_key: str, part
             "language": getattr(info, "language", "zh"),
         })
 
+    if progress is not None:progress.emit('publishing',force=True)
     combined_path.write_text("\n\n".join(all_sections), encoding="utf-8")
 
     ready = read_ready(cfg, lecture_key, parts)

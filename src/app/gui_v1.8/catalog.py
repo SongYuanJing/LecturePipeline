@@ -12,7 +12,7 @@ STAGES={'available':'Есть','missing':'Нет','unknown':'Неизвестн�
 
 class CatalogPanel:
     def __init__(self,app,parent):
-        self.app=app;self.data=dict(items=[],pending=[],errors=[]);self.rows={};self.pending_rows={};self.config=None
+        self.app=app;self.data=dict(items=[],pending=[],errors=[]);self.rows={};self.pending_rows={};self.config=None;self.detail_owner="lecture"
         parent.columnconfigure(0,weight=1);parent.rowconfigure(2,weight=3);parent.rowconfigure(4,weight=2);parent.rowconfigure(6,weight=1)
         bar=ttk.Frame(parent);bar.grid(row=0,column=0,sticky='ew')
         self.course=tk.StringVar(value='Все курсы');self.status=tk.StringVar(value='Все состояния');self.order=tk.StringVar(value='Сначала новые')
@@ -26,8 +26,8 @@ class CatalogPanel:
         ttk.Button(tools,text='Обновить список',command=app.refresh).pack(side='left')
         ttk.Button(tools,text='Добавить лекцию',command=app.add_lecture).pack(side='left',padx=6)
         self.notice=tk.StringVar();ttk.Label(tools,textvariable=self.notice).pack(side='left',padx=8)
-        self.table=self.tree(parent,2,('course','key','date','status','parts','raw','ai','word'),
-                             ('Предмет','Лекция','Дата','Статус','Частей','Raw','AI','Word'),(210,160,110,220,65,90,160,90),5)
+        self.table=self.tree(parent,2,('course','key','date','status','progress','parts','raw','ai','word'),
+                             ('Предмет','Лекция','Дата','Статус','Прогресс ASR','Частей','Raw','AI','Word'),(210,160,110,220,280,65,90,160,90),5)
         self.table.bind('<<TreeviewSelect>>',lambda e:self.select())
         actions=ttk.Frame(parent);actions.grid(row=3,column=0,sticky='ew',pady=4);self.buttons={}
         for label,key in [('Открыть Word','word'),('Папка результата','result'),('Открыть Raw','raw'),('Исходная папка','source')]:
@@ -59,31 +59,43 @@ class CatalogPanel:
         self.courses={'Все курсы':None,**{r['course_display_name']+' ['+r['course_id']+']':r['course_id'] for r in data['items']+data['pending'] if r.get('course_id')}}
         self.course_box['values']=list(self.courses)
         if self.course.get() not in self.courses:self.course.set('Все курсы')
-        self.fill()
+        self.fill(preserve=True)
 
-    def fill(self):
+    def fill(self,preserve=False):
+        detail_scroll=self.detail.yview();owner=self.detail_owner
         old=self.table.selection();selected=self.rows.get(old[0],{}).get('id') if old else None
-        self.table.delete(*self.table.get_children());self.rows={}
         status=next((k for k,v in LABELS.items() if v==self.status.get()),None);course=getattr(self,'courses',{}).get(self.course.get())
         rows=filtered(self.data['items'],course,status,self.order.get()=='Сначала новые')
+        stable=[r['id'] for r in self.rows.values()]==[r['id'] for r in rows]
+        if not stable:self.table.delete(*self.table.get_children())
+        self.rows={}
         for i,r in enumerate(rows):
             iid=str(i);self.rows[iid]=r;s=r['stages']
-            self.table.insert('','end',iid=iid,values=(r['course_display_name'],r['lecture_key'],r['lecture_date'] or 'Не определена',r['status_text'],r['parts'],STAGES.get(s.get('raw'),'—'),STAGES.get(s.get('ai'),'—'),STAGES.get(s.get('word'),'—')))
-            if r['id']==selected:self.table.selection_set(iid)
+            from lecture_progress import STAGES as LIVE_STAGES
+            status_text=LIVE_STAGES[r['progress']['stage']] if r.get('progress') else r['status_text']
+            values=(r['course_display_name'],r['lecture_key'],r['lecture_date'] or 'Не определена',status_text,r.get('progress_view',{}).get('compact') or '—',r['parts'],STAGES.get(s.get('raw'),'—'),STAGES.get(s.get('ai'),'—'),STAGES.get(s.get('word'),'—'))
+            if stable:self.table.item(iid,values=values)
+            else:self.table.insert('','end',iid=iid,values=values)
+            if not stable and r['id']==selected:self.table.selection_set(iid)
         prior=self.pending.selection();pending_id=self.pending_rows.get(prior[0],{}).get('id') if prior else None
-        self.pending.delete(*self.pending.get_children());self.pending_rows={}
-        for r in self.data['pending']:
-            if course and r['course_id']!=course:continue
+        pending_rows=[r for r in self.data['pending'] if not course or r['course_id']==course]
+        pending_stable=list(self.pending_rows.values())==pending_rows
+        if not pending_stable:self.pending.delete(*self.pending.get_children())
+        self.pending_rows={}
+        for r in pending_rows:
             iid=str(len(self.pending_rows));self.pending_rows[iid]=r
-            self.pending.insert('','end',iid=iid,values=(r['course_display_name'],r['name'],r['lecture_date'] or 'Не определена',', '.join(str(n) for n in r['parts'] if n is not None),r['reason']))
-            if r['id']==pending_id:self.pending.selection_set(iid)
+            if not pending_stable:self.pending.insert('','end',iid=iid,values=(r['course_display_name'],r['name'],r['lecture_date'] or 'Не определена',', '.join(str(n) for n in r['parts'] if n is not None),r['reason']))
+            if not pending_stable and r['id']==pending_id:self.pending.selection_set(iid)
         self.notice.set(f"Лекций: {len(rows)} · Ожидают: {len(self.pending_rows)}"+(' · Ошибки чтения' if self.data['errors'] else ''))
-        self.select()
+        if preserve and owner=='pending':self.select_pending()
+        else:self.select()
+        if preserve:self.detail.yview_moveto(detail_scroll[0])
 
     def text(self,value):
         self.detail.configure(state='normal');self.detail.delete('1.0','end');self.detail.insert('1.0',value);self.detail.configure(state='disabled')
 
     def select(self):
+        self.detail_owner="lecture"
         ids=self.table.selection();r=self.rows.get(ids[0]) if ids else None
         for key,button in self.buttons.items():button.state(['!disabled'] if r and r['paths'].get(key) else ['disabled'])
         if not r:self.text('\n'.join(self.data['errors']) or 'Выберите лекцию.');return
@@ -91,10 +103,12 @@ class CatalogPanel:
         stages=' · '.join(names[k]+': '+STAGES.get(v,v) for k,v in r['stages'].items())
         self.text(f"{r['course_display_name']} · {r['lecture_key']} · {r['status_text']}\n"+lecture_dates.describe(r)+
                   f"\nИмпорт: {r.get('imported_at') or 'неизвестно'} · Запись: {r.get('recorded_at') or 'неизвестно'}\n{stages}\n"+
+                  r.get('progress_view',{}).get('details','')+'\n'+
                   '\n'.join(f"{i}. {m['name']}"+(f" — {m['path']}" if m.get('path') else '') for i,m in enumerate(r['members'],1))+
                   '\n'+'\n'.join(r['reasons']+r.get('recovery',[]))+'\n'+'\n'.join(k+': '+str(v) for k,v in r['paths'].items())+'\n'+r.get('integrity',''))
 
     def select_pending(self):
+        self.detail_owner="pending"
         ids=self.pending.selection()
         if ids:
             r=self.pending_rows[ids[0]];self.text(r['name']+'\n'+lecture_dates.describe(r)+'\n'+r['reason'])
