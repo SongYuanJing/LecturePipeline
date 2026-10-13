@@ -44,3 +44,39 @@ download public assets, fresh-install/short actual-ASR/manual-AI/Word/catalog sm
 restart, and separate public beta.2 → v2 update with config/data fingerprints.
 No VIC-15, signing, runtime migration or release overwrite. Fix public defects
 forward as beta.2 rather than moving a tag.
+
+## 2026-10-13 checkpoint: prepublish passed, public acceptance blocked
+
+- Release source/build commit: `a57d75dc8e820780eeeacdbdbfcae13c12980bdd`.
+  Branch and new annotated `v2.0.0-beta.1` tag pushed without force.
+- 78 targeted Python tests passed, including release payload, updater failure/rollback,
+  resumable downloads and DPI coverage; 22 .NET bootstrap assertions passed.
+- Exact Setup: 51,854,062 bytes, SHA-256
+  `95091d623a381dbed4d0f1f28c9e0230bbff3277f0ff761581511e44b92921c2`.
+- Exact code-only update ZIP: 139,139 bytes, SHA-256
+  `a7e1ffeaecd552473d24f4c481d30d3610200832703fd545a234a6babb4ee109`.
+  Its six runtime contract hashes match the public old beta.2 manifest.
+- Local prepublish Setup passed using newly downloaded suppliers: all component
+  imports valid, Auto selected cuda, ready report produced. The installed shortcut
+  reopened the real `Lecture Pipeline · 2.0.0-beta.1` GUI and normal close worked.
+  No GUI log errors. A prior window close reported by the user has no recorded
+  cause; successful reopen must not be presented as a diagnosis of that close.
+- Initial GUI displays missing worker-status paths before workers first run;
+  recorded as existing UX noise, not an installation error.
+- GitHub publication is **NOT complete**. Six small assets reached a draft; the
+  Setup upload produced no asset after over ten minutes. That exact upload process
+  was stopped; one upload-only retry likewise produced no asset after over five
+  minutes and was stopped. Neither command supplied an HTTP error before the
+  bounded stop. Do not claim a 403/auth defect or publish the incomplete draft.
+- Public fresh-install and beta.2-to-v2 upgrade acceptance remain **pending**.
+  Do not move the tag, overwrite assets, or label VIC-24 Done. Resume by inspecting
+  the existing draft and uploading only the missing exact Setup, then publishing
+  only after all asset sizes/hashes match. No additional product changes were made.
+- Five representative protected production/baseline files retained both SHA-256
+  and mtime. No operational course/Google Drive paths were used.
+
+Local operator evidence (not release content): `.local/vic24/prepublish.json`,
+`draft-release.json`, `protected-check.json`, `checkpoint.md`, targeted build/test
+logs. Disposable prepublish root: `%TEMP%/LP24-1013P`; separate public old-beta setup
+root: `%TEMP%/LP24-Upgrade`. Inspect its `setup-result.json` before continuing; never
+assume an interrupted process remained alive. Verified supplier caches stay there.
