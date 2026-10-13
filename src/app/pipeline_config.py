@@ -3,7 +3,8 @@ from __future__ import annotations
 import argparse,hashlib,json,os,re,subprocess,sys
 from pathlib import Path
 
-VERSION='1.7'
+_release=Path(__file__).with_name('release.json')
+VERSION=json.loads(_release.read_text(encoding='utf8'))['app_version'] if _release.exists() else '1.7'
 class ConfigError(ValueError):pass
 def need(ok,message):
  if not ok:raise ConfigError(message)

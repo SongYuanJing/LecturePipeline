@@ -6,9 +6,10 @@ $env:DOTNET_CLI_TELEMETRY_OPTOUT='1'
 $env:DOTNET_GENERATE_ASPNET_CERTIFICATE='false'
 & $Python -B (Join-Path $PSScriptRoot 'build_bootstrap_payload.py')
 if($LASTEXITCODE -ne 0){throw 'Payload build failed'}
+$appVersion=(Get-Content -LiteralPath (Join-Path $repo 'bootstrap/payload/application.json') -Raw | ConvertFrom-Json).app_version
 Push-Location (Join-Path $repo 'bootstrap')
 try {
- & $Dotnet publish Setup.csproj -c Release -o $Output
+ & $Dotnet publish Setup.csproj -c Release -o $Output "-p:Version=$appVersion" "-p:InformationalVersion=$appVersion"
  if($LASTEXITCODE -ne 0){throw 'Self-contained publish failed'}
 } finally {Pop-Location}
 $exe=Join-Path $Output 'Setup.exe'
