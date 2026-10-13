@@ -1,8 +1,8 @@
-# VIC-23 — integration checkpoint (pending final GUI reopen)
+# VIC-23 — validated integration checkpoint
 
-Status on 2026-10-13: **not Done; no push**. The user explicitly selected checks
-without GUI control after stopping Computer Use with Escape. Do not turn prior
-visual observations into a claim that the final reopen passed.
+Status on 2026-10-13: **all acceptance checks PASS**. The user explicitly authorized
+the final GUI reopen and normal development-branch push. Git delivery must still
+be confirmed by matching local/remote HEAD after push; no release is authorized.
 
 ## Repository boundary
 
@@ -98,11 +98,20 @@ ASR ETA, insufficient-data row without ETA, waiting/completed rows without progr
 vertical scrolling verified. No authoritative mutation or Tk errors. Scheduler and
 progress observations here are simulated, not actual ASR timing measurements.
 
-Final same-fixture GUI reopen was started but interrupted before inspection/close.
-The subsequent bottom-scroll refinement has targeted/combined test coverage but
-has not received a new native visual check. Both are pending until the user permits
-GUI control again. Do not replay the expensive integration/ASR gates: repeat only
-the affected GUI checks and confirm the final fingerprint report.
+Final same-fixture GUI reopen completed on 2026-10-13 using the current repository
+CatalogPanel. Exact evidence:
+`%TEMP%/LP-vic23-integration-vm101d7i/gui-evidence-1791872349397162300.json`.
+The `--gui <root> --scroll-check` harness verifies selection, unchanged middle
+position, bottom retention through four different wrapping lengths, correct text,
+and table horizontal/vertical view state. Progress text is an in-memory view-only
+fixture; no completed lecture authority is changed. Native inspection confirmed
+Catalog/Courses readability, RU/Chinese glyphs, correct selected lecture details,
+and preserved selection/table scroll when changing tabs. DPI 192. Normal window
+close, process exit 0, no Tk callback errors, all 159 authoritative file SHA-256 and
+mtime pairs unchanged. Catalog source SHA-256:
+`fa86d968a648f47b50067c3745c70dff87322b542c7ba5a224362aa734a2fbbf`.
+No additional product fix, broad regression, integration, Drive or ASR rerun was
+needed. Only the acceptance harness/report changed after the 333-pass combined run.
 
 ## Compatibility, hygiene and scope
 

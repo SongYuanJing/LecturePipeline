@@ -1,7 +1,7 @@
 {
   "task": "VIC-23",
   "date": "2026-10-13",
-  "status": "PENDING_GUI_REOPEN",
+  "status": "ACCEPTANCE_PASS",
   "branch": "feature/course-setup-gui",
   "tested_start_head": "95c7aeb9547a667bd98beadd55eaf5d65e9eece8",
   "combined": {
@@ -44,14 +44,27 @@
     "evidence": "%TEMP%/LP-vic23-integration-o5wg85eb/integration-evidence.json"
   },
   "native_gui": {
-    "final_reopen": "PENDING: user requested no further GUI control",
-    "dpi": 192,
-    "changed_files": [],
-    "evidence": "%TEMP%/LP-vic23-integration-vm101d7i/gui-evidence-1791805060536097600.json",
-    "prior_status": "PASS",
-    "real_word_open": true,
-    "latest_bottom_fix_visual": "PENDING",
-    "callback_errors": []
+    "status": "PASS",
+    "evidence": "%TEMP%/LP-vic23-integration-vm101d7i/gui-evidence-1791872349397162300.json",
+    "result": {
+      "status": "PASS",
+      "dpi": 192,
+      "callback_errors": [],
+      "changed_files": [],
+      "scroll_checks": {
+        "selection": true,
+        "details": true,
+        "middle_scroll": true,
+        "bottom_reflow": true,
+        "table_scroll": true,
+        "view_only_progress_fixture": true
+      },
+      "catalog_source_sha256": "fa86d968a648f47b50067c3745c70dff87322b542c7ba5a224362aa734a2fbbf",
+      "fingerprinted_files": 159
+    },
+    "exit_code": 0,
+    "visual_inspection": "Catalog and Courses readable; RU/Chinese glyphs, selected details, tab return and scroll verified",
+    "additional_product_fix": false
   },
   "live_progress": {
     "fixture": true,
@@ -63,6 +76,6 @@
     "status": "REUSED",
     "evidence": "%TEMP%/LP-vic14-asr-lvs9ohcg/evidence.json"
   },
-  "push": "NOT_PERFORMED",
+  "push": "AUTHORIZED_AFTER_FINAL_CLEAN_AUDIT",
   "release_tag": "NOT_CREATED"
 }

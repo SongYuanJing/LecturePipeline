@@ -4,6 +4,7 @@ Real services own intake, READY, raw, AI packet, Word, vocabulary and catalog.
 Run without arguments, then --gui <printed root> for native inspection/reopen.
 """
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -104,7 +105,7 @@ def integrate(drive=False):
     report=dict(status='PASS',base=str(base),source_root=str(source_root),bounded_drive=drive,codes=codes,source_count=len(source_files),source_unchanged=True,ready_count=2,parts=[1,3],asr_fixture_calls=len(calls),worker_restart_no_repeat=True,producer_restart_no_repeat=True,word_count=len(results),word_idempotent=True,catalog=final,fixture_asr=True,fixture_scheduler=True)
     dump(base/'integration-evidence.json',report);print(str(base),flush=True)
 
-def gui(base):
+def gui(base,scroll_check=False):
     assert base.resolve().parent==Path(tempfile.gettempdir()).resolve() and base.name.startswith('LP-vic23-integration-')
     c=Config(base/'app/config.json');os.environ['LECTURE_CONFIG']=str(c.path)
     # Complete the disposable inactive Dialogue environment before observation.
@@ -119,17 +120,49 @@ def gui(base):
     from dpi import enable_system_dpi
     def durable():
         return {k:v for k,v in fingerprints(base).items() if not k.startswith('gui-evidence') and k!='app/logs/gui/gui.log'}
-    before=durable();errors=[];enable_system_dpi();root=tk.Tk()
+    before=durable();errors=[];checks={};enable_system_dpi();root=tk.Tk()
     root.report_callback_exception=lambda typ,value,tb:errors.append(str(value))
     with patch.object(adapter,'Controls',FixtureControls),patch.object(adapter,'preflight',lambda c:dict(ok=True,checks=[])):
         app=App(root,c.path);root.title('VIC-23 disposable integration · 200%');root.geometry('1900x1400')
         app.tabs.select(app.pages['Лекции']);dpi=round(float(root.tk.call('tk','scaling'))*72)
+        def check_scroll():
+            if app.busy:root.after(100,check_scroll);return
+            try:
+                assert dpi==192,dpi
+                panel=app.catalog;data=copy.deepcopy(panel.data)
+                assert len(data['items'])==2 and len(data['pending'])==1
+                panel.table.selection_set('0');root.update()
+                panel.table.xview_moveto(.5);panel.table.yview_moveto(.5)
+                panel.detail.yview_moveto(.4);root.update()
+                selection=panel.table.selection();table=(panel.table.xview(),panel.table.yview())
+                middle=panel.detail.yview();panel.render(copy.deepcopy(data),c);root.update()
+                assert panel.detail.yview()==middle
+                panel.detail.yview_moveto(1);root.update()
+                assert panel.detail.yview()[1]==1
+                # View-only progress text tests wrapping without inventing durable
+                # worker state or modifying a completed lecture's authorities.
+                for repeats in (1,30,2,40):
+                    changed=copy.deepcopy(data)
+                    changed['items'][0]['progress_view']=dict(compact='GUI fixture',details=('Тест переноса строки / 中文进度 · '*repeats))
+                    panel.render(changed,c);root.update()
+                    assert panel.table.selection()==selection
+                    assert (panel.table.xview(),panel.table.yview())==table
+                    assert panel.detail.yview()[1]==1,panel.detail.yview()
+                    assert 'Тест переноса строки' in panel.detail.get('1.0','end')
+                panel.render(data,c);root.update()
+                assert panel.detail.yview()[1]==1
+                checks.update(selection=True,details=True,middle_scroll=True,bottom_reflow=True,table_scroll=True,view_only_progress_fixture=True)
+                print('SCROLL_CHECK_PASS',flush=True)
+            except Exception as e:
+                errors.append(str(e));app.close()
+        if scroll_check:root.after(300,check_scroll)
         root.mainloop()
     after=durable();changed=[k for k in before.keys()|after.keys() if before.get(k)!=after.get(k)]
-    report=dict(status='PASS' if not changed and not errors else 'FAIL',dpi=dpi,callback_errors=errors,changed_files=changed)
+    report=dict(status='PASS' if not changed and not errors and (not scroll_check or checks) else 'FAIL',dpi=dpi,callback_errors=errors,changed_files=changed,scroll_checks=checks,
+                catalog_source_sha256=hashlib.sha256((REPO/'src/app/gui_v1.8/catalog.py').read_bytes()).hexdigest(),fingerprinted_files=len(before))
     dump(base/('gui-evidence-'+str(time.time_ns())+'.json'),report);print(json.dumps(report),flush=True)
     assert not changed and not errors,report
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--gui',type=Path);parser.add_argument('--drive',action='store_true');args=parser.parse_args()
-    gui(args.gui) if args.gui else integrate(args.drive)
+    parser=argparse.ArgumentParser();parser.add_argument('--gui',type=Path);parser.add_argument('--drive',action='store_true');parser.add_argument('--scroll-check',action='store_true');args=parser.parse_args()
+    gui(args.gui,args.scroll_check) if args.gui else integrate(args.drive)
