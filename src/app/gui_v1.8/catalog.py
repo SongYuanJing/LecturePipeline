@@ -93,7 +93,10 @@ class CatalogPanel:
             # Text wrapping is recalculated at idle; restore against the new
             # layout rather than the transient line count after replacement.
             self.detail.update_idletasks()
-            self.detail.yview_moveto(detail_scroll[0])
+            # Keep a reader at the end when changed wrapping alters the maximum
+            # scroll fraction; that fraction is not a stable bottom coordinate.
+            bottom=detail_scroll[0]>0 and detail_scroll[1]>=.999
+            self.detail.yview_moveto(1 if bottom else detail_scroll[0])
 
     def text(self,value):
         self.detail.configure(state='normal');self.detail.delete('1.0','end');self.detail.insert('1.0',value);self.detail.configure(state='disabled')

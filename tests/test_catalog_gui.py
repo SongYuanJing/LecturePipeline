@@ -34,12 +34,16 @@ class CatalogGuiTests(unittest.TestCase):
         data=fixtures.catalog.build(self.c)
         panel.render(data,self.c);root.update()
         panel.table.selection_set('0');root.update();panel.detail.yview_moveto(1);root.update()
-        before=(panel.table.selection(),panel.detail.yview()[0],panel.table.yview(),panel.table.xview())
+        before=(panel.table.selection(),panel.detail.yview(),panel.table.yview(),panel.table.xview())
+        self.assertAlmostEqual(before[1][1],1)
         for n in range(10):
             changed=copy.deepcopy(data)
             changed['items'][0]['progress_view']=dict(compact=f'Распознавание · 3/8 · {n}%',details=f'ETA ASR: ~{n+10} мин')
             panel.render(changed,self.c);root.update()
             self.assertEqual(panel.table.selection(),before[0])
-            self.assertAlmostEqual(panel.detail.yview()[0],before[1],delta=.035)
+            # Progress text can change wrapping/line count. A reader at the
+            # bottom must stay there, not retain an obsolete fractional offset.
+            self.assertAlmostEqual(panel.detail.yview()[1],1)
+            self.assertGreater(panel.detail.yview()[0],0)
             self.assertEqual((panel.table.yview(),panel.table.xview()),before[2:])
             self.assertIn('ETA ASR:',panel.detail.get('1.0','end'))
