@@ -80,3 +80,73 @@ Local operator evidence (not release content): `.local/vic24/prepublish.json`,
 logs. Disposable prepublish root: `%TEMP%/LP24-1013P`; separate public old-beta setup
 root: `%TEMP%/LP24-Upgrade`. Inspect its `setup-result.json` before continuing; never
 assume an interrupted process remained alive. Verified supplier caches stay there.
+
+## 2026-10-14 publication and upgrade checkpoint
+
+The transport blocker is resolved without rebuilding or replacing assets. HTTPS
+HEAD reached uploads.github.com. An HTTP/1.1 curl upload timed out at 180 seconds
+after transmitting 38,813,408 bytes; a bounded 420-second retry completed with
+HTTP 201, all 51,854,062 bytes, in 278.869 seconds. No auth/403 error was observed.
+The existing draft's six small assets were verified and preserved. All seven
+server-side sizes/digests matched; the draft was published as prerelease, then all
+seven public assets were downloaded again and their local SHA-256/size verified.
+
+Release: https://github.com/SongYuanJing/LecturePipeline/releases/tag/v2.0.0-beta.1
+Tag/source remains a57d75dc8e820780eeeacdbdbfcae13c12980bdd. No rebuild, version
+change, tag movement or replacement of correct assets occurred.
+
+The separate public beta.2 candidate completed real GitHub discovery/download,
+manifest/ZIP verification, stage/health, atomic switch and first launch to v2.
+Its real GUI displayed v2, Preflight OK, AUTO to GPU and "Установлена последняя
+версия" after Check Updates. Four initialized config/data files retained exact
+SHA-256 and mtime; old version retained; no pending transaction. This is minimal
+legacy initialized state, not a migration of real study data. The old stable
+launcher remained unchanged, including its documented VIC-20 limitation.
+Two bounded fixture rollback tests passed again (staged health rejection and
+failed first-launch pointer restore); the sandbox-only Temp permission failure
+was superseded by the normal disposable Windows Temp run, not a product fix.
+
+Evidence: `.local/vic24/expected-assets.json`, `verified-release.json`,
+`transport-20261014.json`, `upgrade-discovery.log`, `upgrade-apply.log`,
+`upgrade-invariance.json`, `upgrade-result.json`, `rollback-smoke-native-temp.log`.
+Fresh published Setup acceptance continues at `%TEMP%/LP24-Public-1014`;
+functional acceptance is not yet claimed.
+
+## 2026-10-14 fresh public install: Unicode integration defect
+
+The resumed public candidate at `%TEMP%/LP24-Public-1014` had already completed
+Setup: ready report, all pinned components imported, no partial downloads, native
+Auto selected `cuda` (`int8_float16`). The installed shortcut reopened the actual
+`2.0.0-beta.1` GUI. No supplier downloads or prior update gates were repeated.
+
+The existing `Integrate.cmd -Apply` passed native preflight but failed assigning
+WScript shortcut TargetPath for the Chinese installation path: `Value does not
+fall within the expected range` at Integrate.ps1 line 41. The failure was reproduced
+without saving a shortcut: ASCII target accepted, the existing Chinese paths
+rejected. Newly registered disposable tasks rolled back (zero matching tasks
+remain). Six pre-existing task XML definitions remain identical. Five representative
+protected production/baseline files retain both SHA-256 and mtime.
+
+Local fix `50b9187` shares the existing Setup `IShellLinkW` implementation with
+Integrate, using Windows PowerShell-compatible C# syntax. No second shortcut
+implementation, updater change, runtime migration or config contract change.
+Native Unicode shortcut create/read regression passed under Windows PowerShell;
+targeted first-run/payload checks: **7 passed, 1 explicitly skipped** (deployment
+plan test needs a configured test deployment). **22 bootstrap assertions passed**.
+These are local fix tests, not public fresh-install acceptance of the fix.
+
+The public beta.1 installation and published assets/tag are not patched or replaced.
+The fix requires a forward beta.2 build and affected integration/public fresh-flow
+validation. No version bump or beta.2 release was made at this checkpoint.
+GUI automation subsequently could not activate the existing window; no course was
+saved, no single/multipart ASR, manual AI/Word or restart acceptance is claimed.
+VIC-24 remains **not Done**, and VIC-20 final closure remains conditional on the
+remaining acceptance. Earlier evidence that fresh Setup includes its updater UX
+fix remains valid; legacy code-only update still retains the old launcher.
+
+Evidence: `.local/vic24/fresh-integration.log`,
+`unicode-shortcut-first-run.log`, `unicode-shortcut-payload.log`,
+`unicode-shortcut-bootstrap.log`, `tasks-after-integration-failure.json`,
+`protected-after-integration-failure.json`; candidate `setup-result.json` and
+`App 课程/logs/bootstrap-health.json`. Continue from these artifacts; do not rerun
+the completed public asset/old-beta update/rollback gates without a changed risk.
