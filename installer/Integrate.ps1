@@ -24,10 +24,12 @@ foreach($task in $tasks){
   if(-not (Test-ExpectedTask $existing $plan.execute $expectedArguments $root)){throw ('Task conflict; unchanged: '+$task.name)}
  } else {$missing+=$task}
 }
-$shell=New-Object -ComObject WScript.Shell
-$shortcut=$shell.CreateShortcut($plan.shortcut)
+Add-Type -Path (Join-Path $PSScriptRoot 'ShellShortcut.cs')
+$shortcutExists=Test-Path -LiteralPath $plan.shortcut
+if($shortcutExists){$shortcut=New-Object LecturePipeline.Setup.ShellShortcut($plan.shortcut)}
+else {$shortcut=New-Object LecturePipeline.Setup.ShellShortcut}
 $shortcutArguments='-B -X utf8 "'+$plan.launcher+'" gui'
-if((Test-Path -LiteralPath $plan.shortcut) -and ($shortcut.TargetPath -ne $plan.execute -or $shortcut.Arguments -cne $shortcutArguments -or $shortcut.WorkingDirectory -ne $root)){throw 'Shortcut conflict; unchanged'}
+if($shortcutExists -and ($shortcut.Target -ne $plan.execute -or $shortcut.Arguments -cne $shortcutArguments -or $shortcut.Directory -ne $root)){$shortcut.Dispose();throw 'Shortcut conflict; unchanged'}
 $registered=@()
 try {
  foreach($task in $missing){
@@ -38,9 +40,11 @@ try {
   Register-ScheduledTask -TaskName $task.name -Action $action -Trigger $trigger -Principal $principal -Settings $settings | Out-Null
   $registered+=$task.name
  }
- if(-not (Test-Path -LiteralPath $plan.shortcut)){$shortcut.TargetPath=$plan.execute;$shortcut.Arguments=$shortcutArguments;$shortcut.WorkingDirectory=$root;$shortcut.Save()}; '{}' | Set-Content -LiteralPath (Join-Path $root 'logs\integration-applied.json') -Encoding UTF8
+ if(-not $shortcutExists){$shortcut.Target=$plan.execute;$shortcut.Arguments=$shortcutArguments;$shortcut.Directory=$root;$shortcut.Save($plan.shortcut)}; '{}' | Set-Content -LiteralPath (Join-Path $root 'logs\integration-applied.json') -Encoding UTF8
 } catch {
  foreach($name in $registered){Unregister-ScheduledTask -TaskName $name -Confirm:$false}
  throw
+} finally {
+ $shortcut.Dispose()
 }
 Write-Output 'Isolated tasks and shortcut verified/created. Start workers explicitly from GUI; no other tasks replaced.'

@@ -16,6 +16,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../installer/ShellShortcut.cs" Link="ShellShortcut.cs" />
     <InternalsVisibleTo Include="Bootstrap.Tests" />
     <EmbeddedResource Include="base.json" LogicalName="base.json" />
     <EmbeddedResource Include="notices/*.txt" LogicalName="notices.%(Filename)%(Extension)" />

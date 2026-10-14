@@ -39,6 +39,29 @@ class NoticeUninstall(unittest.TestCase):
    self.assertEqual(p.returncode,0,p.stderr);self.assertTrue(all(not(root/n).exists() for n in files));self.assertEqual(cfg.read_text(),'KEEP')
 
 class IntegrationEncoding(unittest.TestCase):
+ def test_native_shortcut_unicode_roundtrip(self):
+  import os,subprocess
+  if os.name!='nt':self.skipTest('Windows shell link COM required')
+  with tempfile.TemporaryDirectory() as td:
+   root=Path(td)/'Программа 课程';root.mkdir()
+   target=root/'private python.exe';target.write_bytes(b'fixture target; never executed')
+   env=dict(os.environ,LP_LINK_SOURCE=str(REPO/'installer/ShellShortcut.cs'),LP_LINK_ROOT=str(root))
+   command=r'''$ErrorActionPreference='Stop'
+Add-Type -Path $env:LP_LINK_SOURCE
+$root=$env:LP_LINK_ROOT
+$path=Join-Path $root 'Lecture Pipeline.lnk'
+$target=Join-Path $root 'private python.exe'
+$arguments='-B -X utf8 "'+(Join-Path $root 'launch.py')+'" gui'
+$link=New-Object LecturePipeline.Setup.ShellShortcut
+try {$link.Target=$target;$link.Arguments=$arguments;$link.Directory=$root;$link.Save($path)} finally {$link.Dispose()}
+$link=New-Object LecturePipeline.Setup.ShellShortcut($path)
+try {
+ if($link.Target -cne $target -or $link.Arguments -cne $arguments -or $link.Directory -cne $root){throw 'Unicode shortcut roundtrip mismatch'}
+} finally {$link.Dispose()}
+'''
+   p=subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-Command',command],env=env,capture_output=True,text=True,encoding='utf8',errors='replace')
+   self.assertEqual(p.returncode,0,p.stderr+p.stdout)
+   self.assertTrue((root/'Lecture Pipeline.lnk').is_file())
  def test_unicode_plan_without_python_encoding_environment(self):
   import os,subprocess
   if not os.environ.get('LP_DEPLOYMENT_ROOT'):self.skipTest('Set LP_DEPLOYMENT_ROOT to a disposable configured package')
