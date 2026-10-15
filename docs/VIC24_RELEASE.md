@@ -150,3 +150,38 @@ Evidence: `.local/vic24/fresh-integration.log`,
 `protected-after-integration-failure.json`; candidate `setup-result.json` and
 `App 课程/logs/bootstrap-health.json`. Continue from these artifacts; do not rerun
 the completed public asset/old-beta update/rollback gates without a changed risk.
+
+## Public beta.2 course-save checkpoint (2026-10-15)
+
+Public beta.2 source is `42b74644d9c61bf7efebe75c7e8953db8f3f36fa`.
+Publication, independent public asset verification, Unicode Integrate and the
+beta.1-to-beta.2 update gates have completed (evidence under
+`.local/vic24/beta2/`). The existing disposable public install resumed to ready,
+native Auto selected CUDA, and the main GUI started. No repeated supplier import
+or replacement of the published installed code was used.
+
+The next real GUI course save exposed a separate fresh-install defect:
+`WorkerControl.ps1 -Action Stop` attempts to write `worker.stop` before the
+never-started worker home exists. Config transaction evidence reports
+`rolled_back`; the saved config still contains only the default subject.
+The same missing-parent assumption exists in DialogueControl. Local fix creates
+only the resolved worker home before Stop/ForceStop/Uninstall. No task identity,
+config schema, launcher or processing contract changes.
+
+Validation: one native Windows PowerShell test covers both controllers and all
+three actions (six subcases, each repeated twice), with Scheduler functions
+substituted and real disposable stop files. PASS. Existing course setup suite:
+15 PASS. An initial sandbox execution failed on Temp permissions before testing
+the product; the authorized native rerun passed.
+
+Evidence: `public-course-save-failure.log`, `public-course-save-failure.json`,
+`public-fresh-checkpoint.json` under the above local evidence directory.
+The public beta.2 installation/assets/tag remain unchanged. This local fix is
+not public acceptance; delivery needs a forward release, not replacement of
+beta.2. Single/multipart ASR, manual AI/Word, restart and final GUI update check
+remain pending. VIC-24 and final VIC-20 closure remain open.
+
+During manual entry a Drive path was selected before the requested Temp correction.
+Directory validation precedes the failed worker stop, so absence of Drive folder
+creation cannot be claimed. No Drive cleanup or inspection was performed by the
+agent; no audio was submitted there. Do not treat this as a protected-root PASS.

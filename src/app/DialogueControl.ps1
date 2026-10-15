@@ -7,6 +7,10 @@ $taskName=$resolved.tasks.dialogue
 $config=$resolved.dialogue
 $dialogueHome=$config.home
 $stopFile=Join-Path $dialogueHome 'stop'
+if($Action -in @('Stop','ForceStop','Uninstall')) {
+ # A fresh installation may never have started this worker.
+ [System.IO.Directory]::CreateDirectory($dialogueHome) | Out-Null
+}
 if($Action -in @('Install','Start')) {
  & $resolved.asr_python -B -X utf8 (Join-Path $base 'pipeline_config.py') | Out-Null
  if($LASTEXITCODE -ne 0){throw 'Preflight failed. Run pipeline_config.py for details; worker not started.'}
