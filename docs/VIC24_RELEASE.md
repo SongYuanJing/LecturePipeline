@@ -185,3 +185,33 @@ During manual entry a Drive path was selected before the requested Temp correcti
 Directory validation precedes the failed worker stop, so absence of Drive folder
 creation cannot be claimed. No Drive cleanup or inspection was performed by the
 agent; no audio was submitted there. Do not treat this as a protected-root PASS.
+
+## Public beta.3 checkpoint
+
+Published source: `943426bce931d52c0a8d4e56dd0036d987b89ba0`;
+annotated tag object: `e0dd40c5ee5d62ceeb39c25085dc93ff80fcacf9`.
+Seven public assets were downloaded and verified; receipts are under
+`.local/vic24/beta3/`. Setup is 51,855,210 bytes, SHA-256
+`e09b7e67dadc0f4219cb94018e5b1fb9284883d8291294b95c4a53e980d85218`.
+Targeted release checks: 53 Python tests passed, one expected skip, and
+22 bootstrap assertions passed.
+
+The existing public beta.3 disposable install reached ready. Native Auto selected
+CUDA; GUI showed 2.0.0-beta.3, Preflight OK and AUTO GPU. Real Integrate returned
+0, created its Unicode shortcut and two isolated tasks. Ten prior task XMLs were
+unchanged. First course save through the GUI committed successfully before either
+worker ever ran (Scheduler last result 267011). This confirms the beta.2 stop-folder
+regression fix. Evidence: `integration-check.json`, `first-course-save.json`.
+
+Manual entry selected the sibling disposable beta.2 Course directory. Correct that
+same course to the beta.3 Course directory before importing audio; do not create
+another installation or download suppliers again. Functional ASR/Word/restart and
+compact beta.2-to-beta.3 updater acceptance remain pending.
+
+An additional minor GUI defect was observed: missing worker observation files on
+a never-started installation appeared as filesystem errors. The local fix treats
+only missing heartbeat/status observations as normal. Corrupt/unreadable files and
+missing authoritative ledgers still report errors; no status files are created.
+Four focused tests and 31 progress regression tests passed. The published beta.3
+installation and artifacts are not patched; this source fix is not a new release.
+VIC-24 remains open. No beta.4, tag movement or VIC-15 work is authorized here.

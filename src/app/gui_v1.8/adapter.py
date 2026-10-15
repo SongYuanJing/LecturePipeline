@@ -65,12 +65,17 @@ def safe_open(c,path,opener=None):
 
 def snapshot(config_path,show_tests=False,catalog=None):
  c=Config(config_path);errors=[]
- def load(path,default):
+ def load(path,default,optional=False):
   try:return read(path)
+  except FileNotFoundError as e:
+   if not optional:errors.append(str(path)+': '+str(e))
+   return default
   except Exception as e:errors.append(str(path)+': '+str(e));return default
  try:c.layout()
  except Exception as e:errors.append(str(e))
- ls=load(c.worker_home/'worker_status.json',{});ds=load(c.dialogue_home/'status.json',{})
+ # Workers publish observations only after their first start. Missing observations
+ # are normal; unreadable/corrupt observations and missing ledgers remain errors.
+ ls=load(c.worker_home/'worker_status.json',{},optional=True);ds=load(c.dialogue_home/'status.json',{},optional=True)
  state=load(c.state,{'lectures':{}});ai=load(c.ai_state,{'processed':{}})
  dialogue=load(c.dialogue_home/'dialogue_state.json',{'jobs':{}})
  try:q=load_queue(c)
