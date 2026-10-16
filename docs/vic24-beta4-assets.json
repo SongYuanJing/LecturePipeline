@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Setup.exe",
+    "size": 51855651,
+    "sha256": "d324edfb3d22c4751efed01a4930b287d1d720332a1f064e369158e4bc82d512"
+  },
+  {
+    "name": "Setup.sha256.json",
+    "size": 108,
+    "sha256": "b603b111abf02dc759b55cd2348b9222a4bb9e7b5a26e7be5068f5c6f8a75c59"
+  },
+  {
+    "name": "dotnet-runtime-LICENSE.txt",
+    "size": 1139,
+    "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b"
+  },
+  {
+    "name": "dotnet-runtime-NOTICES.txt",
+    "size": 78041,
+    "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+  },
+  {
+    "name": "windowsdesktop-LICENSE.txt",
+    "size": 1137,
+    "sha256": "a89886665765362eb77e0f8e26602c924520041d1711b2eedc136434fe4d01ab"
+  },
+  {
+    "name": "LecturePipeline-app-2.0.0-beta.4.zip",
+    "size": 139684,
+    "sha256": "e570f827289aa7fd43f60fce5eb56c497bbcd04134f083fe598525f9f7f968e7"
+  },
+  {
+    "name": "LecturePipeline-update.json",
+    "size": 1099,
+    "sha256": "788ea1d1fd875d50c510eeb9cfb8126cbcf54650a6f6bfd9648b04506b3a8f6d"
+  }
+]

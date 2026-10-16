@@ -1,5 +1,9 @@
 # VIC-24 release engineering — v2.0.0-beta.1
 
+Final status (2026-10-16): **VIC-24 Done; VIC-20 Done with legacy-launcher
+limitation**. See [final beta.4 acceptance](VIC24_FINAL_ACCEPTANCE.md).
+The checkpoints below are historical and their pending statuses are superseded.
+
 Starting validated source: `08317a66095bc44bc78db2c3dc0666fef625c605`, branch
 `feature/course-setup-gui`. Acceptance is pending; no claim of a published/accepted
 v2 release until fresh public install and old-beta upgrade gates complete.
