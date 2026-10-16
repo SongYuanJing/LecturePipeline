@@ -215,3 +215,35 @@ missing authoritative ledgers still report errors; no status files are created.
 Four focused tests and 31 progress regression tests passed. The published beta.3
 installation and artifacts are not patched; this source fix is not a new release.
 VIC-24 remains open. No beta.4, tag movement or VIC-15 work is authorized here.
+
+## Manual finalization runtime defect (2026-10-16)
+
+The existing beta.3 course was corrected to its own disposable Course directory
+through the installed course service/transaction; no new course/install was made.
+Single and multipart completed real CUDA ASR. One key per lecture, 1/3 parts,
+ordered multipart 1/2/3, TXT/SRT/manifest outputs and duplicate READY suppression
+were observed. Both catalog rows reached waiting_ai with null progress/ETA.
+
+Manual-compatible synthetic AI answers were accepted by the installed document
+runtime. Both Word files and vocabulary/AI completion records were produced.
+However, the running ASR worker calls ai_queue.refresh and validates completed
+Word using its own Python, which intentionally lacks python-docx. This changes
+queue completion to failed with `No module named 'docx'`, despite valid Word and
+merged vocabulary. Full manual AI acceptance is therefore NOT PASS.
+
+Minimal local fix delegates the unchanged DOCX validator to the configured private
+document Python (bounded subprocess). Existing completed-output hashes remain
+checked. No dependency installation, schema change, API work or published-code
+replacement. Sixteen local finalizer tests passed, including parent Python without
+docx, corrupt DOCX, missing runtime and authoritative output invariance. A native
+read-only check from the installed ASR Python (docx absent) validated both existing
+Word files through installed document Python; Word/config/AI state/dictionary
+SHA-256 and mtime were unchanged.
+
+Evidence: `.local/vic24/beta3/manual-finalize.log`, `document-runtime-tests.log`,
+`document-runtime-native.log`, `worker-observations.jsonl`, and the existing
+candidate worker log/manifests. The disposable lecture worker was gracefully
+stopped/autostart disabled after the defect; no ASR rerun or source deletion.
+Published beta.3 still contains the defect. Visual Word opening, completed GUI
+restart acceptance, beta.2-to-beta.3 update and final no-update remain pending.
+Stop at this fix checkpoint. Do not publish beta.4 automatically or mark VIC-24 Done.

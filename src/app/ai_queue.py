@@ -1,6 +1,6 @@
 """Local AI boundary v1.7. No chat IDs, no network, no automatic AI/build/merge."""
 from __future__ import annotations
-import argparse,hashlib,importlib.util,json,os,re,shutil,uuid,time
+import argparse,hashlib,importlib.util,json,os,re,shutil,uuid,time,subprocess
 from pathlib import Path
 from contextlib import contextmanager
 from datetime import datetime,timezone,date
@@ -37,6 +37,15 @@ def lock(c):
   yield
 def module(c):
  spec=importlib.util.spec_from_file_location('word_ai_boundary',c.install/'word_ai_v1.5'/'lecture_ai.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
+
+def validate_document(c,path):
+ """Refresh may run in ASR Python; DOCX validation belongs to document Python."""
+ code="import sys;sys.path[:0]=[sys.argv[1],sys.argv[2]];from lecture_ai import validate_docx;validate_docx(sys.argv[3])"
+ result=subprocess.run([str(c.runtime('document_python','.venv/Scripts/python.exe')),
+     '-I','-B','-X','utf8','-c',code,str(c.install),str(c.install/'word_ai_v1.5'),str(path)],
+     capture_output=True,text=True,encoding='utf8',errors='replace',timeout=30,
+     creationflags=0x08000000 if os.name=='nt' else 0)
+ need(result.returncode==0,'Word validation failed: '+(result.stderr.strip() or result.stdout.strip())[-1000:])
 def load_queue(c):
  p=c.queue_home/'queue.json'
  if not p.exists():
@@ -103,10 +112,10 @@ def refresh(c=None):
       if (out/'processing_report.json').exists():
        report=read(out/'processing_report.json')
        for name,h in report['output_hashes'].items():need(sha(child(out,name))==h,'Completed output changed: '+name)
-       word.validate_docx(out/'lecture.docx')
+       validate_document(c,out/'lecture.docx')
       else:
        need(record.get('output_docx_local_path'),'Legacy completion has no verifiable Word path; review required')
-       word.validate_docx(Path(record['output_docx_local_path']))
+       validate_document(c,Path(record['output_docx_local_path']))
       t.update(status='vocabulary_pending' if record.get('vocabulary_status')=='batch_pending' else 'completed',legacy_ai_record=True,vocabulary_status=record.get('vocabulary_status','legacy_unspecified'),source_packet=t.get('source_packet'))
      else:
       old_signature=t.get('source_signature');packet=bundle(c,manifest,t)

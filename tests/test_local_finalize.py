@@ -34,6 +34,19 @@ def lecture(c,key='01_2030-01-01',empty=False):
 class LocalFinalizeTests(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.base=Path(self.tmp.name);self.c=fixture(self.base)
+ def test_refresh_without_docx_in_asr_runtime_preserves_completion(self):
+  identity,p,_=lecture(self.c);result=f.finalize(self.c,identity,p)
+  tracked=[self.c.ai_state,self.c.dictionary,Path(result['word'])]
+  before={str(x):(x.read_bytes(),x.stat().st_mtime_ns) for x in tracked}
+  with patch.dict(sys.modules,{'docx':None}):
+   task=aq.refresh(self.c)['tasks'][identity]
+  self.assertEqual(task['status'],'completed');self.assertNotIn('error',task)
+  self.assertEqual(before,{str(x):(x.read_bytes(),x.stat().st_mtime_ns) for x in tracked})
+ def test_document_validation_rejects_invalid_docx_and_missing_runtime(self):
+  bad=self.base/'invalid.docx';bad.write_bytes(b'not a Word document')
+  with self.assertRaisesRegex(ValueError,'Word validation failed'):aq.validate_document(self.c,bad)
+  with patch.object(self.c,'runtime',return_value=self.base/'absent-python.exe'):
+   with self.assertRaises(OSError):aq.validate_document(self.c,bad)
  def test_local_end_to_end_and_idempotent(self):
   identity,p,folder=lecture(self.c);before={str(x):x.read_bytes() for x in folder.iterdir()}
   result=f.finalize(self.c,identity,p);self.assertEqual(result['status'],'completed');word.validate_docx(result['word'])
