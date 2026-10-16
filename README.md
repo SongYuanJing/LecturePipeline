@@ -1,31 +1,44 @@
-# Lecture Pipeline — Windows x64 Beta
+# Lecture Pipeline
 
-Local lecture transcription and document preparation: audio parts → TXT/SRT → self-contained AI packet → manual ChatGPT result → Word and a merged vocabulary workbook. A separate local Dialogue / Quick mode is also included. Workers continue running when the control window is closed.
+**Current public beta: v2.0.0-beta.4**
 
-## Download and first run
+**Download: [v2.0.0-beta.4 GitHub Release](https://github.com/SongYuanJing/LecturePipeline/releases/tag/v2.0.0-beta.4)**
 
-Use the **v1.9.5-beta.1 tagged GitHub Release** and its `LecturePipeline-1.9.5-beta.1-win-x64.zip`, not a checkout of the development branch. Compare its SHA256 with the release checksum. Until the repository is published, the same artifact is available locally only.
+**Download Setup.exe from the release page.** The current release is a prerelease; use the link above rather than `releases/latest`.
 
-1. Extract into a new writable folder. Keep user data in a separate folder.
-2. Install the official Microsoft Visual C++ v14 x64 runtime if missing. Do not install a system Python for this application.
-3. Open **Lecture Pipeline.vbs** to enter first-run setup. Import the pinned PyAV and CTranslate2 supplier wheels and large-v3 model folder using the component controls. Optional CUDA uses the exact folder containing the pinned DLLs. See [Offline installation](docs/OFFLINE_INSTALL.md) for exact versions, hashes, supplier sources and command alternatives.
-4. Choose a separate data directory, workspace, subject and language. Complete setup. With integration enabled, this creates unique per-installation Windows tasks and starts both workers.
-5. Reopen the generated **Lecture Pipeline.lnk** shortcut. It uses private pythonw without a console and works independently of VBS. If Windows Script Host is disabled before setup, use the documented command setup and `Integrate.cmd -Apply`, then the shortcut.
+Local lecture transcription for **Windows 11 x64**, with **CPU / NVIDIA GPU** support:
+audio → Raw TXT/SRT → manual-compatible AI stage → Word and vocabulary.
 
-## Add a lecture and finish its AI step
+## Install and first run
 
-In **Лекции → Добавить лекцию**, select the subject/date/number and audio files. **Several files in one submission are ordered parts of ONE lecture**, not separate lectures. Confirm to publish READY for the running worker. After transcription, the AI queue shows `waiting_ai`.
+1. Download and run **Setup.exe** from the linked release. Choose writable installation and separate data locations. A system Python or .NET runtime is not required.
+2. Setup obtains the private base runtime and pinned PyAV, CTranslate2, Whisper large-v3 and GPU components as needed, checking sizes and SHA-256. Verified downloads are cached; large downloads can resume. Offline/manual component import remains an advanced fallback.
+3. Choose **Auto**, **CPU** or **GPU**. Auto selects GPU only after the private runtime probe succeeds; otherwise it uses CPU. Forced GPU reports a failed probe rather than silently switching to CPU. CPU does not require CUDA.
+4. Complete setup and open the application. Run `Integrate.cmd -Apply` when registering this installation's worker tasks. The application shortcut is independent of worker task registration.
+5. Configure a Course and its Inbox, Raw and final Word folders. Keep your lecture data outside the installation directory.
 
-Export the task ZIP for ordinary ChatGPT. Supply its START_HERE, versioned instructions and sources; receive a valid `ai_content.json`. Import that result in the GUI. The local finalizer validates it, creates Word, merges vocabulary and marks the task completed. Chat history is optional context, never pipeline state. There is no OpenAI API integration or automatic ChatGPT operation.
+Setup does not install NVIDIA drivers or change global PATH or system Python. See [online components](docs/ONLINE_COMPONENTS.md), [offline import](docs/OFFLINE_INSTALL.md) and [bootstrapper](docs/PHASE_1C.md).
 
-## Components and data
+## Process lectures
 
-Private Python runtimes and base dependencies are included. PyAV, CTranslate2, large-v3 and optional CUDA are separate verified imports, not bundled binaries. No Codex runtime, system Python or user HuggingFace cache is required. GPU is optional; the established CPU int8 fallback is retained. No driver installation or global PATH changes.
+Use the Course Inbox or add a lecture manually. Multipart recordings belong to one lecture with ordered parts. The Catalog shows lecture dates, part counts, processing state and available output files; progress and ETA are shown where meaningful.
 
-Word/Excel are optional for generation, useful for viewing results. Google Drive is optional; an available local filesystem data root works. External data contains workspaces/audio/TXT/SRT/Word, dictionary and lecture states. Application config, journal and logs stay in the application directory.
+After transcription, export the AI packet for ordinary ChatGPT and import the resulting `ai_content.json` using the existing manual workflow. The local finalizer validates the result, creates Word and updates vocabulary. **Automatic AI API integration is not implemented.** Chat history is optional context, never pipeline state.
+
+Word/Excel are optional for generating documents, useful for viewing results. Google Drive is optional; locally available folders can be used. Workers can continue running when the GUI is closed.
+
+## Updates and data
+
+In the application, select **Проверить обновления** (Check updates), then **Обновить** when a newer applicable release is available. Updates come only from tagged GitHub Releases, never from `main`. There is no background automatic update check.
+
+The existing updater downloads and verifies the release manifest/archive, stages the new version beside the old one, checks its health and switches `current.json`. Failed health or first-launch readiness retains/restores the previous version. The previous version remains available; user config and external lecture data are preserved rather than replaced by the code update.
+
+`main` contains the accepted source and documentation. User installers are published in GitHub Releases.
+
+**Legacy limitation:** a code-only upgrade from v1.9.7-beta.2 does not replace its stable `launcher/update_gui.py`, so its older updater error presentation remains. Fresh v2 Setup includes the updater UX fix. See [final acceptance](docs/VIC24_FINAL_ACCEPTANCE.md).
 
 ## Removal and Beta limitations
 
-Close the GUI, stop this installation's workers, then use `launcher/RemoveIntegration.ps1 -Apply` and `Uninstall.cmd -Apply` (omit `-Apply` to preview). The manifest-based removal preserves external data, configuration and imported components; see [Packaging](PACKAGING.md). Never delete your data root to uninstall the application.
+Close the GUI and stop this installation's workers before using the documented removal tools. `launcher/RemoveIntegration.ps1 -Apply` removes integration; `Uninstall.cmd -Apply` performs manifest-based removal (omit `-Apply` to preview). External data, configuration and imported components are preserved; see [Packaging](PACKAGING.md). Never delete your data root to uninstall the application.
 
-This is an unsigned first Beta. Validation uses a separate installation on the existing Windows host, not a newly provisioned OS. Full clean-Windows/login/reboot certification remains outside this release pass. Progress/part counts/ETA and AI workflow presentation need refinement; Word layout/names remain unchanged. Supplier components require separate acquisition and applicable terms. See [Backlog](BACKLOG.md), [Prerequisites](docs/PREREQUISITES.md), [Third-party notices](THIRD_PARTY_NOTICES.md) and [validation record](docs/BETA1_VALIDATION.md).
+This is an unsigned Beta. Native acceptance covers the tested Windows 11 x64 / RTX 3050 host; Windows 10 and a newly provisioned Windows OS are not qualified. Supplier components remain subject to their applicable terms. See [release notes and evidence](docs/VIC24_RELEASE.md), [final acceptance](docs/VIC24_FINAL_ACCEPTANCE.md), [prerequisites](docs/PREREQUISITES.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
