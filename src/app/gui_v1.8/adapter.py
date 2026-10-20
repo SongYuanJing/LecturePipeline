@@ -2,7 +2,7 @@
 from __future__ import annotations
 import base64,copy,json,os,statistics,subprocess,time,uuid,shutil,hashlib
 from pathlib import Path
-from datetime import datetime,timezone
+from datetime import datetime,timezone,timedelta
 from contextlib import contextmanager
 from pipeline_config import Config,ConfigError,preflight,read,inside
 from ai_queue import load_queue,select
@@ -12,6 +12,8 @@ TEST_TASKS={'2026-2027-s1/05/990_2026-09-25'}
 TASKS={'lecture':'LecturePipelineWorker','dialogue':'LecturePipelineDialogueWorker'}
 SCRIPTS={'lecture':'WorkerControl.ps1','dialogue':'DialogueControl.ps1'}
 NO_WINDOW=0x08000000 if os.name=='nt' else 0
+START_CONFIRM_TIMEOUT=150 # Scheduler registration permits one-minute retries.
+START_HEARTBEAT_MAX_AGE=45 # Workers publish every 20 seconds.
 
 def atomic_bytes(path,data):
  path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
@@ -148,14 +150,30 @@ class Controls:
   if r.returncode:raise RuntimeError(r.stderr.strip() or r.stdout.strip() or 'Ошибка контроллера')
   return r.stdout.strip()
  def states(self):
-  s=self.ps("[Console]::OutputEncoding=[Text.UTF8Encoding]::new(); ($env:GUI_TASKS | ConvertFrom-Json) | ForEach-Object { $t=Get-ScheduledTask -TaskName $_; [pscustomobject]@{name=$_.ToString();running=($t.State -eq 'Running');enabled=$t.Settings.Enabled} } | ConvertTo-Json -Compress",{'GUI_TASKS':json.dumps(list(self.tasks.values()))})
-  rows=json.loads(s);return {k:next(x for x in rows if x['name']==name) for k,name in self.tasks.items()}
+  command=("[Console]::OutputEncoding=[Text.UTF8Encoding]::new(); "
+           "($env:GUI_TASKS | ConvertFrom-Json) | ForEach-Object { "
+           "$t=Get-ScheduledTask -TaskName $_; $i=Get-ScheduledTaskInfo -TaskName $_; "
+           "[pscustomobject]@{name=$_.ToString();state=[string]$t.State;"
+           "running=($t.State -eq 'Running');enabled=$t.Settings.Enabled;"
+           "last_result=$i.LastTaskResult;last_run=$i.LastRunTime.ToString('o')} "
+           "} | ConvertTo-Json -Compress")
+  rows=json.loads(self.ps(command,{'GUI_TASKS':json.dumps(list(self.tasks.values()))}))
+  if isinstance(rows,dict):rows=[rows]
+  return {k:next(x for x in rows if x['name']==name) for k,name in self.tasks.items()}
  def action(self,kind,action):
   if kind not in TASKS or action not in ('Stop','Start'):raise ValueError('Неверное действие')
-  self.ps("& $env:GUI_CONTROL -Action $env:GUI_ACTION; if($LASTEXITCODE -and $LASTEXITCODE -ne 0){throw 'Controller failed'}",{'GUI_CONTROL':str(self.c.install/SCRIPTS[kind]),'GUI_ACTION':action})
+  old=getattr(self,'starts',{}).get(kind)
   if action=='Start':
    if not hasattr(self,'starts'):self.starts={}
+   # Record before the launcher: the worker can publish status before PowerShell returns.
    self.starts[kind]=datetime.now(timezone.utc)
+  try:
+   self.ps("& $env:GUI_CONTROL -Action $env:GUI_ACTION; if($LASTEXITCODE -and $LASTEXITCODE -ne 0){throw 'Controller failed'}",{'GUI_CONTROL':str(self.c.install/SCRIPTS[kind]),'GUI_ACTION':action})
+  except Exception:
+   if action=='Start':
+    if old is None:self.starts.pop(kind,None)
+    else:self.starts[kind]=old
+   raise
  def wait_stopped(self,kinds,timeout=65):
   end=time.monotonic()+timeout
   while True:
@@ -166,21 +184,40 @@ class Controls:
   for k,s in previous.items():
    if s['running']:self.action(k,'Start')
    elif s['enabled']:self.ps('Enable-ScheduledTask -TaskName $env:GUI_TASK | Out-Null',{'GUI_TASK':self.tasks[k]})
- def confirm_started(self,previous):
-  end=time.monotonic()+45
+ def confirm_started(self,previous,timeout=START_CONFIRM_TIMEOUT,clock=None,pause=None):
   required=[k for k,v in previous.items() if v['running']]
-  while required:
-   states=self.states();c=Config(self.c.path)
+  if not required:return
+  clock=clock or time.monotonic;pause=pause or time.sleep;deadline=clock()+timeout
+  while True:
+   states=self.states();c=Config(self.c.path);now=datetime.now(timezone.utc)
    paths={'lecture':c.worker_home/'worker_status.json','dialogue':c.dialogue_home/'status.json'}
-   good=True
-   for k in required:
+   observations={};all_ready=True
+   for kind in required:
+    task=states.get(kind,{})
+    detail=dict(task_state=task.get('state','unknown'),enabled=task.get('enabled'),
+                last_result=task.get('last_result'),last_run=task.get('last_run'))
+    if task.get('enabled') is False:
+     raise RuntimeError(kind+' worker: задание Task Scheduler отключено после Start: '+str(detail))
     try:
-     r=read(paths[k]);started=datetime.fromisoformat(r['started_at']);requested=getattr(self,'starts',{}).get(k,datetime.now(timezone.utc))
-     good=good and states[k]['running'] and heartbeat(r)=='Работает' and (requested-started).total_seconds()<3
-    except Exception:good=False
-   if good:return
-   if time.monotonic()>end:raise RuntimeError('Новый worker не подтвердил запуск; выполняется откат')
-   time.sleep(1)
+     status=read(paths[kind]);started=datetime.fromisoformat(status['started_at'])
+     beat=datetime.fromisoformat(status['heartbeat']);requested=self.starts[kind]
+     detail.update(worker=status.get('worker'),started_at=status['started_at'],heartbeat=status['heartbeat'])
+     if any(stamp.tzinfo is None for stamp in (started,beat,requested)):
+      raise ValueError('Время worker без часового пояса')
+     age_seconds=(now-beat).total_seconds()
+     ready=(task.get('running') is True and status.get('worker')=='RUNNING' and
+            started>=requested and started<=now+timedelta(seconds=5) and
+            beat>=started and 0<=age_seconds<=START_HEARTBEAT_MAX_AGE)
+     detail['reason']='confirmed' if ready else ('ожидается новый worker/heartbeat; возраст '+str(round(age_seconds,1))+' с')
+    except Exception as error:
+     ready=False;detail['reason']=str(error)
+    observations[kind]=detail;all_ready=all_ready and ready
+   if all_ready:return
+   remaining=deadline-clock()
+   if remaining<=0:
+    raise RuntimeError('Новый worker не подтвердил запуск за '+str(timeout)+' с; '
+                       'проверьте Task Scheduler и статус worker: '+json.dumps(observations,ensure_ascii=False))
+   pause(min(1,remaining))
 
 @contextmanager
 def transaction_lock(home):
@@ -222,7 +259,7 @@ class Manager:
   if target not in c.data['workspaces']:raise ConfigError('Workspace не настроен')
   data=copy.deepcopy(c.data);data['active_workspace']=target
   return self.apply_config(data)
- def apply_config(self,data,before_commit=None):
+ def apply_config(self,data,before_commit=None,defer_new_preflight=False):
   c=Config(self.path);target=data['active_workspace']
   with transaction_lock(c.local('run/gui')):
    if self.pending():raise RuntimeError('Сначала восстановите незавершённое переключение')
@@ -231,7 +268,8 @@ class Manager:
    # Same parent preserves relative install_root. This is not the live config.
    atomic_bytes(probe,new)
    try:
-    result=self.check(Config(probe))
+    # Course Setup validates paths first, then creates its new folders under before_commit.
+    result=self.check(c if defer_new_preflight else Config(probe))
     if not result['ok']:raise ConfigError('; '.join(x['message'] for x in result['checks'] if x['status']=='error'))
    finally:probe.unlink(missing_ok=True)
    ctl=self.controls(c);previous=ctl.states()
@@ -266,4 +304,3 @@ class Manager:
    except Exception:ctl.restore({kind:before[kind]});raise
    ctl.action(kind,'Start');ctl.confirm_started({kind:{'running':True}})
    return kind+' worker перезапущен'
-

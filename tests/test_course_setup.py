@@ -118,8 +118,86 @@ class CourseTests(unittest.TestCase):
     def test_write_failure_does_not_commit_config(self):
         before=self.c.path.read_bytes()
         with patch.object(cs.tempfile,'NamedTemporaryFile',side_effect=PermissionError('read only')):
-            with self.assertRaises(PermissionError):self.save()
+            with self.assertRaisesRegex(RuntimeError,'read only'):self.save()
         self.assertEqual(before,self.c.path.read_bytes())
+        self.assertFalse((self.root/'Drive Desktop 大学').exists())
+
+    def test_new_folders_do_not_precede_config_transaction(self):
+        before=self.c.path.read_bytes();root=self.root/'Drive Desktop 大学'
+        class RefusingManager:
+            def apply_config(inner,*args,**kwargs):
+                self.assertFalse(root.exists())
+                raise RuntimeError('transaction not entered')
+        with self.assertRaisesRegex(RuntimeError,'transaction not entered'):
+            cs.save_course(self.c,RefusingManager(),'课程',self.mapping,create=True)
+        self.assertEqual(before,self.c.path.read_bytes())
+        self.assertFalse(root.exists())
+
+    def test_post_commit_failure_rolls_back_config_and_only_new_folders(self):
+        from adapter import Manager
+        before=self.c.path.read_bytes();root=self.root/'Drive Desktop 大学'
+        existing=Path(self.mapping['source_audio_folder']);existing.mkdir(parents=True)
+        keep=existing/'user-audio.m4a';keep.write_bytes(b'untouched')
+        stamp=keep.stat().st_mtime_ns
+        def check(config):
+            added=any(code.startswith('course-') for code in config.courses())
+            return dict(ok=not added,checks=[dict(status='error',message='injected')])
+        instance=Manager(self.c.path,FixtureControls,check)
+        with self.assertRaisesRegex(RuntimeError,'исходный config восстановлен'):
+            cs.save_course(self.c,instance,'课程',self.mapping,create=True)
+        self.assertEqual(before,self.c.path.read_bytes())
+        self.assertEqual(keep.read_bytes(),b'untouched')
+        self.assertEqual(keep.stat().st_mtime_ns,stamp)
+        self.assertTrue(existing.is_dir())
+        self.assertFalse((root/'Lectures').exists())
+        self.assertEqual(instance.pending(),None)
+
+    def test_incomplete_worker_rollback_preserves_new_dirs_for_recovery(self):
+        from adapter import Manager
+        before=self.c.path.read_bytes();root=self.root/'Drive Desktop 大学'
+        class BrokenRestore(FixtureControls):
+            def states(inner):return {'lecture':dict(running=True,enabled=True),
+                                      'dialogue':dict(running=False,enabled=False)}
+            def restore(inner,previous):raise RuntimeError('restore unavailable')
+        instance=Manager(self.c.path,BrokenRestore,lambda config:dict(ok=True,checks=[]))
+        with self.assertRaisesRegex(RuntimeError,'Откат требует внимания'):
+            cs.save_course(self.c,instance,'课程',self.mapping,create=True)
+        self.assertEqual(before,self.c.path.read_bytes())
+        self.assertIsNotNone(instance.pending())
+        self.assertTrue(root.is_dir())
+
+    def test_worker_confirmation_failure_cleans_new_course_dirs(self):
+        from adapter import Manager
+        before=self.c.path.read_bytes();root=self.root/'Drive Desktop 大学'
+        class FailingConfirmation(FixtureControls):
+            calls=0
+            def states(inner):return {'lecture':dict(running=True,enabled=True),
+                                      'dialogue':dict(running=False,enabled=False)}
+            def confirm_started(inner,previous):
+                FailingConfirmation.calls+=1
+                if FailingConfirmation.calls==1:raise RuntimeError('worker delayed')
+        instance=Manager(self.c.path,FailingConfirmation,lambda config:dict(ok=True,checks=[]))
+        with self.assertRaisesRegex(RuntimeError,'исходный config восстановлен'):
+            cs.save_course(self.c,instance,'课程',self.mapping,create=True)
+        self.assertEqual(before,self.c.path.read_bytes())
+        self.assertFalse(root.exists())
+        self.assertIsNone(instance.pending())
+        self.assertEqual(FailingConfirmation.calls,2)
+
+    def test_failed_edit_keeps_existing_user_paths(self):
+        from adapter import Manager
+        code=self.save();before=self.c.path.read_bytes()
+        old=self.c.courses()[code]
+        other=cs.recommended(self.root/'new-location')
+        def check(config):
+            changed=config.courses()[code]['source_audio_folder']!=old['source_audio_folder']
+            return dict(ok=not changed,checks=[dict(status='error',message='injected')])
+        with self.assertRaises(RuntimeError):
+            cs.save_course(self.c,Manager(self.c.path,FixtureControls,check),'new name',other,
+                           course_id=code,create=True)
+        self.assertEqual(before,self.c.path.read_bytes())
+        self.assertEqual(Config(self.c.path).courses()[code],old)
+        self.assertFalse((self.root/'new-location').exists())
 
     def test_producer_lock_blocks_config_save(self):
         code=self.save();before=self.c.path.read_bytes();p=ux.pipeline(self.c);self.c.worker_home.mkdir(parents=True,exist_ok=True)

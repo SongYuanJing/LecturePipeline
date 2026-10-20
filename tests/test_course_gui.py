@@ -24,19 +24,47 @@ class CourseGuiTests(unittest.TestCase):
             controls_busy=False,submit=submit,refresh=lambda:None,restart=lambda k:None,control=lambda fn:fn())
 
     def test_preview_cancel_never_creates(self):
-        editor=CourseEditor(self.app);editor.name.set('课程');editor.root_path.set(str(self.base/'课程 root'));editor.propose();self.root.update()
+        editor=CourseEditor(self.app);editor.name.set('课程');editor.mode.set(editor.MODES[1]);editor.root_path.set(str(self.base/'课程 root'));editor.propose();self.root.update()
         self.assertIn('Lectures',editor.preview.get('1.0','end'))
-        with patch('courses.messagebox.askyesno',return_value=False):editor.save()
+        with patch('courses.messagebox.askyesno',return_value=False) as confirm:editor.save()
+        self.assertIn('отдельная структура Inbox/Lectures',confirm.call_args.args[1])
         self.assertFalse((self.base/'课程 root').exists());self.assertFalse(self.app.controls_busy)
         self.assertLessEqual(editor.save_button.winfo_rooty()+editor.save_button.winfo_height(),editor.window.winfo_rooty()+editor.window.winfo_height())
         editor.window.destroy()
 
     def test_confirmed_editor_creates_without_user_code(self):
-        editor=CourseEditor(self.app);editor.name.set('课程');editor.root_path.set(str(self.base/'课程 root'));editor.propose()
+        editor=CourseEditor(self.app);editor.name.set('课程');editor.mode.set(editor.MODES[1]);editor.root_path.set(str(self.base/'课程 root'));editor.propose()
         with patch('courses.messagebox.askyesno',return_value=True):editor.save()
         self.assertFalse(self.errors,self.errors);c=Config(self.c.path)
         code=next(k for k in c.courses());self.assertTrue(code.startswith('course-'))
         self.assertTrue(c.courses()[code]['raw_output_folder'].is_dir())
+
+    def test_existing_structure_is_default_and_does_not_create_recommended_tree(self):
+        from test_course_setup import university
+        root=self.base/'existing';mapping=university(root)
+        editor=CourseEditor(self.app)
+        self.assertEqual(editor.mode.get(),editor.MODES[0])
+        editor.name.set('课程');editor.root_path.set(str(root));editor.propose();self.root.update()
+        self.assertEqual(editor.mapping(),mapping)
+        self.assertNotIn(str(root/'Lectures/Audio'),editor.preview.get('1.0','end'))
+        with patch('courses.messagebox.askyesno',return_value=True):editor.save()
+        self.assertFalse(self.errors,self.errors)
+        self.assertEqual(next(iter(Config(self.c.path).courses().values()))['source_audio_folder'],Path(mapping['source_audio_folder']))
+        self.assertFalse((root/'Lectures').exists())
+
+    def test_preview_tracks_path_and_root_edits(self):
+        editor=CourseEditor(self.app);editor.mode.set(editor.MODES[1])
+        editor.root_path.set(str(self.base/'first'));editor.propose()
+        changed=str(self.base/'manual-raw')
+        editor.paths['raw_output_folder'].set(changed)
+        self.assertIn(changed,editor.preview.get('1.0','end'))
+        editor.root_path.set(str(self.base/'second'))
+        self.assertIn('Папка курса изменена',editor.preview.get('1.0','end'))
+        with patch('courses.messagebox.askyesno',return_value=True) as confirm:editor.save()
+        confirm.assert_not_called()
+        self.assertFalse((self.base/'first').exists())
+        self.assertFalse((self.base/'second').exists())
+        editor.window.destroy()
 
     def prepare_panel(self,filename):
         mapping=cs.recommended(self.base/'大学');cs.save_course(self.c,manager(self.c),'课程',mapping,course_id='SUBJECT',create=True)

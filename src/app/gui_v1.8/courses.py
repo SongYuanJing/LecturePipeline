@@ -12,7 +12,7 @@ def explain(error):
 
 
 class CourseEditor:
-    MODES=('Существующая структура','Создать рекомендуемую','Вручную')
+    MODES=('Подключить существующую структуру','Создать новую рекомендованную структуру','Выбрать папки вручную')
     def __init__(self,app,code=None):
         self.app=app;self.c=app.config();self.code=code;self.busy=False
         w=self.window=tk.Toplevel(app.root);w.title('Настройка курса');w.transient(app.root);w.grab_set()
@@ -25,7 +25,7 @@ class CourseEditor:
         subject=self.c.subjects().get(code,{})
         binding=self.c.courses().get(code,{})
         self.name=tk.StringVar(value=subject.get('title',''));self.language=tk.StringVar(value=subject.get('default_language','zh'))
-        self.enabled=tk.BooleanVar(value=binding.get('enabled',True));self.mode=tk.StringVar(value=self.MODES[2] if code else self.MODES[1]);self.root_path=tk.StringVar()
+        self.enabled=tk.BooleanVar(value=binding.get('enabled',True));self.mode=tk.StringVar(value=self.MODES[2] if code else self.MODES[0]);self.root_path=tk.StringVar();self._proposal_root=None
         self.paths={k:tk.StringVar(value=str(binding[k]) if binding.get(k) else '') for k in service.FIELDS}
         ttk.Label(body,text='Название курса').grid(row=0,column=0,sticky='w');ttk.Entry(body,textvariable=self.name).grid(row=0,column=1,columnspan=2,sticky='ew',pady=5)
         ttk.Label(body,text='Язык аудио').grid(row=1,column=0,sticky='w');ttk.Combobox(body,textvariable=self.language,values=('zh','en','auto'),state='readonly',width=10).grid(row=1,column=1,sticky='w')
@@ -42,6 +42,8 @@ class CourseEditor:
         ttk.Label(body,textvariable=self.notice,wraplength=600).grid(row=12,column=0,columnspan=3,sticky='ew')
         self.preview=tk.Text(body,height=6,wrap='word');self.preview.grid(row=13,column=0,columnspan=3,sticky='ew',pady=8)
         self.preview.configure(state='disabled')
+        for variable in (self.root_path,self.mode,*self.paths.values()):variable.trace_add('write',self._paths_changed)
+        self._render_preview()
         footer=ttk.Frame(w,padding=12);footer.grid(row=1,column=0,columnspan=2,sticky='ew')
         self.cancel=ttk.Button(footer,text='Отмена',command=w.destroy);self.cancel.pack(side='left')
         self.save_button=ttk.Button(footer,text='Использовать / сохранить',command=self.save);self.save_button.pack(side='right')
@@ -56,24 +58,41 @@ class CourseEditor:
 
     def mapping(self):return {k:v.get().strip() or None for k,v in self.paths.items()}
 
+    def _render_preview(self):
+        warning=('Папка курса изменена после подбора; проверьте пути.\n' if self._proposal_root and
+                 self.root_path.get()!=self._proposal_root else '')
+        lines=[warning+'Режим: '+self.mode.get(), 'Папка курса: '+(self.root_path.get() or 'не задана')]
+        lines.extend(service.LABELS[k]+': '+str(v or 'не задано') for k,v in self.mapping().items())
+        self.preview.configure(state='normal');self.preview.delete('1.0','end')
+        self.preview.insert('1.0','\n'.join(lines));self.preview.configure(state='disabled')
+
+    def _paths_changed(self,*_):
+        self._render_preview()
+
     def propose(self):
         try:
             if self.mode.get()==self.MODES[1]:mapping=service.recommended(self.root_path.get());text='Будут созданы только отсутствующие папки:'
             elif self.mode.get()==self.MODES[0]:
+                root=Path(self.root_path.get())
+                if not self.root_path.get().strip() or not root.is_absolute() or not root.is_dir():
+                    self.notice.set('Папка курса не найдена. Выберите существующую папку или режим создания новой.');self._render_preview();return
                 mapping=service.detect(self.root_path.get());text='Найдена структура. Проверьте пути и подтвердите использование.'
                 if mapping is None:
                     self.mode.set(self.MODES[2]);self.notice.set('Структура неоднозначна или не распознана. Выберите папки вручную.');return
             else:mapping=self.mapping();text='Проверьте выбранные папки:'
+            self._proposal_root=self.root_path.get()
             for key,value in mapping.items():self.paths[key].set(value or '')
-            self.notice.set(text);self.preview.configure(state='normal');self.preview.delete('1.0','end')
-            self.preview.insert('1.0','\n'.join(service.LABELS[k]+': '+str(v or 'не задано') for k,v in mapping.items()));self.preview.configure(state='disabled')
+            self.notice.set(text);self._render_preview()
         except Exception as e:messagebox.showerror('Папки курса',explain(e),parent=self.window)
 
     def save(self):
         if self.busy or self.app.controls_busy:return
+        if self._proposal_root and self.root_path.get()!=self._proposal_root and self.mode.get()!=self.MODES[2]:
+            self.notice.set('Папка курса изменилась. Нажмите «Показать / найти папки» ещё раз.');return
         mapping=self.mapping();create=self.mode.get()==self.MODES[1]
         if create and not any(mapping.values()):self.propose();mapping=self.mapping()
         preview='\n\n'.join(service.LABELS[k]+':\n'+str(v or 'не задано') for k,v in mapping.items())
+        if create:preview='Будет создана отдельная структура Inbox/Lectures рядом с существующими папками, если они есть.\n\n'+preview
         if not messagebox.askyesno('Создать папки и сохранить?' if create else 'Использовать эти папки?',preview+'\n\nWorkers будут безопасно остановлены и восстановлены. Существующие результаты не перемещаются.',parent=self.window):return
         self.busy=True;self.app.controls_busy=True;self.save_button.state(['disabled']);self.cancel.state(['disabled'])
         self.notice.set('Сохранение настроек и восстановление workers…')

@@ -56,7 +56,7 @@ def main():
         root.update()
     wait_until(lambda:not app.busy)
     app.tabs.select(app.pages['Курсы / Inbox']);root.update()
-    editor=CourseEditor(app);editor.name.set('中级微观经济学');editor.root_path.set(str(gate/'Drive Desktop 大学/微观'))
+    editor=CourseEditor(app);editor.mode.set(editor.MODES[1]);editor.name.set('中级微观经济学');editor.root_path.set(str(gate/'Drive Desktop 大学/微观'))
     editor.propose();root.update();mapping=editor.mapping()
     assert not Path(mapping['source_audio_folder']).exists()
     assert all(str(p) in editor.preview.get('1.0','end') for p in mapping.values())

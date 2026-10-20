@@ -46,22 +46,35 @@ def detect(root):
     return proposals[0] if len(proposals)==1 else None
 
 
-def validate_directories(mapping,create=False,probe=False):
+def _create_tracked(path,created):
+    missing=[];current=path
+    while not current.exists():
+        missing.append(current);current=current.parent
+    for folder in reversed(missing):
+        try:folder.mkdir()
+        except FileExistsError:
+            need(folder.is_dir(),'Вместо папки найден файл: '+str(folder))
+        else:created.append(folder)
+
+
+def check_directories(mapping,create=False):
     paths=[Path(v) for v in mapping.values() if v]
     for path in paths:
         need(path.is_absolute(),'Все пути должны быть абсолютными')
         for ancestor in (path,*path.parents):
             need(not ancestor.exists() or ancestor.is_dir(),'Вместо папки найден файл: '+str(ancestor))
         if not create:need(path.is_dir(),'Папка не существует: '+str(path))
+    return paths
+
+
+def validate_directories(mapping,create=False,probe=False,created=None):
+    paths=check_directories(mapping,create)
     if create:
-        for path in paths:path.mkdir(parents=True,exist_ok=True)
+        for path in paths:_create_tracked(path,created if created is not None else [])
     source=Path(mapping['source_audio_folder'])
-    # Actually enumerate, rather than assuming access from a drive letter.
     with os.scandir(source) as entries:next(entries,None)
     if probe:
         for key in ('raw_output_folder','final_output_folder'):
-            # Save was explicitly confirmed. NamedTemporaryFile owns and removes
-            # only this unique zero-byte probe, including exception cleanup.
             with tempfile.NamedTemporaryFile(prefix='.lp-write-probe-',dir=mapping[key]):pass
 
 
@@ -85,8 +98,9 @@ def save_course(c,manager,name,mapping,*,course_id=None,enabled=True,create=Fals
         binding[field]=str(Path(value).resolve()) if value and Path(value).is_absolute() else value
     binding['enabled']=bool(enabled);subject['inbox']=binding
     probe=c.path.with_name('.course-validation-'+uuid.uuid4().hex+'.json')
+    created=[]
     try:
-        atomic(probe,data);candidate=Config(probe) # validates all overlap/internal boundaries before mkdir
+        atomic(probe,data);candidate=Config(probe) # validate boundaries without creating folders
         old=c.subjects().get(code);target=candidate.subjects()[code]
         def relocation_check():
             if old and any(old[k]!=target[k] for k in ('raw_dir','ready_dir')):
@@ -95,17 +109,31 @@ def save_course(c,manager,name,mapping,*,course_id=None,enabled=True,create=Fals
                      not any(k.startswith(code+'/') for k in read(c.state)['lectures']),
                      'У предмета уже есть аудио или результаты. Перенос результатов сейчас не поддерживается.')
         relocation_check()
-        validate_directories({k:binding[k] for k in FIELDS},create=create,probe=True)
-        if new:
-            for key in ('audio','raw','ready'):child(child(c.workspace_root,code),subject['paths'][key]).mkdir(parents=True,exist_ok=True)
+        check_directories({k:binding[k] for k in FIELDS},create=create)
         with ExitStack() as locks:
             def guard():
-                # Manager has stopped workers. Hold producer locks through config publication.
-                p=ux.pipeline(c);c.worker_home.mkdir(parents=True,exist_ok=True)
-                locks.enter_context(p.pipeline_lock(c.worker_home/'inbox.lock'))
-                if old:locks.enter_context(p.pipeline_lock(old['audio_dir']/'.ingest.lock'))
+                # Workers are stopped; producer locks remain held through config publication.
+                pipeline=ux.pipeline(c);c.worker_home.mkdir(parents=True,exist_ok=True)
+                locks.enter_context(pipeline.pipeline_lock(c.worker_home/'inbox.lock'))
+                if old:locks.enter_context(pipeline.pipeline_lock(old['audio_dir']/'.ingest.lock'))
                 relocation_check()
-            manager.apply_config(data,before_commit=guard)
+                validate_directories({k:binding[k] for k in FIELDS},create=create,probe=True,created=created)
+                if new:
+                    for key in ('audio','raw','ready'):
+                        _create_tracked(child(child(c.workspace_root,code),subject['paths'][key]),created)
+            # The new course's internal folders do not exist before guard runs.
+            manager.apply_config(data,before_commit=guard,defer_new_preflight=True)
+    except Exception:
+        # Only remove directories created by this attempt, and only after config rollback.
+        try:
+            rolled_back=(c.path.read_bytes()==c.bytes and
+                         (not hasattr(manager,'pending') or manager.pending() is None))
+        except (OSError,ValueError):rolled_back=False
+        if rolled_back:
+            for folder in reversed(created):
+                try:folder.rmdir()
+                except OSError:pass # A nonempty/raced directory belongs to the user now.
+        raise
     finally:probe.unlink(missing_ok=True)
     return code
 
