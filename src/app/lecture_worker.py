@@ -120,6 +120,16 @@ class Worker:
     def save(self):
         atomic_json(self.journal_path, self.journal)
 
+    def refresh_ai_queue(self):
+        """Index committed Raw without making AI indexing part of the ASR transaction."""
+        if self.home.resolve() != p.CONFIG.worker_home.resolve():
+            return
+        try:
+            from ai_queue import refresh
+            refresh(p.CONFIG)
+        except Exception:
+            logging.exception('AI queue update failed; lecture completion is retained')
+
     def report(self, key, status, detail):
         with self.status_lock:
             previous = self.rows.get(key, {})
@@ -238,6 +248,7 @@ class Worker:
         job.pop('error', None)
         self.save()
         self.report(identity, 'DONE', 'Результаты опубликованы в папке черновых расшифровок')
+        self.refresh_ai_queue()
 
     def transcribe(self, identity, cfg, key, parts, state_file, state):
         job = self.journal['jobs'].get(identity)
@@ -337,6 +348,7 @@ class Worker:
                             state['lectures'][identity]=recovered;p.save_state(state_file,state)
                             job['phase']='done';job['recovery_action']='reused_committed_raw';self.save()
                             self.report(identity,'DONE','reused_committed_raw: внешняя публикация проверена после потери spool')
+                            self.refresh_ai_queue()
                             continue
                         self.report(identity, 'READY', 'Восстанавливаю публикацию готовых результатов без Whisper')
                         self.publish_job(identity, job, cfg, key, state_file, state)
@@ -349,6 +361,7 @@ class Worker:
                         if json.loads((cfg['raw_dir']/key/(key+'_manifest.json')).read_text(encoding='utf8'))['subject_code']!=code:raise ValueError('Raw course mismatch')
                         state['lectures'][identity]=recovered;p.save_state(state_file,state)
                         self.report(identity,'DONE','reused_committed_raw: восстановлен completed без ASR')
+                        self.refresh_ai_queue()
                     except (OSError,ValueError,KeyError) as exc:
                         self.report(identity,'ERROR','raw_recovery_requires_review: '+str(exc))
                     continue
@@ -359,12 +372,7 @@ class Worker:
                     state = p.load_state(state_file)
         self.publish_status()
         # AI indexing is a separate, idempotent projection; ASR/DONE are unchanged.
-        if self.home.resolve() == p.CONFIG.worker_home.resolve():
-            try:
-                from ai_queue import refresh
-                refresh(p.CONFIG)
-            except Exception:
-                logging.exception('AI queue update failed; lecture completion is retained')
+        self.refresh_ai_queue()
 
     def safe_cycle(self):
         try:

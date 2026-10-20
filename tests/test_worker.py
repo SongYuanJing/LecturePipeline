@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 import lecture_pipeline as p
 import lecture_worker as w
+import ai_queue as aq
 
 
 class WorkerTests(unittest.TestCase):
@@ -54,6 +55,95 @@ class WorkerTests(unittest.TestCase):
 
     def status(self):
         return self.worker.rows[self.identity]['status']
+
+    def enable_ai_queue(self):
+        """Use the real queue against disposable state, Raw and AI files."""
+        c = p.CONFIG
+        self.ai_state = self.root / 'ai_state.json'
+        self.ai_state.write_text('{"schema_version":1,"processed":{}}', encoding='utf8')
+        self.dictionary = self.root / 'dictionary.xlsx'
+        self.dictionary.write_bytes(b'untouched fixture')
+        self.queue_home = self.root / 'ai_queue'
+        self.cfg['ready_dir'] = self.root / 'Drive' / 'word'
+        self.cfg['ready_dir'].mkdir()
+        settings = {'worker_home': self.home, 'ai_state': self.ai_state,
+                    'dictionary': self.dictionary, 'queue_home': self.queue_home,
+                    'install': Path(w.__file__).resolve().parent}
+        for name, value in settings.items():
+            patcher = patch.object(c, name, value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        for name, value in [('layout', (self.sf, self.root / 'pipeline.log', {'01': self.cfg})),
+                            ('courses', {})]:
+            patcher = patch.object(c, name, return_value=value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        return c
+
+    def test_each_committed_lecture_reaches_queue_before_next_asr(self):
+        c = self.enable_ai_queue()
+        self.parts(1)
+        self.signal(1)
+        second = '06_2026-09-26'
+        (self.audio / '6_2026_09_26_1.m4a').write_bytes(b'second audio')
+        (self.audio / f'READY {second} 1').mkdir()
+        self.cycle()
+        observed = []
+        transcribe = self.worker.transcribe
+        def inspect_before_next_asr(identity, *args):
+            if identity == '01/' + second:
+                q = aq.load_queue(c)
+                first = q['tasks'].get(c.active + '/' + self.identity)
+                observed.append(first and first['status'] == 'waiting_ai'
+                                and Path(first['source_packet']).is_file())
+            return transcribe(identity, *args)
+        with patch.object(self.worker, 'transcribe', side_effect=inspect_before_next_asr):
+            self.cycle(120)
+        self.assertEqual(observed, [True])
+        q = aq.load_queue(c)
+        self.assertEqual({t['status'] for t in q['tasks'].values()}, {'waiting_ai'})
+        self.assertEqual(len(q['tasks']), 2)
+        self.assertEqual(self.calls, 2)
+        saved = (self.ai_state.read_bytes(), self.dictionary.read_bytes(),
+                 (self.queue_home / 'queue.json').read_bytes())
+        self.cycle()
+        self.assertEqual(saved, (self.ai_state.read_bytes(), self.dictionary.read_bytes(),
+                                 (self.queue_home / 'queue.json').read_bytes()))
+        self.assertEqual(self.calls, 2)
+
+    def test_queue_failure_keeps_raw_commit_and_next_cycle_recovers(self):
+        c = self.enable_ai_queue()
+        self.parts(1)
+        self.signal(1)
+        self.cycle()
+        with aq.lock(c):
+            self.cycle(120)
+        self.assertEqual(self.status(), 'DONE')
+        self.assertEqual(self.calls, 1)
+        self.assertEqual(p.load_state(self.sf)['lectures'][self.identity]['status'], 'completed')
+        self.assertEqual(aq.load_queue(c)['tasks'], {})
+        self.cycle()
+        self.assertEqual(aq.load_queue(c)['tasks'][c.active + '/' + self.identity]['status'], 'waiting_ai')
+        self.assertEqual(self.calls, 1)
+
+    def test_uncommitted_state_never_reaches_queue(self):
+        c = self.enable_ai_queue()
+        self.parts(1)
+        self.signal(1)
+        self.cycle()
+        save = p.save_state
+        def fail_state(path, data):
+            if path == self.sf:
+                raise OSError('state commit failed')
+            return save(path, data)
+        with patch.object(p, 'save_state', side_effect=fail_state):
+            self.cycle(120)
+        self.assertEqual(aq.load_queue(c)['tasks'], {})
+        self.assertEqual(self.calls, 1)
+        self.worker = self.new_worker()
+        self.cycle(300)
+        self.assertEqual(aq.load_queue(c)['tasks'][c.active + '/' + self.identity]['status'], 'waiting_ai')
+        self.assertEqual(self.calls, 1)
 
     def test_signal_before_audio_then_missing_then_complete(self):
         self.signal(5)
