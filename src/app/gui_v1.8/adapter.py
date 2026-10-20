@@ -188,6 +188,7 @@ class Controls:
   required=[k for k,v in previous.items() if v['running']]
   if not required:return
   clock=clock or time.monotonic;pause=pause or time.sleep;deadline=clock()+timeout
+  retried=set()
   while True:
    states=self.states();c=Config(self.c.path);now=datetime.now(timezone.utc)
    paths={'lecture':c.worker_home/'worker_status.json','dialogue':c.dialogue_home/'status.json'}
@@ -198,6 +199,19 @@ class Controls:
                 last_result=task.get('last_result'),last_run=task.get('last_run'))
     if task.get('enabled') is False:
      raise RuntimeError(kind+' worker: задание Task Scheduler отключено после Start: '+str(detail))
+    # A manually started task can exit with an error without Scheduler retrying it.
+    # Re-dispatch once only after LastRunTime proves the failed run belongs to this Start.
+    if (kind not in retried and task.get('state')=='Ready' and task.get('enabled') is True and
+        task.get('last_result') not in (None,0,267009,267011)):
+     try:last_run=datetime.fromisoformat(task.get('last_run',''))
+     except (TypeError,ValueError):last_run=None
+     if (last_run is not None and last_run.tzinfo is not None and
+         last_run+timedelta(seconds=1)>=self.starts[kind]):
+      retried.add(kind)
+      try:self.action(kind,'Start')
+      except Exception as error:
+       raise RuntimeError(kind+' worker: повторный Start после Scheduler exit '+str(task['last_result'])+' не выполнен: '+str(error)) from error
+    detail['explicit_retry']=kind in retried
     try:
      status=read(paths[kind]);started=datetime.fromisoformat(status['started_at'])
      beat=datetime.fromisoformat(status['heartbeat']);requested=self.starts[kind]

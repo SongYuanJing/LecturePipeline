@@ -28,9 +28,9 @@ class WorkerConfirmationTests(unittest.TestCase):
         self.status.write_text(json.dumps(dict(worker='RUNNING',started_at=started.isoformat(),
                                                heartbeat=(beat or datetime.now(timezone.utc)).isoformat())))
 
-    def scheduler(self,running=True,enabled=True,last_result=0):
+    def scheduler(self,running=True,enabled=True,last_result=0,last_run='fixture'):
         return {'lecture':dict(state='Running' if running else 'Ready',running=running,
-                               enabled=enabled,last_result=last_result,last_run='fixture')}
+                               enabled=enabled,last_result=last_result,last_run=last_run)}
 
     def wait(self,step):self.tick+=step
     def confirm(self,timeout=5):
@@ -76,6 +76,35 @@ class WorkerConfirmationTests(unittest.TestCase):
         self.controls.confirm_started({'lecture':{'running':True}},timeout=100,
                                       clock=lambda:self.tick,pause=advance)
         self.assertEqual(self.tick,50)
+
+    def test_manual_start_retries_once_after_failed_current_scheduler_run(self):
+        self.publish(self.request-timedelta(minutes=5))
+        failed_run=(self.request+timedelta(seconds=1)).isoformat()
+        running=[False];actions=[]
+        self.controls.states=lambda:self.scheduler(running=running[0],last_result=0 if running[0] else 73,last_run=failed_run)
+        def restart(kind,action):
+            actions.append((kind,action));running[0]=True
+            self.controls.starts[kind]=datetime.now(timezone.utc)-timedelta(seconds=1)
+            self.publish(datetime.now(timezone.utc))
+        self.controls.action=restart
+        self.confirm(timeout=5)
+        self.assertEqual(actions,[('lecture','Start')])
+
+    def test_old_scheduler_failure_does_not_trigger_retry(self):
+        self.publish(self.request-timedelta(minutes=5))
+        old_run=(self.request-timedelta(minutes=10)).isoformat()
+        self.controls.states=lambda:self.scheduler(running=False,last_result=73,last_run=old_run)
+        actions=[];self.controls.action=lambda *args:actions.append(args)
+        with self.assertRaisesRegex(RuntimeError,'73'):self.confirm(timeout=2)
+        self.assertEqual(actions,[])
+
+    def test_second_failed_attempt_is_reported_without_looping(self):
+        self.publish(self.request-timedelta(minutes=5))
+        failed_run=(self.request+timedelta(seconds=1)).isoformat()
+        self.controls.states=lambda:self.scheduler(running=False,last_result=73,last_run=failed_run)
+        actions=[];self.controls.action=lambda *args:actions.append(args)
+        with self.assertRaisesRegex(RuntimeError,'explicit_retry'):self.confirm(timeout=3)
+        self.assertEqual(actions,[('lecture','Start')])
 
     def test_failed_transaction_confirmation_restores_old_config(self):
         before=self.c.path.read_bytes();data=copy.deepcopy(self.c.data)
