@@ -59,6 +59,7 @@ class DedupTests(unittest.TestCase):
 class RawRecoveryTests(unittest.TestCase):
     setUp=worker_tests.WorkerTests.setUp
     new_worker=worker_tests.WorkerTests.new_worker
+    enable_ai_queue=worker_tests.WorkerTests.enable_ai_queue
     recognize=worker_tests.WorkerTests.recognize
     cycle=worker_tests.WorkerTests.cycle
     status=worker_tests.WorkerTests.status
@@ -101,6 +102,24 @@ class RawRecoveryTests(unittest.TestCase):
         shutil.rmtree(spool)
         self.worker=self.new_worker();self.cycle(1000)
         self.assertEqual(self.status(),'DONE');self.assertEqual(self.calls,calls)
+
+    def test_lost_spool_recovery_indexes_queue_without_asr(self):
+        import shutil
+        self.complete();calls=self.calls
+        c=self.enable_ai_queue()
+        self.assertEqual(aq.load_queue(c)['tasks'],{})
+        raw=self.raw/self.key
+        before={f.name:f.read_bytes() for f in raw.iterdir() if f.is_file()}
+        state=worker_tests.p.load_state(self.sf);state['lectures'].clear()
+        worker_tests.p.save_state(self.sf,state)
+        job=self.worker.journal['jobs'][self.identity];job['phase']='publishing';self.worker.save()
+        spool=self.worker.spool(job).resolve();self.assertIn(self.root.resolve(),spool.parents)
+        shutil.rmtree(spool)
+        self.worker=self.new_worker();self.cycle(1000)
+        self.assertEqual(self.status(),'DONE')
+        self.assertEqual(self.calls,calls)
+        self.assertEqual(before,{f.name:f.read_bytes() for f in raw.iterdir() if f.is_file()})
+        self.assertEqual(aq.load_queue(c)['tasks'][c.active+'/'+self.identity]['status'],'waiting_ai')
 
 
 class AIRecoveryTests(unittest.TestCase):

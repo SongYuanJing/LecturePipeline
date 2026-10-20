@@ -122,8 +122,18 @@ class WorkerTests(unittest.TestCase):
         self.assertEqual(self.calls, 1)
         self.assertEqual(p.load_state(self.sf)['lectures'][self.identity]['status'], 'completed')
         self.assertEqual(aq.load_queue(c)['tasks'], {})
+        raw = self.raw / self.key
+        raw_before = {f.name: f.read_bytes() for f in raw.iterdir() if f.is_file()}
+        state_before = self.sf.read_bytes()
+        queue_before = (self.queue_home / 'queue.json').read_bytes()
+        self.assertTrue(any(name.endswith('.srt') for name in raw_before))
         self.cycle()
         self.assertEqual(aq.load_queue(c)['tasks'][c.active + '/' + self.identity]['status'], 'waiting_ai')
+        self.assertEqual(raw_before, {f.name: f.read_bytes() for f in raw.iterdir() if f.is_file()})
+        self.assertEqual(self.sf.read_bytes(), state_before)
+        self.assertNotEqual((self.queue_home / 'queue.json').read_bytes(), queue_before)
+        self.assertEqual(self.ai_state.read_text(encoding='utf8'), '{"schema_version":1,"processed":{}}')
+        self.assertEqual(self.dictionary.read_bytes(), b'untouched fixture')
         self.assertEqual(self.calls, 1)
 
     def test_uncommitted_state_never_reaches_queue(self):
@@ -140,9 +150,14 @@ class WorkerTests(unittest.TestCase):
             self.cycle(120)
         self.assertEqual(aq.load_queue(c)['tasks'], {})
         self.assertEqual(self.calls, 1)
+        raw = self.raw / self.key
+        raw_before = {f.name: f.read_bytes() for f in raw.iterdir() if f.is_file()}
+        self.assertTrue(any(name.endswith('.srt') for name in raw_before))
         self.worker = self.new_worker()
         self.cycle(300)
         self.assertEqual(aq.load_queue(c)['tasks'][c.active + '/' + self.identity]['status'], 'waiting_ai')
+        self.assertEqual(raw_before, {f.name: f.read_bytes() for f in raw.iterdir() if f.is_file()})
+        self.assertEqual(p.load_state(self.sf)['lectures'][self.identity]['status'], 'completed')
         self.assertEqual(self.calls, 1)
 
     def test_signal_before_audio_then_missing_then_complete(self):
