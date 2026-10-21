@@ -15,6 +15,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--install', type=Path, required=True)
     parser.add_argument('--archive', type=Path, required=True)
+    parser.add_argument('--from-version', default='2.0.0-beta.5-dev.1')
+    parser.add_argument('--to-version', default='2.0.0-beta.5-dev.2')
     args = parser.parse_args()
     root = args.install.resolve(strict=True)
     candidate = root.parent
@@ -24,10 +26,10 @@ def main():
     sys.path.insert(0, str(root / 'launcher'))
     import updater
     archive = args.archive.resolve(strict=True)
-    name = '2.0.0-beta.5-dev.2'
+    name = args.to_version
     current = (root / 'current.json').read_bytes()
-    if json.loads(current)['app_version'] != '2.0.0-beta.5-dev.1':
-        raise ValueError('Expected isolated dev.1 baseline')
+    if json.loads(current)['app_version'] != args.from_version:
+        raise ValueError('Unexpected isolated DEV baseline')
     data = {p.relative_to(candidate).as_posix(): digest(p)
             for folder in ('data', 'app/config') for p in (candidate / folder).rglob('*') if p.is_file()}
     release = {'tag_name': 'v' + name}

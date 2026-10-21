@@ -9,6 +9,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
@@ -205,6 +206,46 @@ class DashboardTests(unittest.TestCase):
         dump(self.config, data)
         with self.assertRaisesRegex(ValueError, 'course path leaves'):
             run_desktop(self.root / 'app', self.root / 'app/versions/fixture', self.config)
+
+    def test_desktop_second_launch_uses_existing_instance(self):
+        marker = self.root / 'DEV_CANDIDATE.json'
+        dump(marker, dict(purpose='Lecture Pipeline unified DEV',
+                          install_root=str(self.root / 'app'), data_root=str(self.root / 'data')))
+        code = self.root / 'app/versions/fixture'
+        executable = code / 'gui_web/native/LecturePipelineDesktop.exe'
+        executable.parent.mkdir(parents=True)
+        executable.write_bytes(b'disposable shell fixture')
+        first_started = threading.Event()
+        release_first = threading.Event()
+        calls = []
+        outcomes = []
+
+        def shell(_args, **_kwargs):
+            calls.append(1)
+            if len(calls) == 1:
+                first_started.set()
+                if not release_first.wait(5):
+                    raise TimeoutError('First shell did not close')
+            return subprocess.CompletedProcess([], 0)
+
+        def first():
+            try:
+                outcomes.append(run_desktop(self.root / 'app', code, self.config))
+            except Exception as error:
+                outcomes.append(error)
+
+        with patch('desktop_runner.subprocess.run', side_effect=shell):
+            thread = threading.Thread(target=first)
+            thread.start()
+            try:
+                self.assertTrue(first_started.wait(5))
+                self.assertEqual(run_desktop(self.root / 'app', code, self.config), 0)
+                self.assertEqual(len(calls), 1)
+            finally:
+                release_first.set()
+                thread.join(5)
+        self.assertEqual(outcomes, [0])
+        self.assertFalse(thread.is_alive())
 
     def test_loopback_rejects_foreign_host_origin_and_missing_session(self):
         server = ThreadingHTTPServer(('127.0.0.1', 0), handler_for(self.provider, session_token='audit-secret'))

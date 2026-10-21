@@ -1,6 +1,7 @@
 """One-session DEV dashboard: existing catalog reader plus a local WebView2 window."""
 from __future__ import annotations
 
+from contextlib import ExitStack
 from http.server import ThreadingHTTPServer
 import json
 from pathlib import Path
@@ -11,6 +12,7 @@ import threading
 from readonly_host import handler_for
 from readonly_snapshot import SnapshotProvider, contained
 from pipeline_config import Config
+from update_state import locked
 
 
 def run(install_root, code_root, config_path):
@@ -38,20 +40,26 @@ def run(install_root, code_root, config_path):
     if not executable.is_file():
         raise FileNotFoundError('WebView2 desktop shell is missing; use the Tk fallback')
 
-    provider = SnapshotProvider(candidate_root, config_path)
-    token = secrets.token_urlsafe(32)
-    server = ThreadingHTTPServer(('127.0.0.1', 0), handler_for(provider, session_token=token))
-    server.daemon_threads = True
-    thread = threading.Thread(target=server.serve_forever, daemon=True)
-    thread.start()
+    gate = ExitStack()
     try:
-        url = f'http://127.0.0.1:{server.server_port}/#session={token}'
-        profile = install_root / 'run/gui-webview2-profile'
-        result = subprocess.run([str(executable), url, str(profile)], cwd=install_root)
-        if result.returncode:
-            raise RuntimeError('WebView2 window failed; open Lecture Pipeline (Tk)')
-        return 0
-    finally:
-        server.shutdown()
-        server.server_close()
-        thread.join(timeout=3)
+        gate.enter_context(locked(install_root / 'run/gui-dashboard.lock'))
+    except RuntimeError:
+        return 0  # An existing dashboard keeps its own host, port, and WebView2 profile.
+    with gate:
+        provider = SnapshotProvider(candidate_root, config_path)
+        token = secrets.token_urlsafe(32)
+        server = ThreadingHTTPServer(('127.0.0.1', 0), handler_for(provider, session_token=token))
+        server.daemon_threads = True
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            url = f'http://127.0.0.1:{server.server_port}/#session={token}'
+            profile = install_root / 'run/gui-webview2-profile'
+            result = subprocess.run([str(executable), url, str(profile)], cwd=install_root)
+            if result.returncode:
+                raise RuntimeError('WebView2 window failed; open Lecture Pipeline (Tk)')
+            return 0
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=3)

@@ -43,7 +43,10 @@ class DeviceProcessSmoke(unittest.TestCase):
             app.mkdir(parents=True)
             for name in ('pipeline_config.py', 'asr_device.py', 'lecture_asr.py'):
                 shutil.copy2(REPO / 'src/app' / name, app / name)
-            (runtime / 'python311._pth').write_text('python311.zip\n.\n../../versions/test\n', encoding='ascii')
+            stdlib = 'python311.zip' if (runtime / 'python311.zip').is_file() else 'Lib'
+            if not (runtime / stdlib).exists():
+                self.fail('Smoke requires an isolated Python 3.11 standard library')
+            (runtime / 'python311._pth').write_text(stdlib + '\nDLLs\n.\n../../versions/test\n', encoding='ascii')
             (runtime / 'av.py').write_text('# FAKE supplier for process contract only\n')
             (runtime / 'ctranslate2.py').write_text("def get_supported_compute_types(device):\n assert device == 'cpu'\n return {'int8'}\ndef get_cuda_device_count():\n return 0\n")
             (runtime / 'faster_whisper.py').write_text(FAKE_WHISPER)

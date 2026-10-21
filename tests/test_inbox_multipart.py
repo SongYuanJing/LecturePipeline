@@ -57,7 +57,7 @@ class MultipartTests(unittest.TestCase):
     def test_same_date_different_stem(self):
         self.write(*[f'{stem}-2026_10_09_{n}.wav' for stem in ('A','B') for n in (1,2)])
         self.scan(5);self.assertEqual(len(self.ready()),2)
-        self.assertTrue(all(json.loads(f.read_text())['expected_parts']==2 for f in self.ready()))
+        self.assertTrue(all(json.loads(f.read_text(encoding='utf8'))['expected_parts']==2 for f in self.ready()))
 
     def test_same_family_independent_dates_drive_inventory(self):
         # Actual VIC-10 Drive names: repeated course prefix, separate dated sessions.
@@ -122,7 +122,7 @@ class MultipartTests(unittest.TestCase):
 
     def test_lost_ack_reuses_ready(self):
         self.write('foo20261009_1.wav','foo20261009_2.wav');self.scan(5)
-        state=json.loads(self.inbox.path.read_text());group=next(iter(state['groups'].values()));group['status']='ready'
+        state=json.loads(self.inbox.path.read_text(encoding='utf8'));group=next(iter(state['groups'].values()));group['status']='ready'
         for row in state['sources'].values():row['status']='ready';row.pop('lecture_key',None)
         dump(self.inbox.path,state);self.restart()
         with patch.object(ux.shutil,'copy2',side_effect=AssertionError('duplicate copy')):
@@ -182,7 +182,7 @@ class MultipartTests(unittest.TestCase):
 
     def test_existing_phase3a_publication_not_regrouped(self):
         self.write('foo20261009_1.wav');file=self.source/'foo20261009_1.wav'
-        self.scan();state=json.loads(self.inbox.path.read_text());row=next(iter(state['sources'].values()))
+        self.scan();state=json.loads(self.inbox.path.read_text(encoding='utf8'));row=next(iter(state['sources'].values()))
         key=ux.add_lecture(self.c,'SUBJECT',row['lecture_date'],1,[file],intake=row)
         row.update(status='queued',lecture_key=key);state.pop('groups',None);dump(self.inbox.path,state)
         self.write('foo20261009_2.wav');self.restart();r=self.scan(5)

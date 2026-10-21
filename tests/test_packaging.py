@@ -26,7 +26,10 @@ class PackagingTests(unittest.TestCase):
   c=self.variant(lambda d:d['runtimes'].update(model_cache=str(self.base/'no-model')));r=preflight(c,probe_gpu=False)
   self.assertFalse(r['ok']);self.assertEqual(next(x for x in r['checks'] if x['id']=='model')['status'],'error')
  def test_missing_gpu_fallback(self):
-  c=self.variant(lambda d:d['runtimes'].update(cuda=str(self.base/'no-cuda')));r=preflight(c)
+  def missing_gpu(d):
+   d['asr']['device_mode']='auto'
+   d['runtimes'].update(cuda=str(self.base/'no-cuda'))
+  c=self.variant(missing_gpu);r=preflight(c)
   x=next(x for x in r['checks'] if x['id']=='asr_backend');self.assertTrue(x['cpu_fallback']);self.assertFalse(x['gpu_available']);self.assertEqual(x['status'],'warning')
  def test_data_unavailable_no_reset(self):
   before=C.state.read_bytes();c=self.variant(lambda d:d.update(data_root=str(self.base/'not-mounted')));r=preflight(c,probe_gpu=False)
@@ -50,9 +53,9 @@ class PackagingTests(unittest.TestCase):
  def test_release_manifest_hashes(self):
   m=json.loads((C.install/'release.json').read_text());self.assertEqual(m['config_schema_version'],1);self.assertFalse(m['migration_required'])
   for name,h in m['files'].items():self.assertEqual(hashlib.sha256((C.install/name).read_bytes()).hexdigest(),h,name)
- def test_asr_h3_unchanged(self):
+ def test_asr_accepted_main_unchanged(self):
   for name in ('lecture_asr.py','atomic_publish.py','windows_publish.py','dictionary_merge.py','word_ai_v1.5/lecture_ai.py'):
-   r=call(['git','-C',REPO,'show','v1.8.1:src/app/'+name]);self.assertEqual(r.returncode,0,r.stderr)
+   r=call(['git','-C',REPO,'show','c256ae3beee5c014478a833c1d156e14d0b32a8c:src/app/'+name]);self.assertEqual(r.returncode,0,r.stderr)
    self.assertEqual(r.stdout,(REPO/'src/app'/name).read_text(encoding='utf-8-sig'),name)
  def test_source_personal_paths_absent(self):
   prohibited=[value for value in (os.environ.get('USERPROFILE'),str(Path.home()),'codex-runtimes') if value]
@@ -63,7 +66,9 @@ class PackagingTests(unittest.TestCase):
      for value in prohibited:self.assertNotIn(value,text,str(p))
  def test_safe_open_new_log_root(self):
   p=ROOT/'logs';opened=[];safe_open(C,p,opened.append);self.assertEqual(opened,[str(p)])
- def test_controls_use_config_tasks(self):self.assertEqual(Controls(C).tasks,C.task_names())
+ def test_controls_use_config_tasks(self):
+  with patch.dict(os.environ,LECTURE_CONFIG=str(C.path)):
+   self.assertEqual(Controls(C).tasks,C.task_names())
  def test_first_run_refuses_existing_data(self):
   before=C.state.read_bytes();r=call([ROOT/'runtime/asr/python.exe','-B',ROOT/'launcher/setup.py','--data-root',C.data_root]);self.assertNotEqual(r.returncode,0);self.assertEqual(before,C.state.read_bytes())
  def test_uninstall_preserves_mutable_and_external(self):
