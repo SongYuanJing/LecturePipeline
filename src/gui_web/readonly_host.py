@@ -64,13 +64,17 @@ def main():
     parser.add_argument('--open', action='store_true', help='Open the local UI in the default browser')
     parser.add_argument('--visual-fixture', action='store_true', help='Create and freeze an explicitly synthetic UI test set')
     parser.add_argument('--fixture-root', type=Path)
+    parser.add_argument('--fixture-scenario', choices=['normal', 'stale', 'unknown', 'preparing'], default='normal')
     args = parser.parse_args()
     root = args.dev_root.resolve(strict=True)
     config = args.config or root / 'app/config/config.json'
     if args.visual_fixture:
         from visual_fixture import create_fixture
-        root = (args.fixture_root or Path(__file__).resolve().parents[2] / '.local/vic28-visual-fixture').resolve()
-        config = create_fixture(root)
+        folder = 'vic28-visual-fixture' + (('-' + args.fixture_scenario) if args.fixture_scenario != 'normal' else '')
+        root = (args.fixture_root or Path(__file__).resolve().parents[2] / '.local' / folder).resolve()
+        config = create_fixture(root, args.fixture_scenario)
+    elif args.fixture_scenario != 'normal':
+        parser.error('--fixture-scenario requires --visual-fixture')
     provider = SnapshotProvider(root, config, fixture=args.visual_fixture)
     first = provider.snapshot()
     server = ThreadingHTTPServer(('127.0.0.1', args.port), handler_for(provider))

@@ -63,3 +63,7 @@ ETA относится только к ASR. На waiting_ai/Word/vocabulary пр
 ## WebView2
 
 DTO может передаваться через read-only bridge от native host без обязательного HTTP. Пока реализован только loopback transport. Будущий bridge должен отдавать versioned snapshots, не принимать произвольные пути/команды, сохранять backend authority и рассматривать ответы на команды отдельно от подтверждённых состояний. Внедрение в release и command API в этот этап не входят.
+
+Preview 2 использует тот же loopback DTO в отдельном `native_gate/NativeGate.cs`. В нём нет host objects, pipeline bridge или нового resolver; разрешены только GET к выбранному loopback origin. Profile и QA logs принадлежат `.local`, вне читаемых Pipeline authorities. Это диагностический host, не release shell.
+
+Во время IME-композиции сохраняется DOM-поле поиска, но остальная страница продолжает обновляться. Устаревший heartbeat/transport failure скрывает live прогресс без ожидания завершения ввода. AI-очередь — фильтр existing rows с известным `stages.ai`, без нового состояния на диске.

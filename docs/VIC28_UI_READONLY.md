@@ -1,8 +1,8 @@
-# VIC-28 · Work S · first runnable UI
+# VIC-28 · Work S · read-only UI
 
-20 октября 2026. Локальный read-only Dashboard на базе дизайна 00.03S. Ветка `dev/vic28-ui-s` от `c256ae3beee5c014478a833c1d156e14d0b32a8c`.
+Preview 1 от 20 октября и Preview 2 от 21 октября 2026. Локальный read-only Dashboard на базе дизайна 00.03S. Ветка `dev/vic28-ui-s` от `c256ae3beee5c014478a833c1d156e14d0b32a8c`. Актуальные результаты и ограничения: [VIC28_PREVIEW2.md](VIC28_PREVIEW2.md).
 
-Добавлены только `src/gui_web`, два целевых тестовых файла и этот документ. Tk GUI, backend modules, workers, config/data schemas, installer, launcher, updater и release metadata не меняются. Никаких PR/push/main/release операций. Существующие многогигабайтные runtime/CUDA/model используются на месте и не входят в новый UI.
+Добавлены только `src/gui_web`, целевые VIC-28 тесты и документы. Tk GUI, backend modules, workers, config/data schemas, installer, launcher, updater и release metadata не меняются. Никаких PR/push/main/release операций. Существующие многогигабайтные runtime/CUDA/model используются на месте и не входят в новый UI.
 
 ## Продолжение дизайна
 

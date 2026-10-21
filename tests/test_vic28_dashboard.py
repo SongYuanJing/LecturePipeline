@@ -46,7 +46,7 @@ class DashboardTests(unittest.TestCase):
         value = self.provider.snapshot()
         self.assertTrue(value['available'])
         self.assertEqual(value['errors'], [])
-        self.assertEqual(value['counts']['total'], 8)
+        self.assertEqual(value['counts']['total'], 13)
         self.assertEqual(value['counts']['waiting_ai'], 1)
         self.assertEqual(value['counts']['done'], 1)
         self.assertIn('运筹学', self.row(value)['course_display_name'])
@@ -55,6 +55,32 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(self.row(value)['progress']['percent'], 57)
         self.assertEqual(value['device']['observed']['device'], 'cuda')
         self.assertEqual(value['pending'][0]['parts'], [1, 3])
+
+    def test_all_catalog_stages_have_explicit_visual_examples(self):
+        value = self.provider.snapshot()
+        self.assertEqual({r['status'] for r in value['catalog']},
+                         {'asr','ready','waiting_ai','raw','word','vocabulary','done','error',
+                          'publishing','ai_ready','review','problem','waiting'})
+        self.assertEqual(value['counts']['problems'], 3)
+        self.assertTrue(self.row(value, '12_2026-10-10')['reasons'])
+
+    def test_fixture_scenarios_use_backend_freshness_rules(self):
+        for scenario in ('stale', 'unknown', 'preparing'):
+            root = self.base / scenario
+            config = create_fixture(root, scenario)
+            value = SnapshotProvider(root, config, fixture=True).snapshot()
+            self.assertEqual(value['errors'], [])
+            progress = self.row(value)['progress']
+            if scenario == 'stale':
+                self.assertEqual(value['workers'][0]['health'], 'stale')
+                self.assertIsNone(progress)
+                self.assertIsNone(value['device']['observed'])
+            else:
+                self.assertEqual(progress['part_index'], 2)
+                self.assertEqual(progress['part_count'], 3)
+                self.assertIsNone(progress['percent'])
+                self.assertIsNone(progress['eta_seconds'])
+                self.assertEqual(progress['stage'], 'preparing' if scenario == 'preparing' else 'asr')
 
     def test_snapshot_has_zero_mutations_and_no_content_reads(self):
         before = fingerprints(self.root)

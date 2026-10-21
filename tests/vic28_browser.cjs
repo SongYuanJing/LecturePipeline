@@ -41,14 +41,14 @@ const dev=process.env.VIC28_DEV_URL||'http://127.0.0.1:8768',fixture=process.env
     assert.equal(sample.source.kind,'fixture');assert.equal(sample.source.frozen,true);
     assert.equal(await page.locator('.active-job [role="progressbar"]').getAttribute('aria-valuenow'),'57');
     assert.ok((await page.locator('.active-job').innerText()).includes('Текущая часть 2 из 3'));
-    const footer=await page.locator('.inspector-actions').boundingBox(),bar=await page.locator('#statusbar').boundingBox();assert.ok(footer.y+footer.height<=bar.y,'Inspector footer clipped');
     await page.screenshot({path:path.join(out,'dashboard-synthetic.png'),animations:'disabled'});
-    await nav('catalog');assert.equal(await page.locator('tbody tr').count(),8);
-    await page.keyboard.press('Control+k');await page.locator('#global-search').fill('系统');assert.equal(await page.locator('tbody tr').count(),3);
+    await nav('catalog');assert.equal(await page.locator('tbody tr').count(),13);
+    const footer=await page.locator('.inspector-actions').boundingBox(),bar=await page.locator('#statusbar').boundingBox();assert.ok(footer.y+footer.height<=bar.y,'Inspector footer clipped');
+    await page.keyboard.press('Control+k');await page.locator('#global-search').fill('系统');assert.equal(await page.locator('tbody tr').count(),4);
     await page.locator('#global-search').fill('');await nav('catalog','waiting_ai');assert.equal(await page.locator('tbody tr').count(),1);
     assert.equal(await page.locator('.inspector [role="progressbar"]').count(),0,'AI percent invented');
     assert.ok((await page.locator('.inspector').innerText()).includes('Ожидается ручной AI'));
-    await nav('catalog','all');await page.locator('#course-filter').selectOption('ECON');assert.equal(await page.locator('tbody tr').count(),3);
+    await nav('catalog','all');await page.locator('#course-filter').selectOption('ECON');assert.equal(await page.locator('tbody tr').count(),5);
     await nav('inbox');assert.ok((await page.locator('main').innerText()).includes('Не хватает части 2'));
     await nav('courses');assert.equal(await page.locator('.course-card').count(),3);
     await nav('diagnostics');assert.ok((await page.locator('main').innerText()).includes('Не запускался этим UI'));

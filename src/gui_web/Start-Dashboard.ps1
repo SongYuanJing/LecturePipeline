@@ -4,6 +4,8 @@ param(
     [string]$Python,
     [int]$Port = 8768,
     [switch]$VisualFixture,
+    [ValidateSet('normal','stale','unknown','preparing')][string]$FixtureScenario = 'normal',
+    [string]$FixtureRoot,
     [switch]$NoBrowser
 )
 $ErrorActionPreference = 'Stop'
@@ -14,6 +16,8 @@ if (-not (Test-Path -LiteralPath $Python -PathType Leaf)) {
 $taskArguments = @('-B', (Join-Path $PSScriptRoot 'readonly_host.py'), '--dev-root', $DevRoot, '--port', $Port)
 if ($Config) { $taskArguments += @('--config', $Config) }
 if ($VisualFixture) { $taskArguments += '--visual-fixture' }
+if ($FixtureRoot) { $taskArguments += @('--fixture-root', $FixtureRoot) }
+if ($FixtureScenario -ne 'normal') { $taskArguments += @('--fixture-scenario', $FixtureScenario) }
 if (-not $NoBrowser) { $taskArguments += '--open' }
 & $Python @taskArguments
 exit $LASTEXITCODE
