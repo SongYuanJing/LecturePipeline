@@ -19,19 +19,22 @@ def run():
  if mode=='gui' and not cfg.exists():
   from setup_gui import first_run
   if not first_run(ROOT):return 0
- if mode!='gui' and (ROOT/'launcher/pyav-manifest.json').exists():
+ if mode not in ('gui','dashboard') and (ROOT/'launcher/pyav-manifest.json').exists():
   from component_status import require_components
   require_components(ROOT)
  if not cfg.exists():raise RuntimeError('First run: execute Setup.cmd and choose a data root. No existing data is modified automatically.')
  os.environ['LP_APP_VERSION']=json.loads((app/'release.json').read_text(encoding='utf8'))['app_version']
  os.environ['LECTURE_CONFIG']=str(cfg);os.environ['PYTHONNOUSERSITE']='1'
- sys.path[:0]=[str(app),str(app/'gui_v1.8'),str(app/'dialogue_v1.6')]
+ sys.path[:0]=[str(app),str(app/'gui_v1.8'),str(app/'dialogue_v1.6'),str(app/'gui_web')]
  from pipeline_config import Config,require_preflight
  c=Config(cfg)
  if c.install!=app:raise ValueError('Config/current version mismatch; no automatic migration')
  if mode=='preflight':
   from pipeline_config import preflight
   result=preflight(c);print(json.dumps(result,ensure_ascii=False,indent=2));return 0 if result['ok'] else 2
+ if mode=='dashboard':
+  from desktop_runner import run as run_dashboard
+  return run_dashboard(ROOT,app,cfg)
  if mode!='gui':require_preflight(c)
  entry={'gui':'gui_v1.8/app.py','lecture':'lecture_worker.py','dialogue':'dialogue_v1.6/dialogue_worker.py'}[mode]
  sys.argv=[str(app/entry)]+(['--config',str(cfg)] if mode in ('gui','dialogue') else [])

@@ -5,6 +5,7 @@ import argparse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
+import secrets
 import sys
 from urllib.parse import urlsplit
 import webbrowser
@@ -20,7 +21,7 @@ ASSETS = {'/': ('index.html', 'text/html; charset=utf-8'),
           '/dashboard.css': ('dashboard.css', 'text/css; charset=utf-8')}
 
 
-def handler_for(provider):
+def handler_for(provider, *, session_token=None):
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *_):
             pass  # Never create a log in the installation or data root.
@@ -39,8 +40,22 @@ def handler_for(provider):
                 pass
 
         def do_GET(self):
+            expected_origin = 'http://127.0.0.1:' + str(self.server.server_port)
+            hosts = self.headers.get_all('Host', [])
+            if hosts != ['127.0.0.1:' + str(self.server.server_port)]:
+                self.send(403, b'Invalid local host', 'text/plain; charset=utf-8')
+                return
+            origin = self.headers.get('Origin')
+            if origin and origin != expected_origin:
+                self.send(403, b'Invalid origin', 'text/plain; charset=utf-8')
+                return
             path = urlsplit(self.path).path
             if path == '/api/v1/snapshot':
+                if session_token is not None and not secrets.compare_digest(
+                    self.headers.get('X-Lecture-Session', ''), session_token
+                ):
+                    self.send(403, b'Invalid session', 'text/plain; charset=utf-8')
+                    return
                 payload = json.dumps(provider.snapshot(), ensure_ascii=False, allow_nan=False).encode('utf-8')
                 self.send(200, payload, 'application/json; charset=utf-8')
             elif path in ASSETS:
@@ -58,8 +73,10 @@ def handler_for(provider):
 
 def main():
     parser = argparse.ArgumentParser(description='VIC-28 local read-only dashboard')
-    parser.add_argument('--dev-root', type=Path, default=Path(r'C:\PipLine GPT WORK'))
+    parser.add_argument('--dev-root', type=Path, required=True)
     parser.add_argument('--config', type=Path)
+    parser.add_argument('--allow-read-root', type=Path, action='append', default=[],
+                        help='Explicit additional read-only course/data root')
     parser.add_argument('--port', type=int, default=8768)
     parser.add_argument('--open', action='store_true', help='Open the local UI in the default browser')
     parser.add_argument('--visual-fixture', action='store_true', help='Create and freeze an explicitly synthetic UI test set')
@@ -75,10 +92,12 @@ def main():
         config = create_fixture(root, args.fixture_scenario)
     elif args.fixture_scenario != 'normal':
         parser.error('--fixture-scenario requires --visual-fixture')
-    provider = SnapshotProvider(root, config, fixture=args.visual_fixture)
+    provider = SnapshotProvider(root, config, fixture=args.visual_fixture,
+                                allowed_roots=() if args.visual_fixture else args.allow_read_root)
     first = provider.snapshot()
-    server = ThreadingHTTPServer(('127.0.0.1', args.port), handler_for(provider))
-    url = 'http://127.0.0.1:' + str(server.server_address[1])
+    token = secrets.token_urlsafe(32)
+    server = ThreadingHTTPServer(('127.0.0.1', args.port), handler_for(provider, session_token=token))
+    url = 'http://127.0.0.1:' + str(server.server_address[1]) + '/#session=' + token
     print('VIC-28 · ' + ('SYNTHETIC FROZEN FIXTURE' if args.visual_fixture else 'DEV READ ONLY'), flush=True)
     print('Source: ' + str(config), flush=True)
     print('Snapshot: ' + ('available' if first['available'] else 'unavailable; see UI diagnostics'), flush=True)

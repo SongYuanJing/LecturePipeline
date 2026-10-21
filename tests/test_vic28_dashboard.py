@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src/gui_web'))
 from readonly_snapshot import SnapshotProvider, ReadFence
 from readonly_host import handler_for
+from desktop_runner import run as run_desktop
 from visual_fixture import create_fixture, dump
 
 
@@ -173,6 +174,55 @@ class DashboardTests(unittest.TestCase):
         value = self.provider.snapshot()
         self.assertTrue(value['errors'])
         self.assertIsNone(value['counts'])
+
+    def test_existing_course_outside_primary_root_requires_explicit_read_allowlist(self):
+        outside = self.base / 'existing-course'
+        for name in ('source', 'archive', 'raw', 'final'):
+            (outside / name).mkdir(parents=True)
+        data = load(self.config)
+        data['workspaces']['visual']['subjects'][0]['inbox'] = dict(
+            enabled=True, source_audio_folder=str(outside / 'source'),
+            archive_audio_folder=str(outside / 'archive'), raw_output_folder=str(outside / 'raw'),
+            final_output_folder=str(outside / 'final'))
+        dump(self.config, data)
+        self.assertFalse(self.provider.snapshot()['available'])
+        allowed = SnapshotProvider(self.root, self.config, allowed_roots=(outside,)).snapshot()
+        self.assertTrue(allowed['available'], allowed['errors'])
+        self.assertIn('ECON', [course['id'] for course in allowed['courses']])
+
+    def test_desktop_candidate_refuses_course_outside_its_isolated_tree(self):
+        marker = self.root / 'DEV_CANDIDATE.json'
+        dump(marker, dict(purpose='Lecture Pipeline unified DEV',
+                          install_root=str(self.root / 'app'), data_root=str(self.root / 'data')))
+        outside = self.base / 'external-course'
+        for name in ('source', 'archive', 'raw', 'final'):
+            (outside / name).mkdir(parents=True)
+        data = load(self.config)
+        data['workspaces']['visual']['subjects'][0]['inbox'] = dict(
+            enabled=True, source_audio_folder=str(outside / 'source'),
+            archive_audio_folder=str(outside / 'archive'), raw_output_folder=str(outside / 'raw'),
+            final_output_folder=str(outside / 'final'))
+        dump(self.config, data)
+        with self.assertRaisesRegex(ValueError, 'course path leaves'):
+            run_desktop(self.root / 'app', self.root / 'app/versions/fixture', self.config)
+
+    def test_loopback_rejects_foreign_host_origin_and_missing_session(self):
+        server = ThreadingHTTPServer(('127.0.0.1', 0), handler_for(self.provider, session_token='audit-secret'))
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        url = 'http://127.0.0.1:' + str(server.server_address[1]) + '/api/v1/snapshot'
+        try:
+            for headers in ({}, {'Host': 'other.example', 'X-Lecture-Session': 'audit-secret'},
+                            {'Origin': 'https://other.example', 'X-Lecture-Session': 'audit-secret'}):
+                with self.assertRaises(HTTPError) as result:
+                    urlopen(Request(url, headers=headers))
+                self.assertEqual(result.exception.code, 403)
+            with urlopen(Request(url, headers={'X-Lecture-Session': 'audit-secret'})) as response:
+                self.assertEqual(json.load(response)['contract'], 'vic28.dashboard/1')
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
 
     def test_visual_fixture_is_explicit_and_frozen(self):
         provider = SnapshotProvider(self.root, self.config, fixture=True)

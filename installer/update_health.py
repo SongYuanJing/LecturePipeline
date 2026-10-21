@@ -10,6 +10,15 @@ if (root/'versions').resolve() not in app.parents:
 sys.path[:0]=[str(app),str(app/'gui_v1.8'),str(app/'dialogue_v1.6')]
 for path in app.rglob('*.py'):
     compile(path.read_bytes(),str(path),'exec')
+ui=app/'gui_web'
+if ui.exists():
+    for name in ('readonly_snapshot.py','readonly_host.py','desktop_runner.py','web/index.html',
+                 'web/ui.js','native/LecturePipelineDesktop.exe','native/WebView2Loader.dll'):
+        if not (ui/name).is_file():raise ValueError('Missing dashboard component: '+name)
+    sys.path.insert(0,str(ui))
+    import readonly_snapshot
+    if readonly_snapshot.APP_ROOT != app:
+        raise ValueError('Dashboard/backend code root mismatch')
 from pipeline_config import Config, preflight
 import app as gui
 result=preflight(Config(root/'config/config.json',code_root=app),probe_gpu=False)

@@ -13,10 +13,15 @@ import updater
 
 def build(source, base, output, app_version):
     updater.version(app_version)
+    source=Path(source)
     output.mkdir(parents=True,exist_ok=False)
     files={p.relative_to(source).as_posix():p.read_bytes() for p in sorted(source.rglob('*'))
            if p.is_file() and '__pycache__' not in p.parts and p.suffix!='.pyc' and p.name!='release.json'}
-    release=dict(manifest_schema_version=1,updater_protocol=1,app_version=app_version,
+    source_release=source/'release.json'
+    metadata=json.loads(source_release.read_text(encoding='utf8')) if source_release.exists() else {}
+    if metadata and metadata.get('app_version')!=app_version:
+        raise ValueError('Source package version differs from update version')
+    release=dict(metadata,manifest_schema_version=1,updater_protocol=1,app_version=app_version,
         config_schema_version=1,migration_required=False,
         files={name:hashlib.sha256(data).hexdigest() for name,data in files.items()})
     files['release.json']=(json.dumps(release,ensure_ascii=False,indent=2)+'\n').encode('utf8')
@@ -38,5 +43,6 @@ if __name__=='__main__':
     parser.add_argument('--base',type=Path,required=True)
     parser.add_argument('--out',type=Path,required=True)
     parser.add_argument('--version',required=True)
+    parser.add_argument('--source',type=Path,default=REPO/'src/app',help='Versioned code directory, including gui_web when present')
     args=parser.parse_args()
-    print(json.dumps(build(REPO/'src/app',args.base,args.out,args.version),indent=2))
+    print(json.dumps(build(args.source,args.base,args.out,args.version),indent=2))

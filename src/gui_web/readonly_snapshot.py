@@ -14,7 +14,10 @@ import threading
 import time
 
 sys.dont_write_bytecode = True
-APP_ROOT = Path(__file__).resolve().parents[1] / 'app'
+CODE_PARENT = Path(__file__).resolve().parents[1]
+APP_ROOT = CODE_PARENT / 'app' if (CODE_PARENT / 'app' / 'pipeline_config.py').is_file() else CODE_PARENT
+if not (APP_ROOT / 'pipeline_config.py').is_file():
+    raise ImportError('Lecture Pipeline backend is missing beside the dashboard')
 sys.path.insert(0, str(APP_ROOT))
 import pipeline_config
 import asr_device  # Preload without probing devices or loading ASR.
@@ -36,15 +39,23 @@ def contained(path: Path, root: Path) -> bool:
 
 class ReadFence:
     """Thread-scoped I/O audit: deny writes/processes and content reads outside DEV."""
-    def __init__(self, root):
+    def __init__(self, root, extra_roots=()):
         self.root = Path(root).resolve(strict=True)
+        self.roots = (self.root, *(Path(path).resolve() for path in extra_roots))
         self.reads = set()
 
     def require_dev(self, path):
         path = Path(path).resolve()
-        if not contained(path, self.root):
+        if not any(contained(path, root) for root in self.roots):
             raise PermissionError('Источник вне выбранного DEV-корня; чтение отклонено')
         return path
+
+    def audit_name(self, path):
+        for index, root in enumerate(self.roots):
+            if contained(path, root):
+                relative = path.relative_to(root).as_posix()
+                return relative if index == 0 else f'allowed{index}/{relative}'
+        raise PermissionError('Источник вне выбранного DEV-корня; чтение отклонено')
 
     def validate_paths(self, value):
         if isinstance(value, dict):
@@ -85,7 +96,7 @@ def _audit(event, args):
                 fence.require_dev(path)
                 if path.suffix.lower() in _MEDIA:
                     raise PermissionError('VIC-28 не читает содержимое аудио, Word или словаря')
-                fence.reads.add(str(path.relative_to(fence.root)))
+                fence.reads.add(fence.audit_name(path))
     elif event in {'os.scandir', 'pathlib.Path.glob', 'pathlib.Path.rglob'}:
         if args and isinstance(args[0], (str, bytes, os.PathLike)):
             fence.require_dev(os.fsdecode(args[0]))
@@ -145,10 +156,11 @@ def worker_observation(name, path, fence, now):
 
 
 class SnapshotProvider:
-    def __init__(self, dev_root, config_path, *, fixture=False):
+    def __init__(self, dev_root, config_path, *, fixture=False, allowed_roots=()):
         self.root = Path(dev_root).resolve(strict=True)
         self.config_path = Path(config_path).resolve()
         self.fixture = fixture
+        self.allowed_roots = tuple(Path(path).resolve() for path in allowed_roots)
         self.lock = threading.Lock()
         self.frozen = None
         ReadFence(self.root).require_dev(self.config_path)
@@ -164,7 +176,7 @@ class SnapshotProvider:
 
     def _read(self):
         started = time.monotonic()
-        fence = ReadFence(self.root)
+        fence = ReadFence(self.root, self.allowed_roots)
         result = dict(contract=CONTRACT, available=False, captured_at=_utc(), revision=None,
                       source=dict(kind='fixture' if self.fixture else 'dev', frozen=self.fixture,
                                   config=str(self.config_path), dev_root=str(self.root)),

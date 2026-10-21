@@ -2,6 +2,8 @@
 // Visual shell and SVG icons retained from the 00.03S Liquid Glass prototype.
 // VIC-28 reads versioned host snapshots; no pipeline commands are implemented.
 const $ = selector => document.querySelector(selector);
+const sessionToken = new URLSearchParams(location.hash.slice(1)).get('session');
+if (sessionToken) history.replaceState(null, '', location.pathname + location.search);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const paths = {
   wave:'M4 14v-4m4 8V6m4 15V3m4 15V6m4 8v-4',
@@ -154,7 +156,8 @@ function closeModal(){$('#modal').close();if(returnFocus?.isConnected)returnFocu
 async function refresh(){
   if(inFlight)return;inFlight=true;
   try{
-    const response=await fetch('/api/v1/snapshot',{cache:'no-store',signal:AbortSignal.timeout(7000)});
+    const response=await fetch('/api/v1/snapshot',{cache:'no-store',signal:AbortSignal.timeout(7000),
+      headers:sessionToken?{'X-Lecture-Session':sessionToken}:{}});
     if(!response.ok)throw Error('HTTP '+response.status);
     const value=await response.json();if(value.contract!=='vic28.dashboard/1')throw Error('Версия контракта не поддерживается');
     snapshot=value;transportError='';

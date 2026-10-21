@@ -1,0 +1,57 @@
+"""One-session DEV dashboard: existing catalog reader plus a local WebView2 window."""
+from __future__ import annotations
+
+from http.server import ThreadingHTTPServer
+import json
+from pathlib import Path
+import secrets
+import subprocess
+import threading
+
+from readonly_host import handler_for
+from readonly_snapshot import SnapshotProvider, contained
+from pipeline_config import Config
+
+
+def run(install_root, code_root, config_path):
+    install_root = Path(install_root).resolve()
+    code_root = Path(code_root).resolve()
+    config_path = Path(config_path).resolve()
+    candidate_root = install_root.parent
+    config = Config(config_path)
+    marker = candidate_root / 'DEV_CANDIDATE.json'
+    identity = json.loads(marker.read_text(encoding='utf-8'))
+    if (identity.get('purpose') != 'Lecture Pipeline unified DEV'
+            or Path(identity.get('install_root', '')).resolve() != install_root
+            or Path(identity.get('data_root', '')).resolve() != config.data_root
+            or config.install != code_root
+            or not contained(config.data_root, candidate_root)):
+        raise ValueError('Dashboard DEV requires its own version and data inside the candidate root')
+    # Course Setup may bind existing folders. This candidate reads only its own DEV tree.
+    for binding in config.courses().values():
+        for key in ('source_audio_folder', 'archive_audio_folder',
+                    'raw_output_folder', 'final_output_folder'):
+            path = binding.get(key)
+            if path is not None and not contained(path, candidate_root):
+                raise ValueError('Dashboard DEV course path leaves the isolated candidate')
+    executable = code_root / 'gui_web/native/LecturePipelineDesktop.exe'
+    if not executable.is_file():
+        raise FileNotFoundError('WebView2 desktop shell is missing; use the Tk fallback')
+
+    provider = SnapshotProvider(candidate_root, config_path)
+    token = secrets.token_urlsafe(32)
+    server = ThreadingHTTPServer(('127.0.0.1', 0), handler_for(provider, session_token=token))
+    server.daemon_threads = True
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        url = f'http://127.0.0.1:{server.server_port}/#session={token}'
+        profile = install_root / 'run/gui-webview2-profile'
+        result = subprocess.run([str(executable), url, str(profile)], cwd=install_root)
+        if result.returncode:
+            raise RuntimeError('WebView2 window failed; open Lecture Pipeline (Tk)')
+        return 0
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=3)

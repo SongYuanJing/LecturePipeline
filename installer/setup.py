@@ -17,6 +17,10 @@ def validate_runtimes(root):
 def configure(root,data,workspace,subject,*,workspace_name=None,subject_name=None,language="zh",device_mode='auto'):
  if not data.is_absolute():raise ValueError('Выберите абсолютную папку данных')
  root=root.resolve();data=data.resolve();app=app_root(root)
+ dashboard=(app/'gui_web/desktop_runner.py').is_file() and json.loads((app/'release.json').read_text(encoding='utf8')).get('distribution_status')=='dev'
+ if dashboard and data.parent!=root.parent:raise ValueError('DEV dashboard data must be a sibling of its isolated application')
+ marker=root.parent/'DEV_CANDIDATE.json'
+ if dashboard and marker.exists():raise ValueError('DEV candidate marker already exists; nothing overwritten')
  if root==data or root in data.parents or data in root.parents:raise ValueError('User data and application root must be separate')
  if not re.fullmatch('[A-Za-z0-9_-]+',workspace) or not re.fullmatch('[A-Za-z0-9_-]+',subject):raise ValueError('Workspace and subject IDs: letters, digits, - or _')
  if language not in ('zh','en','auto'):raise ValueError('Invalid lecture language')
@@ -44,7 +48,10 @@ def configure(root,data,workspace,subject,*,workspace_name=None,subject_name=Non
  if not book.exists():
   subprocess.run([str(root/'runtime/document/python.exe'),'-B',str(root/'launcher/create_dictionary.py'),str(book),str(app)],check=True,creationflags=0x08000000)
  else:raise ValueError('Existing dictionary: use explicit adoption, never overwrite')
- new_json(cfg,template);return cfg
+ new_json(cfg,template)
+ if dashboard:
+  new_json(marker,dict(purpose='Lecture Pipeline unified DEV',install_root=str(root),data_root=str(data)))
+ return cfg
 if __name__=='__main__':
  p=argparse.ArgumentParser();p.add_argument('--data-root',type=Path);p.add_argument('--workspace',default='semester-1');p.add_argument('--subject',default='SUBJECT');p.add_argument('--device-mode',choices=('auto','cpu','gpu'),default='auto');a=p.parse_args()
  data=a.data_root or Path(input('Absolute data root (outside application): ').strip().strip('"'))
