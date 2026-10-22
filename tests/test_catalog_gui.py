@@ -23,7 +23,12 @@ class CatalogGuiTests(unittest.TestCase):
         panel.detail.yview_moveto(1);root.update()
         before=(panel.detail.get('1.0','end'),panel.detail.yview(),panel.table.selection())
         panel.render(copy.deepcopy(data),self.c);root.update()
-        self.assertEqual(before,(panel.detail.get('1.0','end'),panel.detail.yview(),panel.table.selection()))
+        # Tk can settle wrapped-line geometry on the next idle update at 192 DPI.
+        # At the bottom, the first fractional coordinate is not a stable pixel.
+        self.assertEqual(panel.detail.get('1.0','end'),before[0])
+        self.assertEqual(panel.table.selection(),before[2])
+        self.assertAlmostEqual(before[1][1],1)
+        self.assertAlmostEqual(panel.detail.yview()[1],1)
         self.assertIn('8.',before[0])
 
     def test_changing_progress_preserves_selection_and_scroll(self):

@@ -216,8 +216,27 @@ internal sealed class InstallEngine(Action<Update> report)
             using var existing=new ShellShortcut(path);
             if(!string.Equals(existing.Target,target,StringComparison.OrdinalIgnoreCase)
                 || existing.Arguments!=arguments || !string.Equals(existing.Directory,root,StringComparison.OrdinalIgnoreCase)
-                || (dashboard && !string.Equals(existing.IconLocation,icon,StringComparison.OrdinalIgnoreCase)))
+                )
                 throw new IOException("Конфликт ярлыка; существующий ярлык сохранён: " + path);
+            if(dashboard && !string.Equals(existing.IconLocation,icon,StringComparison.OrdinalIgnoreCase))
+            {
+                // Migrate only a shortcut with our exact target, arguments, folder and
+                // versioned native icon. A user-selected icon remains untouched.
+                var oldIcon=existing.IconLocation;
+                var relative=Path.GetRelativePath(root,oldIcon);
+                if(!System.Text.RegularExpressions.Regex.IsMatch(relative,
+                    @"^versions[\\/][0-9A-Za-z.-]+[\\/]gui_web[\\/]native[\\/]LecturePipelineDesktop\.exe$",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                    throw new IOException("Конфликт ярлыка; существующий ярлык сохранён: " + path);
+                string replacement=path+".pending";
+                try
+                {
+                    existing.IconLocation=icon!;
+                    existing.Save(replacement);
+                    File.Replace(replacement,path,null);
+                }
+                finally {if(File.Exists(replacement))File.Delete(replacement);}
+            }
             return path;
         }
         using var link=new ShellShortcut {Target=target,Arguments=arguments,Directory=root};

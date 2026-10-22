@@ -67,6 +67,21 @@ try
         Check(web.IconLocation==Path.Combine(shortcutRoot,"versions","2.0.0-beta.5-dev.5",
             "gui_web","native","LecturePipelineDesktop.exe"));
     }
+    File.WriteAllText(Path.Combine(shortcutRoot,"current.json"),
+        "{\"app_version\":\"2.0.0-beta.5-dev.6\",\"path\":\"versions/2.0.0-beta.5-dev.6\"}");
+    Check(InstallEngine.Shortcut(shortcutRoot,shortcutFolder,dashboard:true)==webShortcut);
+    using(var updated=new ShellShortcut(webShortcut))
+        Check(updated.IconLocation==Path.Combine(shortcutRoot,"versions","2.0.0-beta.5-dev.6",
+            "gui_web","native","LecturePipelineDesktop.exe"));
+    var customIcon=Path.Combine(folder,"custom.ico");
+    using(var modified=new ShellShortcut(webShortcut))
+    {
+        modified.IconLocation=customIcon;modified.Save(webShortcut);
+    }
+    File.WriteAllText(Path.Combine(shortcutRoot,"current.json"),
+        "{\"app_version\":\"2.0.0-beta.5-dev.7\",\"path\":\"versions/2.0.0-beta.5-dev.7\"}");
+    await Reject(()=>{InstallEngine.Shortcut(shortcutRoot,shortcutFolder,dashboard:true);return Task.CompletedTask;});
+    using(var preservedWeb=new ShellShortcut(webShortcut))Check(preservedWeb.IconLocation==customIcon);
     Console.WriteLine($"{tests} bootstrap assertions passed");
     if(args.Length==2 && args[0]=="--screenshot")
     {
