@@ -11,6 +11,13 @@ using Microsoft.Web.WebView2.WinForms;
 
 public sealed class DesktopShell : Form
 {
+#if LP_PRODUCT
+    const string ProductTitle = "Lecture Pipeline";
+    const string BlockedResponse = "Read-only dashboard";
+#else
+    const string ProductTitle = "Lecture Pipeline DEV";
+    const string BlockedResponse = "Read-only DEV dashboard";
+#endif
     [DllImport("user32.dll")] static extern bool SetProcessDpiAwarenessContext(IntPtr context);
     readonly Uri origin;
     readonly string profile;
@@ -35,7 +42,7 @@ public sealed class DesktopShell : Form
         origin = url;
         profile = profileDirectory;
         statusPath = firstLaunchStatus;
-        Text = "Lecture Pipeline DEV";
+        Text = ProductTitle;
         var selectedIcon = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LecturePipeline-A-dark.ico");
         if (File.Exists(selectedIcon)) Icon = new System.Drawing.Icon(selectedIcon);
         MinimumSize = new System.Drawing.Size(720, 500);
@@ -62,7 +69,7 @@ public sealed class DesktopShell : Form
                 view.CoreWebView2.WebResourceRequested += delegate(object sender, CoreWebView2WebResourceRequestedEventArgs e) {
                     if (e.Request.Method != "GET" || !Allowed(e.Request.Uri))
                         e.Response = environment.CreateWebResourceResponse(
-                            new MemoryStream(System.Text.Encoding.UTF8.GetBytes("Read-only DEV dashboard")),
+                            new MemoryStream(System.Text.Encoding.UTF8.GetBytes(BlockedResponse)),
                             403, "Blocked", "Content-Type: text/plain");
                 };
                 view.Source = origin;
@@ -75,7 +82,7 @@ public sealed class DesktopShell : Form
                     return;
                 }
                 MessageBox.Show(this, "Новый интерфейс недоступен. Откройте Lecture Pipeline (Tk).\n\n" + error.Message,
-                    "Lecture Pipeline DEV", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ProductTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.ExitCode = 2;
                 Close();
             }

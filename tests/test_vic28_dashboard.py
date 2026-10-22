@@ -240,6 +240,7 @@ class DashboardTests(unittest.TestCase):
         self.assertIn((external_course / 'raw').resolve(), observed[0].allowed_roots)
         result = observed[0].snapshot()
         self.assertTrue(result['available'], result['errors'])
+        self.assertEqual(result['source']['kind'], 'product')
         self.assertFalse(result['read_audit']['mutations_allowed'])
 
     def test_desktop_second_launch_uses_existing_instance(self):

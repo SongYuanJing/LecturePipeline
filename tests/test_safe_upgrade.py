@@ -47,7 +47,7 @@ class SafeUpgradeTests(unittest.TestCase):
         self.stage = self.root / '.upgrade-stage' / 'test'
         put(self.stage / 'versions/2.0.0-beta.5-dev.5/release.json',
             dict(app_version='2.0.0-beta.5-dev.5', updater_protocol=1,
-                 config_schema_version=1, migration_required=False))
+                 distribution_status='dev', config_schema_version=1, migration_required=False))
         put(self.stage / 'launcher/launch.py', 'new launcher')
         put(self.stage / 'current.json', dict(app_version='2.0.0-beta.5-dev.5',
                                              path='versions/2.0.0-beta.5-dev.5'))
@@ -59,6 +59,36 @@ class SafeUpgradeTests(unittest.TestCase):
         self.before_data = {p.relative_to(self.data).as_posix():sha(p)
                             for p in self.data.rglob('*') if p.is_file()}
         self.before_config = (self.root / 'config/config.json').read_bytes()
+
+    def product_stage(self, distribution_status='beta'):
+        version = '2.0.0-beta.5'
+        old = self.stage / 'versions/2.0.0-beta.5-dev.5'
+        new = self.stage / 'versions' / version
+        old.rename(new)
+        release = json.loads((new / 'release.json').read_text(encoding='utf8'))
+        release.update(app_version=version, distribution_status=distribution_status)
+        put(new / 'release.json', release)
+        put(self.stage / 'current.json', dict(app_version=version, path='versions/' + version))
+        self.payload = dict(app_version=version,
+            files={p.relative_to(self.stage).as_posix():sha(p)
+                   for p in self.stage.rglob('*') if p.is_file()})
+
+    def test_product_beta5_upgrade_preserves_beta4_and_data(self):
+        self.product_stage()
+        result = safe_upgrade.apply(self.root, self.stage, self.payload,
+                                    health=lambda _root, _code: None)
+        self.assertEqual(result['current'], '2.0.0-beta.5')
+        self.assertEqual((self.root / 'config/config.json').read_bytes(), self.before_config)
+        self.assertEqual({p.relative_to(self.data).as_posix():sha(p)
+                          for p in self.data.rglob('*') if p.is_file()}, self.before_data)
+
+    def test_product_version_rejects_dev_distribution_metadata(self):
+        self.product_stage(distribution_status='dev')
+        before = (self.root / 'current.json').read_bytes()
+        with self.assertRaisesRegex(ValueError, 'distribution'):
+            safe_upgrade.apply(self.root, self.stage, self.payload,
+                               health=lambda _root, _code: None)
+        self.assertEqual((self.root / 'current.json').read_bytes(), before)
 
     def test_success_keeps_data_config_and_old_version(self):
         result = safe_upgrade.apply(self.root, self.stage, self.payload,

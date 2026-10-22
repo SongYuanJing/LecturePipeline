@@ -40,8 +40,9 @@ def _payload(root, stage, payload):
     if not isinstance(payload, dict) or not isinstance(payload.get('files'), dict):
         raise ValueError('Invalid upgrade payload manifest')
     version = payload.get('app_version')
-    if not isinstance(version, str) or not re.fullmatch(r'\d+\.\d+\.\d+-beta\.\d+-dev\.\d+', version):
-        raise ValueError('Expected an isolated DEV upgrade version')
+    product = version == '2.0.0-beta.5'
+    if not isinstance(version, str) or not (product or re.fullmatch(r'\d+\.\d+\.\d+-beta\.\d+-dev\.\d+', version)):
+        raise ValueError('Expected beta.5 product or isolated DEV upgrade version')
     names = set(payload['files'])
     required = {'current.json', 'launcher/launch.py',
                 'versions/' + version + '/release.json'}
@@ -65,6 +66,8 @@ def _payload(root, stage, payload):
             or release.get('app_version') != version or release.get('config_schema_version') != 1
             or release.get('migration_required') is not False):
         raise ValueError('Upgrade version contract mismatch')
+    if release.get('distribution_status') != ('beta' if product else 'dev'):
+        raise ValueError('Upgrade distribution identity mismatch')
     return root, stage, version
 
 

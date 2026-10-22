@@ -1,5 +1,5 @@
 param([string]$Python='python',[string]$Dotnet='dotnet',[string]$Output,
-      [string]$Version,[string]$DesktopBin)
+      [string]$Version,[string]$DesktopBin,[ValidateSet('dev','beta')][string]$DistributionStatus)
 $ErrorActionPreference='Stop'
 $repo=Split-Path $PSScriptRoot
 if(-not $Output){$Output=Join-Path $repo 'dist/bootstrap'}
@@ -8,6 +8,7 @@ $env:DOTNET_GENERATE_ASPNET_CERTIFICATE='false'
 $payloadArgs=@()
 if($Version){$payloadArgs+=@('--version',$Version)}
 if($DesktopBin){$payloadArgs+=@('--desktop-bin',$DesktopBin)}
+if($DistributionStatus){$payloadArgs+=@('--distribution-status',$DistributionStatus)}
 & $Python -B (Join-Path $PSScriptRoot 'build_bootstrap_payload.py') @payloadArgs
 if($LASTEXITCODE -ne 0){throw 'Payload build failed'}
 $appVersion=(Get-Content -LiteralPath (Join-Path $repo 'bootstrap/payload/application.json') -Raw | ConvertFrom-Json).app_version

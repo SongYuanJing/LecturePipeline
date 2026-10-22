@@ -28,7 +28,7 @@ contract: "vic28.dashboard/1"
 available: boolean                 # config / источник доступны
 captured_at: ISO-8601 UTC
 revision: string                   # content revision, не processing authority
-source: { kind: "dev" | "fixture", frozen: boolean, dev_root, config }
+source: { kind: "dev" | "product" | "fixture", frozen: boolean, dev_root, config }
 workspace: { id, name } | null
 version: string | null
 workers: WorkerObservation[]

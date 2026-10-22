@@ -38,7 +38,7 @@ def run(install_root, code_root, config_path):
                 path = binding.get(key)
                 if path is not None and not contained(path, candidate_root):
                     raise ValueError('Dashboard DEV course path leaves the isolated candidate')
-        snapshot_root, allowed_roots = candidate_root, ()
+        snapshot_root, allowed_roots, source_kind = candidate_root, (), 'dev'
     else:
         release = json.loads((code_root / 'release.json').read_text(encoding='utf8'))
         if release.get('distribution_status') != 'beta':
@@ -47,7 +47,7 @@ def run(install_root, code_root, config_path):
         for binding in config.courses().values():
             roots.update(binding[key] for key in ('source_audio_folder', 'archive_audio_folder',
                          'raw_output_folder', 'final_output_folder') if binding.get(key))
-        snapshot_root, allowed_roots = install_root, tuple(sorted(roots))
+        snapshot_root, allowed_roots, source_kind = install_root, tuple(sorted(roots)), 'product'
     executable = code_root / 'gui_web/native/LecturePipelineDesktop.exe'
     if not executable.is_file():
         raise FileNotFoundError('WebView2 desktop shell is missing; use the Tk fallback')
@@ -58,7 +58,8 @@ def run(install_root, code_root, config_path):
     except RuntimeError:
         return 0  # An existing dashboard keeps its own host, port, and WebView2 profile.
     with gate:
-        provider = SnapshotProvider(snapshot_root, config_path, allowed_roots=allowed_roots)
+        provider = SnapshotProvider(snapshot_root, config_path, allowed_roots=allowed_roots,
+                                    source_kind=source_kind)
         token = secrets.token_urlsafe(32)
         server = ThreadingHTTPServer(('127.0.0.1', 0), handler_for(provider, session_token=token))
         server.daemon_threads = True

@@ -7,10 +7,15 @@ import sys
 import zipfile
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_package import VERSION
+from public_exclusions import check
 
-def build(repo, output, *, version=VERSION, desktop_bin=None):
+def build(repo, output, *, version=VERSION, desktop_bin=None, distribution_status=None):
     if desktop_bin and version == VERSION:
         raise ValueError('Unified DEV must not reuse accepted beta.4 identity')
+    if distribution_status is None:
+        distribution_status = 'dev' if desktop_bin else 'beta'
+    if distribution_status not in ('dev', 'beta'):
+        raise ValueError('Unsupported distribution status')
     files = {}
     for source, prefix in ((repo/'src/app', 'versions/'+version), (repo/'installer', 'launcher')):
         for path in sorted(source.rglob('*')):
@@ -30,17 +35,22 @@ def build(repo, output, *, version=VERSION, desktop_bin=None):
     def encoded(value):return (json.dumps(value,ensure_ascii=False,indent=2)+'\n').encode('utf8')
     prefix = 'versions/'+version+'/'
     files[prefix+'release.json'] = encoded(dict(manifest_schema_version=1,updater_protocol=1,app_version=version,
-        config_schema_version=1,migration_required=False,distribution_status='dev' if desktop_bin else 'beta',
+        baseline='v1.8.1',distribution_status=distribution_status,config_schema_version=1,
+        data_schema_version={'lecture':1,'dialogue':1,'ai_state':1,'dictionary':'1.4'},migration_required=False,
         files={n[len(prefix):]:hashlib.sha256(v).hexdigest() for n,v in files.items() if n.startswith(prefix)}))
     files['current.json'] = encoded(dict(app_version=version,path='versions/'+version))
     files['launcher/config.example.json'] = (repo/'config.example.json').read_bytes()
     for name,command in (('CheckUpdates','check'),('Update','apply --tag')):
         files[name+'.cmd']=('@echo off\r\n"%~dp0runtime\\asr\\python.exe" -B -X utf8 "%~dp0launcher\\updater.py" '+command+' %*\r\n').encode('ascii')
     if desktop_bin:
-        for name,mode in (('Lecture Pipeline.vbs','dashboard'),('Lecture Pipeline DEV.vbs','dashboard'),('Lecture Pipeline (Tk).vbs','gui')):
+        entries = [('Lecture Pipeline.vbs','dashboard'),('Lecture Pipeline (Tk).vbs','gui')]
+        if distribution_status == 'dev':
+            entries.append(('Lecture Pipeline DEV.vbs','dashboard'))
+        for name,mode in entries:
             files[name]=('Set fso=CreateObject("Scripting.FileSystemObject")\r\nroot=fso.GetParentFolderName(WScript.ScriptFullName)\r\nSet sh=CreateObject("WScript.Shell")\r\nsh.Run Chr(34) & root & "\\runtime\\asr\\pythonw.exe" & Chr(34) & " -B -X utf8 " & Chr(34) & root & "\\launcher\\launch.py" & Chr(34) & " '+mode+'", 0, False\r\n').encode('ascii')
     for path in sorted((repo/'components').glob('*-manifest.json')):
         files['launcher/'+path.name] = path.read_bytes()
+    check(files)
     output.mkdir(parents=True,exist_ok=True)
     with zipfile.ZipFile(output/'application.zip','w',zipfile.ZIP_DEFLATED) as archive:
         for name,value in sorted(files.items()):
@@ -55,6 +65,8 @@ if __name__=='__main__':
     parser.add_argument('--out',type=Path)
     parser.add_argument('--version',default=VERSION)
     parser.add_argument('--desktop-bin',type=Path)
+    parser.add_argument('--distribution-status',choices=('dev','beta'))
     args=parser.parse_args()
     repo=Path(__file__).resolve().parents[1]
-    build(repo,args.out or repo/'bootstrap/payload',version=args.version,desktop_bin=args.desktop_bin)
+    build(repo,args.out or repo/'bootstrap/payload',version=args.version,desktop_bin=args.desktop_bin,
+          distribution_status=args.distribution_status)

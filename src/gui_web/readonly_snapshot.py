@@ -38,7 +38,7 @@ def contained(path: Path, root: Path) -> bool:
 
 
 class ReadFence:
-    """Thread-scoped I/O audit: deny writes/processes and content reads outside DEV."""
+    """Thread-scoped I/O audit: deny writes/processes and reads outside configured roots."""
     def __init__(self, root, extra_roots=()):
         self.root = Path(root).resolve(strict=True)
         self.roots = (self.root, *(Path(path).resolve() for path in extra_roots))
@@ -47,7 +47,7 @@ class ReadFence:
     def require_dev(self, path):
         path = Path(path).resolve()
         if not any(contained(path, root) for root in self.roots):
-            raise PermissionError('Источник вне выбранного DEV-корня; чтение отклонено')
+            raise PermissionError('Источник вне разрешённых папок; чтение отклонено')
         return path
 
     def audit_name(self, path):
@@ -55,7 +55,7 @@ class ReadFence:
             if contained(path, root):
                 relative = path.relative_to(root).as_posix()
                 return relative if index == 0 else f'allowed{index}/{relative}'
-        raise PermissionError('Источник вне выбранного DEV-корня; чтение отклонено')
+        raise PermissionError('Источник вне разрешённых папок; чтение отклонено')
 
     def validate_paths(self, value):
         if isinstance(value, dict):
@@ -156,10 +156,13 @@ def worker_observation(name, path, fence, now):
 
 
 class SnapshotProvider:
-    def __init__(self, dev_root, config_path, *, fixture=False, allowed_roots=()):
+    def __init__(self, dev_root, config_path, *, fixture=False, allowed_roots=(), source_kind='dev'):
+        if source_kind not in ('dev', 'product'):
+            raise ValueError('Unsupported dashboard source kind')
         self.root = Path(dev_root).resolve(strict=True)
         self.config_path = Path(config_path).resolve()
         self.fixture = fixture
+        self.source_kind = source_kind
         self.allowed_roots = tuple(Path(path).resolve() for path in allowed_roots)
         self.lock = threading.Lock()
         self.frozen = None
@@ -178,7 +181,7 @@ class SnapshotProvider:
         started = time.monotonic()
         fence = ReadFence(self.root, self.allowed_roots)
         result = dict(contract=CONTRACT, available=False, captured_at=_utc(), revision=None,
-                      source=dict(kind='fixture' if self.fixture else 'dev', frozen=self.fixture,
+                      source=dict(kind='fixture' if self.fixture else self.source_kind, frozen=self.fixture,
                                   config=str(self.config_path), dev_root=str(self.root)),
                       workspace=None, version=None, workers=[], courses=[], catalog=[], pending=[],
                       counts=None, errors=[], device=dict(configured=None, observed=None),
@@ -235,7 +238,7 @@ class SnapshotProvider:
                                             problems=sum(r['status'] in ('problem', 'review', 'error') for r in rows),
                                             pending=len(view['pending']))
         except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
-            result['errors'].append('Источник DEV недоступен: ' + str(exc))
+            result['errors'].append('Источник недоступен: ' + str(exc))
         result['read_audit'] = dict(files=sorted(fence.reads), file_count=len(fence.reads),
                                     content_excluded=['audio', 'Word', 'vocabulary'], mutations_allowed=False)
         result['read_duration_ms'] = round((time.monotonic() - started) * 1000, 1)

@@ -87,6 +87,19 @@ class UpdateTests(unittest.TestCase):
             self.assertEqual((self.root/'current.json').read_bytes(),self.previous)
             self.assertEqual(self.snapshot(),self.before)
 
+    def test_setup_only_beta5_release_cannot_trigger_code_only_update(self):
+        self.release = dict(tag_name='v2.0.0-beta.5', draft=False, prerelease=True,
+                            assets=[dict(name='Setup.exe', state='uploaded', size=1,
+                                         digest='sha256:' + '0' * 64,
+                                         browser_download_url='https://github.com/' + u.REPOSITORY
+                                         + '/releases/download/v2.0.0-beta.5/Setup.exe')])
+        with patch.object(u.downloads, 'open_url', side_effect=AssertionError('network used')):
+            with self.assertRaisesRegex(ValueError, 'LecturePipeline-update.json'):
+                self.apply()
+        self.assertEqual((self.root / 'current.json').read_bytes(), self.previous)
+        self.assertEqual(self.snapshot(), self.before)
+        self.assertFalse((self.root / 'versions/2.0.0-beta.5').exists())
+
     def test_invalid_zip_with_matching_outer_hash_refused(self):
         data=b'not a ZIP';name=self.manifest['artifact']['name']
         self.replace_asset(name,data)
