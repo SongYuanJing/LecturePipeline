@@ -2,12 +2,12 @@
 const {chromium}=require('playwright');
 const assert=require('assert/strict'),fs=require('fs'),path=require('path');
 const out=path.resolve(process.env.VIC28_PREVIEW2_OUTPUT||'.local/vic28-preview2');fs.mkdirSync(out,{recursive:true});
-const urls={fixture:'http://127.0.0.1:8769',copy:'http://127.0.0.1:8770',stale:'http://127.0.0.1:8771',unknown:'http://127.0.0.1:8772',preparing:'http://127.0.0.1:8773'};
+const urls={fixture:process.env.VIC28_FIXTURE_URL||'http://127.0.0.1:8769',copy:process.env.VIC28_COPY_URL||'http://127.0.0.1:8770',stale:process.env.VIC28_STALE_URL||'http://127.0.0.1:8771',unknown:process.env.VIC28_UNKNOWN_URL||'http://127.0.0.1:8772',preparing:process.env.VIC28_PREPARING_URL||'http://127.0.0.1:8773'};
 (async()=>{
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
  const errors=[],external=[],checks=[],layouts=[],contrast=[];
  try{
-  async function context(options){const c=await browser.newContext(options);await c.route('**/*',r=>{const u=r.request().url();if(/^http:\/\/127\.0\.0\.1:87(?:6[89]|7[0-3])(?:\/|$)/.test(u))return r.continue();external.push(u);return r.abort();});c.on('page',p=>p.on('pageerror',e=>errors.push(e.message)));return c;}
+  async function context(options){const c=await browser.newContext(options);await c.route('**/*',r=>{const u=r.request().url();if(Object.values(urls).some(base=>u===base||u.startsWith(base+'/')))return r.continue();external.push(u);return r.abort();});c.on('page',p=>p.on('pageerror',e=>errors.push(e.message)));return c;}
   const ctx=await context({viewport:{width:1760,height:1350}}),p=await ctx.newPage();p.setDefaultTimeout(7000);
   async function go(kind){await p.goto(urls[kind]);await p.waitForSelector('.worker-card');const v=await (await p.request.get(urls[kind]+'/api/v1/snapshot')).json();fs.writeFileSync(path.join(out,kind+'-snapshot.json'),JSON.stringify(v,null,2));return v;}
   async function nav(view,filter='all'){await p.locator(`[data-nav="${view}"][data-filter="${filter}"]:visible`).first().click();}
@@ -33,13 +33,13 @@ const urls={fixture:'http://127.0.0.1:8769',copy:'http://127.0.0.1:8770',stale:'
   await p.route('**/api/v1/snapshot',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(staleDuringComposition)}));
   const response=p.waitForResponse(r=>r.url().endsWith('/api/v1/snapshot'));await p.locator('[data-action="refresh"]').first().evaluate(el=>el.click());await response;
   assert.equal(await p.evaluate(()=>window.__composingInput===document.querySelector('#global-search')),true,'Snapshot repaint cancelled IME input');
-  assert.ok((await p.locator('.worker-card').first().innerText()).includes('Heartbeat устарел'),'Heartbeat paint was delayed by composition');
+  assert.ok((await p.locator('.worker-card').first().innerText()).includes('Данные устарели'),'Heartbeat paint was delayed by composition');
   assert.equal(await p.locator('[role="progressbar"]').count(),0,'Live progress was retained during composition');
   await p.unroute('**/api/v1/snapshot');
   await p.locator('#global-search').evaluate(el=>{el.value='运筹';el.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'运筹'}));});
   assert.equal(await p.locator('#global-search').inputValue(),'运筹');assert.equal(await p.locator('tbody tr').count(),4);
   checks.push('Composition regression: input DOM identity survives refresh while stale heartbeat and hidden live progress repaint immediately; committed Chinese query filters 4 rows (synthetic event test, not native IME evidence)');
-  await go('stale');assert.ok((await p.locator('.worker-card').first().innerText()).includes('Heartbeat устарел'));assert.equal(await p.locator('[role="progressbar"]').count(),0);assert.ok(!(await p.locator('.worker-grid').innerText()).includes('GPU · CUDA'));assert.ok(!(await p.locator('.active-job').innerText()).includes('Текущая часть 2 из 3'));await shot('09-stale-heartbeat');
+  await go('stale');assert.ok((await p.locator('.worker-card').first().innerText()).includes('Данные устарели'));assert.equal(await p.locator('[role="progressbar"]').count(),0);assert.ok(!(await p.locator('.worker-grid').innerText()).includes('GPU · CUDA'));assert.ok(!(await p.locator('.active-job').innerText()).includes('Текущая часть 2 из 3'));await shot('09-stale-heartbeat');
   await go('unknown');const unknown=await p.locator('.active-job').innerText();assert.ok(unknown.includes('Текущая часть 2 из 3')&&unknown.includes('Процент недоступен')&&unknown.includes('ETA недоступен'));assert.equal(await p.locator('[role="progressbar"]').count(),0);await shot('10-unknown-percent-eta');
   await go('preparing');assert.ok((await p.locator('.active-job').innerText()).includes('Подготовка аудио'));assert.equal(await p.locator('[role="progressbar"]').count(),0);await shot('11-preparing');
   checks.push('Real backend projection of isolated stale/unknown/preparing fixtures: stale hides N/M/percent/ETA/device, unknown percent keeps valid multipart N/M');

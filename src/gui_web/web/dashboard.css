@@ -25,3 +25,44 @@
 @media(max-width:920px){.source-banner{font-size:11px}.worker-card strong{font-size:13px}.worker-card small{font-size:10px}.worker-card .eyebrow{font-size:9px}}
 @media(max-width:760px){.dashboard-grid,.catalog-layout{grid-template-columns:1fr}.worker-grid{grid-template-columns:1fr}.worker-card>div,.worker-grid>.worker-card:last-child>div{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}.worker-card .eyebrow{min-width:110px;font-size:10px}.worker-card small{font-size:11px}.worker-card strong{font-size:13px}.page-title p{font-size:12px;max-width:none}.source-banner{font-size:11px}.metric-label{font-size:11px}.source-pill{font-size:9px}.statusbar{font-size:9px}.catalog-layout .inspector{display:flex;grid-row:auto}.inspector-content{overflow:visible}.filterbar select{max-width:100%}}
 @media(max-width:520px){.source-banner{font-size:10px}.lecture-title-btn,.catalog-main .lecture-title-btn{font-size:12px}.lecture-sub,.catalog-main .lecture-sub{font-size:11px}.lecture-table .badge,.catalog-main .badge{font-size:10px}.segmented button{font-size:10px;padding:5px 7px}.segmented{justify-content:flex-start}.stage-row .stage-state{max-width:95px}.statusbar button{font-size:9px}}
+
+/* User-facing polish: keep the accepted glass palette and improve readable density. */
+:root{--sidebar:238px}
+.brand-name span,.workspace-button small,.nav-label,.side-version{font-size:12px}
+.brand-name{font-size:15px}.nav-label{letter-spacing:1px}
+.workspace-button{min-width:0}.workspace-tile{flex-shrink:0}.workspace-label{min-width:0;overflow-wrap:anywhere}
+.nav-item{font-size:13px;line-height:1.5;min-height:42px}.nav-item .label{min-width:0;overflow-wrap:anywhere}
+.side-note{font-size:12px;line-height:1.65}.side-note strong{white-space:normal}
+.sidebar{scrollbar-gutter:stable}.side-version button{min-width:30px;min-height:30px}
+.breadcrumbs{font-size:12px;min-width:0}.breadcrumbs>span:first-child{max-width:200px;overflow:hidden;text-overflow:ellipsis}
+.top-actions{min-width:0}.global-search{flex-shrink:1;min-width:100px}.global-search input{min-width:0}
+.source-pill{font-size:11px;line-height:1.5;letter-spacing:0;white-space:normal;max-width:205px;flex-shrink:0}
+.source-pill.dev-source{color:#dac6f3;border-color:#cab7ff38;background:#cab7ff0b}
+.source-banner,.page-title p{font-size:13px;line-height:1.7}
+.page-title{align-items:flex-start;flex-wrap:wrap;gap:14px}.page-title>div:first-child{min-width:0}.page-title p{overflow-wrap:anywhere}
+.worker-card .eyebrow{font-size:12px;letter-spacing:.6px}.worker-card strong{font-size:15px}.worker-card small{font-size:12px;line-height:1.65}
+.worker-card>div{overflow-wrap:anywhere}.metric-label{font-size:13px;line-height:1.5;white-space:normal}
+.dashboard-primary .active-job .job-title{font-size:22px;line-height:1.4;overflow-wrap:anywhere}
+.job-subtitle,.progress-meta,.parts-inline,.unknown-values{font-size:13px;line-height:1.65}
+.active-job-head{gap:10px;flex-wrap:wrap}.progress-meta,.parts-inline{flex-wrap:wrap;gap:8px 14px}
+.lecture-title-btn,.catalog-main .lecture-title-btn{font-size:14px;line-height:1.55;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+.lecture-sub,.catalog-main .lecture-sub{font-size:12px;line-height:1.65;white-space:normal;max-width:none;overflow:visible;overflow-wrap:anywhere}
+.lecture-table .badge,.catalog-main .badge,.mini-progress-label,.lecture-table th,.date-cell{font-size:12px;line-height:1.6}
+.lecture-table td{vertical-align:top}.lecture-table .course-icon{flex-shrink:0}
+.inspector-identity h2{font-size:20px;line-height:1.4}.inspector-identity p,.info-pairs,.inspector-content .info-pairs dd,.inspector-actions .readonly-action{font-size:12px;line-height:1.7}
+.inspector-top,.inspector-actions{flex-shrink:0}.inspector-content{min-height:0}
+.stage-row{font-size:13px;line-height:1.6;display:grid;grid-template-columns:20px minmax(0,1fr) minmax(65px,100px);gap:9px;align-items:start}
+.stage-row .stage-state{font-size:12px;max-width:none;min-width:0;overflow-wrap:anywhere}
+.info-pairs dt,.info-pairs dd{min-width:0;overflow-wrap:anywhere}
+.source-item strong{font-size:14px}.source-item small,.source-panel .callout,.inspector-content .callout,.callout,.table-tail,.filter-count,.text-button{font-size:12px;line-height:1.65}
+.diagnostic-pairs{font-size:13px;line-height:1.7;grid-template-columns:minmax(110px,180px) minmax(0,1fr)}
+.diagnostics{font-size:12px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+.course-card-head>div{min-width:0}.course-card h2{font-size:16px;line-height:1.5;white-space:normal;overflow-wrap:anywhere}.course-card p{font-size:12px;overflow-wrap:anywhere}
+.course-card-stats{font-size:13px;line-height:1.6}.course-card-stats span{font-size:12px;overflow-wrap:anywhere}.inbox-reason{font-size:13px;line-height:1.7;overflow-wrap:anywhere}.inbox-item .badge{font-size:12px;line-height:1.6}
+.segmented button,.filterbar select,.source-panel .text-button{font-size:12px;min-height:34px}
+.filterbar select{min-width:0}.statusbar{height:auto;min-height:38px;flex-wrap:wrap;gap:7px 13px;font-size:12px;padding-top:5px;padding-bottom:5px}.statusbar button{font-size:12px}
+@media(max-width:1320px){:root{--sidebar:216px}.worker-card .eyebrow,.worker-card small,.metric-label{font-size:12px}.dashboard-grid{grid-template-columns:minmax(0,1fr) 305px}}
+@media(max-width:1100px){:root{--sidebar:200px}.breadcrumbs>span:first-child{max-width:130px}.dashboard-grid,.catalog-layout{grid-template-columns:minmax(0,1fr) 285px}.source-pill{max-width:180px}.statusbar .secondary-status{display:none}}
+@media(max-width:920px){:root{--sidebar:68px}.worker-card strong{font-size:14px}.worker-card small,.worker-card .eyebrow{font-size:12px}.source-banner,.page-title p{font-size:13px}.breadcrumbs{display:none}.top-actions{width:100%;margin-left:0}.global-search{flex:1}}
+@media(max-width:760px){.dashboard-grid,.catalog-layout{grid-template-columns:1fr}.worker-card .eyebrow{min-width:120px}.worker-card small{font-size:12px}.source-pill{font-size:11px}.statusbar{font-size:12px}.source-panel .callout{font-size:12px}.diagnostic-pairs{grid-template-columns:minmax(100px,140px) minmax(0,1fr)}.stage-row .stage-state{max-width:none}}
+@media(max-width:520px){:root{--sidebar:53px}.source-pill span{display:inline}.source-pill{max-width:150px;padding:6px 8px}.source-banner,.page-title p{font-size:12px}.lecture-title-btn,.catalog-main .lecture-title-btn{font-size:13px}.lecture-sub,.catalog-main .lecture-sub,.lecture-table .badge,.catalog-main .badge,.segmented button,.statusbar button{font-size:12px}.worker-card .eyebrow,.worker-card small{font-size:12px}.dashboard-primary .active-job .job-title{font-size:18px}.topbar{padding-left:14px;padding-right:14px;gap:8px}.top-actions{gap:6px}.source-pill>.svg-icon{display:none}.statusbar{margin-left:8px}.statusbar button{max-width:160px;text-align:left}.diagnostic-pairs{grid-template-columns:1fr;gap:3px}.diagnostic-pairs dd{margin-bottom:10px}}

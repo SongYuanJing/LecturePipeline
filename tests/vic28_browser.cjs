@@ -19,7 +19,7 @@ const dev=process.env.VIC28_DEV_URL||'http://127.0.0.1:8768',fixture=process.env
       const partial={...original,counts:null,catalog:[],errors:['Проверка UI: файл состояния не читается']};
       await page.route('**/api/v1/snapshot',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(partial)}));
       await goto(dev);assert.ok((await page.locator('.read-warning').innerText()).includes('Данные каталога неполны'));
-      assert.ok(!(await page.locator('main').innerText()).includes('Каталог DEV пуст'));
+      assert.ok(!(await page.locator('main').innerText()).includes('Лекций пока нет'));
       assert.ok(!(await page.locator('main').innerText()).includes('В DEV ещё нет лекций'));
       assert.equal(await page.locator('.metric-number').first().innerText(),'—');
       await layout('partial snapshot 1440x1000');
@@ -31,8 +31,8 @@ const dev=process.env.VIC28_DEV_URL||'http://127.0.0.1:8768',fixture=process.env
     if(process.env.VIC28_FOCUS_PARTIAL==='1'){await partialSnapshot();assert.deepEqual(errors,[]);console.log(fs.readFileSync(path.join(out,'partial-verification.json'),'utf8'));return;}
     await goto(dev);const actual=await (await page.request.get(dev+'/api/v1/snapshot')).json();
     assert.equal(actual.source.kind,'dev');assert.equal(actual.capabilities.read_only,true);
-    assert.ok((await page.locator('.source-banner').innerText()).includes('Реальные read-only данные DEV'));
-    if(actual.counts.total===0){assert.ok((await page.locator('main').innerText()).includes('Каталог DEV пуст'));assert.equal(await page.locator('[role="progressbar"]').count(),0);}
+    assert.ok((await page.locator('.source-banner').innerText()).includes('Изолированная тестовая установка'));
+    if(actual.counts.total===0){assert.ok((await page.locator('main').innerText()).includes('Лекций пока нет'));assert.equal(await page.locator('[role="progressbar"]').count(),0);}
     await page.screenshot({path:path.join(out,'dashboard-real-dev.png'),animations:'disabled'});
     fs.writeFileSync(path.join(out,'real-dev-snapshot.json'),JSON.stringify(actual,null,2));
     checks.push('Real DEV source, actual counts, missing data represented explicitly');
