@@ -2,7 +2,7 @@
 const {chromium}=require('playwright');
 const assert=require('assert/strict'),fs=require('fs'),path=require('path');
 const out=path.resolve(process.env.VIC28_POLISH_OUTPUT||'.local/user-facing-polish/evidence/browser');
-const urls={dev:process.env.VIC28_DEV_URL||'http://127.0.0.1:8898',fixture:process.env.VIC28_FIXTURE_URL||'http://127.0.0.1:8899',stale:'http://127.0.0.1:8901',unknown:'http://127.0.0.1:8902',preparing:'http://127.0.0.1:8903'};
+const urls={dev:process.env.VIC28_DEV_URL||'http://127.0.0.1:8898',fixture:process.env.VIC28_FIXTURE_URL||'http://127.0.0.1:8899',stale:process.env.VIC28_STALE_URL||'http://127.0.0.1:8901',unknown:process.env.VIC28_UNKNOWN_URL||'http://127.0.0.1:8902',preparing:process.env.VIC28_PREPARING_URL||'http://127.0.0.1:8903'};
 fs.mkdirSync(out,{recursive:true});
 (async()=>{
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
