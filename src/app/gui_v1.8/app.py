@@ -22,6 +22,8 @@ class App(Actions):
  def __init__(self,root,config,log_dir=None):
   self.root=root;self.path=Path(config).resolve();self.events=queue.Queue();self.busy=False;self.closed=False;self.view=None;self.preflight=None;self.controls_busy=False;self.initialized=False
   self.root.title('Lecture Pipeline · '+os.environ.get('LP_APP_VERSION','1.8'));self.px=configure_root(root)
+  icon=Path(__file__).with_name('icon.ico')
+  if icon.is_file():self.root.iconbitmap(str(icon))
   self.root.configure(bg='#eef2f7');self.root.protocol('WM_DELETE_WINDOW',self.close)
   style=ttk.Style(root);style.theme_use('clam')
   style.configure('.',font=('Segoe UI',11));style.configure('TFrame',background='#eef2f7');style.configure('TLabel',background='#eef2f7',foreground='#18273f')

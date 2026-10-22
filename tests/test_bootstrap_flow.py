@@ -95,6 +95,26 @@ class BootstrapTests(unittest.TestCase):
                 self.assertEqual(called.call_count,1);self.assertEqual(cfg.read_bytes(),original)
                 self.assertEqual((data/'user.txt').read_text(),'retained')
 
+    def test_dev_marker_follows_published_data_root_and_retry_repairs_stale_stage(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)/'app';data=Path(temporary)/'data';root.mkdir()
+            marker=root.parent/'DEV_CANDIDATE.json'
+            def configure(home,stage,*args,**kwargs):
+                stage.mkdir()
+                flow.write(home/'config/config.json',dict(data_root=str(stage)))
+                flow.write(marker,dict(purpose='Lecture Pipeline unified DEV',
+                    install_root=str(root),data_root=str(stage)))
+            with patch.object(flow.setup,'configure',side_effect=configure):
+                flow.configure_resumable(root,data,'cpu')
+            self.assertEqual(json.loads(marker.read_text())['data_root'],str(data))
+            stage=data.parent/('.lp-data-'+hashlib.sha256(str(root).encode()).hexdigest()[:12])
+            flow.write(marker,dict(purpose='Lecture Pipeline unified DEV',
+                install_root=str(root),data_root=str(stage)))
+            with patch.object(flow.setup,'configure') as again:
+                flow.configure_resumable(root,data,'cpu')
+                again.assert_not_called()
+            self.assertEqual(json.loads(marker.read_text())['data_root'],str(data))
+
     def test_failed_initialization_retries_only_owned_empty_state(self):
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary)/'app';data=Path(temporary)/'data';root.mkdir()

@@ -25,7 +25,7 @@ def build(repo, output, *, version=VERSION, desktop_bin=None):
             if path.is_file():files[prefix+'web/'+path.name] = path.read_bytes()
         for path in sorted(Path(desktop_bin).iterdir()):
             if path.is_file():files[prefix+'native/'+path.name] = path.read_bytes()
-        for name in ('LecturePipelineDesktop.exe','LecturePipelineDesktop.exe.config','Microsoft.Web.WebView2.Core.dll','Microsoft.Web.WebView2.WinForms.dll','WebView2Loader.dll'):
+        for name in ('LecturePipelineDesktop.exe','LecturePipelineDesktop.exe.config','Microsoft.Web.WebView2.Core.dll','Microsoft.Web.WebView2.WinForms.dll','WebView2Loader.dll','LecturePipeline-A-dark.ico','LecturePipeline-A-light.ico'):
             if prefix+'native/'+name not in files:raise ValueError('Missing desktop component: '+name)
     def encoded(value):return (json.dumps(value,ensure_ascii=False,indent=2)+'\n').encode('utf8')
     prefix = 'versions/'+version+'/'
@@ -37,7 +37,7 @@ def build(repo, output, *, version=VERSION, desktop_bin=None):
     for name,command in (('CheckUpdates','check'),('Update','apply --tag')):
         files[name+'.cmd']=('@echo off\r\n"%~dp0runtime\\asr\\python.exe" -B -X utf8 "%~dp0launcher\\updater.py" '+command+' %*\r\n').encode('ascii')
     if desktop_bin:
-        for name,mode in (('Lecture Pipeline DEV.vbs','dashboard'),('Lecture Pipeline (Tk).vbs','gui')):
+        for name,mode in (('Lecture Pipeline.vbs','dashboard'),('Lecture Pipeline DEV.vbs','dashboard'),('Lecture Pipeline (Tk).vbs','gui')):
             files[name]=('Set fso=CreateObject("Scripting.FileSystemObject")\r\nroot=fso.GetParentFolderName(WScript.ScriptFullName)\r\nSet sh=CreateObject("WScript.Shell")\r\nsh.Run Chr(34) & root & "\\runtime\\asr\\pythonw.exe" & Chr(34) & " -B -X utf8 " & Chr(34) & root & "\\launcher\\launch.py" & Chr(34) & " '+mode+'", 0, False\r\n').encode('ascii')
     for path in sorted((repo/'components').glob('*-manifest.json')):
         files['launcher/'+path.name] = path.read_bytes()

@@ -25,6 +25,8 @@ try
     var old=Path.Combine(folder,"existing");Directory.CreateDirectory(old);File.WriteAllText(Path.Combine(old,"keep"),"untouched");
     await Reject(()=>engine.Run(new(old,Path.Combine(folder,"data"),"auto"),CancellationToken.None));
     Check(File.ReadAllText(Path.Combine(old,"keep"))=="untouched");
+    await Reject(()=>engine.Run(new(old,Path.Combine(folder,"data"),"auto",Upgrade:true),CancellationToken.None));
+    Check(File.ReadAllText(Path.Combine(old,"keep"))=="untouched");
     var fresh=Path.Combine(folder,"cancel");var cancel=new CancellationTokenSource();cancel.Cancel();
     try{await engine.Run(new(fresh,Path.Combine(folder,"fresh-data"),"auto"),cancel.Token);throw new Exception("Expected cancel");}catch(OperationCanceledException){tests++;}
     Check(JsonNode.Parse(File.ReadAllText(Path.Combine(fresh,"bootstrap-state.json")))!["status"]!.GetValue<string>()=="cancelled");
@@ -46,6 +48,16 @@ try
     }
     await Reject(()=>{InstallEngine.Shortcut(shortcutRoot,shortcutFolder);return Task.CompletedTask;});
     using(var preserved=new ShellShortcut(shortcut))Check(preserved.Arguments=="conflicting user shortcut");
+    File.WriteAllText(Path.Combine(shortcutRoot,"current.json"),
+        "{\"app_version\":\"2.0.0-beta.5-dev.5\",\"path\":\"versions/2.0.0-beta.5-dev.5\"}");
+    var webShortcut=InstallEngine.Shortcut(shortcutRoot,shortcutFolder,dashboard:true);
+    Check(webShortcut!=shortcut);
+    using(var web=new ShellShortcut(webShortcut))
+    {
+        Check(web.Arguments.EndsWith(" dashboard"));
+        Check(web.IconLocation==Path.Combine(shortcutRoot,"versions","2.0.0-beta.5-dev.5",
+            "gui_web","native","LecturePipelineDesktop.exe"));
+    }
     Console.WriteLine($"{tests} bootstrap assertions passed");
     if(args.Length==2 && args[0]=="--screenshot")
     {

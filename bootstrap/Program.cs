@@ -27,6 +27,7 @@ internal sealed class SetupForm:Form
         install.Text=args.GetValueOrDefault("--install",Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Programs","LecturePipeline"));
         data.Text=args.GetValueOrDefault("--data",Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Lecture Pipeline Data"));
         mode.Items.AddRange(["Auto","CPU","GPU"]);mode.SelectedIndex=Array.IndexOf(new[]{"auto","cpu","gpu"},args.GetValueOrDefault("--mode","auto"));if(mode.SelectedIndex<0)mode.SelectedIndex=0;
+        if(args.ContainsKey("--upgrade")){start.Text="Обновить beta.4";stage.Text="Переход на новый интерфейс в указанной установке";}
         var layout=new TableLayoutPanel{Dock=DockStyle.Fill,Padding=new Padding(20),ColumnCount=1,RowCount=9};layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100));
         for(int i=0;i<6;i++)layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,30));layout.RowStyles.Add(new RowStyle(SizeType.Percent,100));layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         layout.Controls.Add(new Label{Text="Lecture Pipeline · Windows 11 x64",AutoSize=true,Font=new Font(Font,FontStyle.Bold)});
@@ -55,7 +56,7 @@ internal sealed class SetupForm:Form
     async Task Run()
     {
         if(running)return;running=true;start.Enabled=false;cancel.Enabled=true;advanced.Enabled=false;install.Enabled=data.Enabled=mode.Enabled=false;cancellation=new();ExitCode=1;
-        var options=new InstallOptions(install.Text,data.Text,mode.Text.ToLowerInvariant(),args.GetValueOrDefault("--shortcut-directory"),!args.ContainsKey("--no-launch"),args.GetValueOrDefault("--smoke-audio"));
+        var options=new InstallOptions(install.Text,data.Text,mode.Text.ToLowerInvariant(),args.GetValueOrDefault("--shortcut-directory"),!args.ContainsKey("--no-launch"),args.GetValueOrDefault("--smoke-audio"),args.ContainsKey("--upgrade"));
         using var timer=new System.Windows.Forms.Timer();if(args.TryGetValue("--cancel-after-ms",out var delay)){timer.Interval=int.Parse(delay);timer.Tick+=(_,_)=>{timer.Stop();RequestCancel();};timer.Start();}
         object result;
         try{result=await Task.Run(()=>new InstallEngine(Display).Run(options,cancellation.Token));ExitCode=0;start.Text="Готово";}

@@ -75,6 +75,7 @@ class UpdateTests(unittest.TestCase):
     def test_missing_bad_or_incompatible_manifest_refused(self):
         original=json.loads(json.dumps(self.release))
         variants=[None,b'not json',json.dumps(dict(self.manifest,migration_required=True)).encode(),
+                  json.dumps(dict(self.manifest,updater_protocol=2)).encode(),
                   json.dumps(dict(self.manifest,repository='someone/else')).encode()]
         for data in variants:
             self.release=json.loads(json.dumps(original))

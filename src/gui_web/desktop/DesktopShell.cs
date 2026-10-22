@@ -34,6 +34,8 @@ public sealed class DesktopShell : Form
         origin = url;
         profile = profileDirectory;
         Text = "Lecture Pipeline DEV";
+        var selectedIcon = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LecturePipeline-A-dark.ico");
+        if (File.Exists(selectedIcon)) Icon = new System.Drawing.Icon(selectedIcon);
         MinimumSize = new System.Drawing.Size(720, 500);
         StartPosition = FormStartPosition.CenterScreen;
         WindowState = FormWindowState.Maximized;

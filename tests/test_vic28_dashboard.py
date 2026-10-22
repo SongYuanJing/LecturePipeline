@@ -4,6 +4,7 @@ import hashlib
 from http.server import ThreadingHTTPServer
 import json
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -206,6 +207,40 @@ class DashboardTests(unittest.TestCase):
         dump(self.config, data)
         with self.assertRaisesRegex(ValueError, 'course path leaves'):
             run_desktop(self.root / 'app', self.root / 'app/versions/fixture', self.config)
+
+    def test_installed_product_reads_configured_external_roots_without_dev_marker(self):
+        code = self.root / 'app/versions/fixture'
+        dump(code / 'release.json', dict(app_version='fixture', distribution_status='beta'))
+        executable = code / 'gui_web/native/LecturePipelineDesktop.exe'
+        executable.parent.mkdir(parents=True)
+        executable.write_bytes(b'disposable shell fixture')
+        external_data = self.base / 'existing-data'
+        shutil.move(str(self.root / 'data'), str(external_data))
+        external_course = self.base / 'configured-course'
+        for name in ('source', 'raw', 'final'):
+            (external_course / name).mkdir(parents=True)
+        data = load(self.config)
+        data['data_root'] = str(external_data)
+        data['workspaces']['visual']['subjects'][0]['inbox'] = dict(
+            enabled=True, source_audio_folder=str(external_course / 'source'),
+            archive_audio_folder=None, raw_output_folder=str(external_course / 'raw'),
+            final_output_folder=str(external_course / 'final'))
+        dump(self.config, data)
+        observed = []
+        def provider(*args, **kwargs):
+            created = SnapshotProvider(*args, **kwargs)
+            observed.append(created)
+            return created
+        with patch('desktop_runner.SnapshotProvider', side_effect=provider), \
+             patch('desktop_runner.subprocess.run', return_value=subprocess.CompletedProcess([], 0)):
+            self.assertEqual(run_desktop(self.root / 'app', code, self.config), 0)
+        self.assertEqual(len(observed), 1)
+        self.assertEqual(observed[0].root, (self.root / 'app').resolve())
+        self.assertIn(external_data.resolve(), observed[0].allowed_roots)
+        self.assertIn((external_course / 'raw').resolve(), observed[0].allowed_roots)
+        result = observed[0].snapshot()
+        self.assertTrue(result['available'], result['errors'])
+        self.assertFalse(result['read_audit']['mutations_allowed'])
 
     def test_desktop_second_launch_uses_existing_instance(self):
         marker = self.root / 'DEV_CANDIDATE.json'

@@ -29,6 +29,21 @@ def write(path, value):
     temporary.replace(path)
 
 
+def finish_dev_marker(root, stage, data):
+    marker = root.parent / 'DEV_CANDIDATE.json'
+    if not marker.exists():
+        return
+    value = json.loads(marker.read_text(encoding='utf8'))
+    if value.get('purpose') != 'Lecture Pipeline unified DEV' or value.get('install_root') != str(root):
+        raise ValueError('DEV candidate marker belongs to another installation')
+    if value.get('data_root') == str(data):
+        return
+    if value.get('data_root') != str(stage):
+        raise ValueError('DEV candidate marker has an unexpected data root')
+    value['data_root'] = str(data)
+    write(marker, value)
+
+
 def configure_resumable(root, data, mode):
     """Initialize only a new data root; preserve a completed config on retry.
 
@@ -42,6 +57,7 @@ def configure_resumable(root, data, mode):
         value = json.loads(cfg.read_text(encoding='utf8'))
         if Path(value['data_root']).resolve() != data:
             raise ValueError('Эта установка использует другую папку данных; она не изменена.')
+        finish_dev_marker(root, stage, data)
         return cfg
     if journal.exists():
         expected = dict(data=str(data), stage=str(stage))
@@ -75,6 +91,7 @@ def configure_resumable(root, data, mode):
         raise ValueError('Не найдены подготовленные данные; установка не завершена.')
     value['data_root'] = str(data)
     write(cfg, value)
+    finish_dev_marker(root, stage, data)
     journal.unlink()
     return cfg
 

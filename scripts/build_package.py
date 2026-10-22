@@ -50,6 +50,7 @@ def build(repo,components,out,*,version=VERSION,desktop_bin=None):
  (out/'Lecture Pipeline.vbs').write_text('Set fso=CreateObject("Scripting.FileSystemObject")\r\nroot=fso.GetParentFolderName(WScript.ScriptFullName)\r\nSet sh=CreateObject("WScript.Shell")\r\nsh.Run Chr(34) & root & "\\runtime\\asr\\pythonw.exe" & Chr(34) & " -B -X utf8 " & Chr(34) & root & "\\launcher\\launch.py" & Chr(34) & " gui", 0, False\r\n',encoding='ascii')
  if desktop_bin:
   (out/'Lecture Pipeline (Tk).vbs').write_bytes((out/'Lecture Pipeline.vbs').read_bytes())
+  (out/'Lecture Pipeline.vbs').write_text('Set fso=CreateObject("Scripting.FileSystemObject")\r\nroot=fso.GetParentFolderName(WScript.ScriptFullName)\r\nSet sh=CreateObject("WScript.Shell")\r\nsh.Run Chr(34) & root & "\\runtime\\asr\\pythonw.exe" & Chr(34) & " -B -X utf8 " & Chr(34) & root & "\\launcher\\launch.py" & Chr(34) & " dashboard", 0, False\r\n',encoding='ascii')
   (out/'Lecture Pipeline DEV.vbs').write_text('Set fso=CreateObject("Scripting.FileSystemObject")\r\nroot=fso.GetParentFolderName(WScript.ScriptFullName)\r\nSet sh=CreateObject("WScript.Shell")\r\nsh.Run Chr(34) & root & "\\runtime\\asr\\pythonw.exe" & Chr(34) & " -B -X utf8 " & Chr(34) & root & "\\launcher\\launch.py" & Chr(34) & " dashboard", 0, False\r\n',encoding='ascii')
  if (repo/'docs').exists():shutil.copytree(repo/'docs',out/'docs')
  if (repo/'third_party').exists():shutil.copytree(repo/'third_party',out/'third_party')

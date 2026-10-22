@@ -16,6 +16,7 @@ public sealed class ShellShortcut : IDisposable
     public string Target { get {var b=new StringBuilder(32768);link.GetPath(b,b.Capacity,IntPtr.Zero,4);return b.ToString();} set {link.SetPath(value);} }
     public string Arguments { get {var b=new StringBuilder(32768);link.GetArguments(b,b.Capacity);return b.ToString();} set {link.SetArguments(value);} }
     public string Directory { get {var b=new StringBuilder(32768);link.GetWorkingDirectory(b,b.Capacity);return b.ToString();} set {link.SetWorkingDirectory(value);} }
+    public string IconLocation { get {var b=new StringBuilder(32768);link.GetIconLocation(b,b.Capacity,out _);return b.ToString();} set {link.SetIconLocation(value,0);} }
     public void Save(string path) {link.SetDescription("Lecture Pipeline");((IPersistFile)link).Save(path,true);}
     public void Dispose() {Marshal.FinalReleaseComObject(link);}
 

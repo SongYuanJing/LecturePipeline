@@ -1,10 +1,14 @@
-param([string]$Python='python',[string]$Dotnet='dotnet',[string]$Output)
+param([string]$Python='python',[string]$Dotnet='dotnet',[string]$Output,
+      [string]$Version,[string]$DesktopBin)
 $ErrorActionPreference='Stop'
 $repo=Split-Path $PSScriptRoot
 if(-not $Output){$Output=Join-Path $repo 'dist/bootstrap'}
 $env:DOTNET_CLI_TELEMETRY_OPTOUT='1'
 $env:DOTNET_GENERATE_ASPNET_CERTIFICATE='false'
-& $Python -B (Join-Path $PSScriptRoot 'build_bootstrap_payload.py')
+$payloadArgs=@()
+if($Version){$payloadArgs+=@('--version',$Version)}
+if($DesktopBin){$payloadArgs+=@('--desktop-bin',$DesktopBin)}
+& $Python -B (Join-Path $PSScriptRoot 'build_bootstrap_payload.py') @payloadArgs
 if($LASTEXITCODE -ne 0){throw 'Payload build failed'}
 $appVersion=(Get-Content -LiteralPath (Join-Path $repo 'bootstrap/payload/application.json') -Raw | ConvertFrom-Json).app_version
 Push-Location (Join-Path $repo 'bootstrap')

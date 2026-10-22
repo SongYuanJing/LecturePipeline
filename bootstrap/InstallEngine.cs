@@ -9,7 +9,7 @@ using System.Text.Json.Nodes;
 namespace LecturePipeline.Setup;
 
 internal record InstallOptions(string Install, string Data, string Mode, string? ShortcutDirectory = null,
-    bool Launch = true, string? SmokeAudio = null);
+    bool Launch = true, string? SmokeAudio = null, bool Upgrade = false);
 internal record Update(string Stage, string Message, long Done = 0, long? Total = null);
 
 internal sealed class InstallEngine(Action<Update> report)
@@ -193,30 +193,144 @@ internal sealed class InstallEngine(Action<Update> report)
         if (process.ExitCode == 130 || cancel.IsCancellationRequested) throw new OperationCanceledException(cancel);
         if (process.ExitCode != 0) throw new IOException("Python setup не завершён. См. сообщение выше и logs/bootstrap-python.log. " + error);
     }
-    internal static string Shortcut(string root, string? customDirectory)
+    internal static string Shortcut(string root, string? customDirectory, bool dashboard=false)
     {
         var folder = customDirectory ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs),"Lecture Pipeline");
         Directory.CreateDirectory(folder);
         var id = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(root.ToUpperInvariant())))[..8];
-        string path = Path.Combine(folder,"Lecture Pipeline — " + id + ".lnk");
+        string path = Path.Combine(folder,"Lecture Pipeline — " + id + (dashboard ? " — WebView2" : "") + ".lnk");
         string target = Path.Combine(root,"runtime","asr","pythonw.exe");
-        string arguments = "-B -X utf8 \"" + Path.Combine(root,"launcher/launch.py") + "\" gui";
+        string arguments = "-B -X utf8 \"" + Path.Combine(root,"launcher/launch.py") + "\" " + (dashboard ? "dashboard" : "gui");
+        string? icon = null;
+        if (dashboard)
+        {
+            var pointer = ReadObject(Path.Combine(root,"current.json"));
+            var version = pointer["app_version"]!.GetValue<string>();
+            if (!System.Text.RegularExpressions.Regex.IsMatch(version,@"^[0-9A-Za-z.-]+$")
+                || pointer["path"]!.GetValue<string>() != "versions/" + version)
+                throw new IOException("Invalid dashboard version pointer");
+            icon = Path.Combine(root,"versions",version,"gui_web","native","LecturePipelineDesktop.exe");
+        }
         if (File.Exists(path))
         {
             using var existing=new ShellShortcut(path);
             if(!string.Equals(existing.Target,target,StringComparison.OrdinalIgnoreCase)
-                || existing.Arguments!=arguments || !string.Equals(existing.Directory,root,StringComparison.OrdinalIgnoreCase))
+                || existing.Arguments!=arguments || !string.Equals(existing.Directory,root,StringComparison.OrdinalIgnoreCase)
+                || (dashboard && !string.Equals(existing.IconLocation,icon,StringComparison.OrdinalIgnoreCase)))
                 throw new IOException("Конфликт ярлыка; существующий ярлык сохранён: " + path);
             return path;
         }
         using var link=new ShellShortcut {Target=target,Arguments=arguments,Directory=root};
+        if (icon != null) link.IconLocation=icon;
         string temporary=path+".pending";
         try {link.Save(temporary);File.Move(temporary,path);}
         finally {if(File.Exists(temporary))File.Delete(temporary);}
         return path;
     }
+    static int LaunchWindow(string root, bool dashboard)
+    {
+        var start=new ProcessStartInfo(Path.Combine(root,"runtime","asr","pythonw.exe")) {
+            UseShellExecute=false,WorkingDirectory=root };
+        foreach(var arg in new[]{"-B","-X","utf8",Path.Combine(root,"launcher/launch.py"),
+            dashboard ? "dashboard" : "gui"}) start.ArgumentList.Add(arg);
+        using var app=Process.Start(start) ?? throw new IOException("Не удалось запустить приложение.");
+        var pointer=ReadObject(Path.Combine(root,"current.json"));
+        var version=pointer["app_version"]!.GetValue<string>();
+        string expectedTitle="Lecture Pipeline · "+version;
+        string expectedShell=Path.Combine(root,"versions",version,"gui_web","native","LecturePipelineDesktop.exe");
+        var timer=Stopwatch.StartNew();
+        while(timer.Elapsed < TimeSpan.FromSeconds(45))
+        {
+            Thread.Sleep(250);app.Refresh();
+            if(app.HasExited)break;
+            if(!dashboard && app.MainWindowHandle!=IntPtr.Zero && app.MainWindowTitle==expectedTitle)return app.Id;
+            if(dashboard)
+            {
+                foreach(var shell in Process.GetProcessesByName("LecturePipelineDesktop"))
+                {
+                    using(shell)
+                    {
+                        try {if(shell.MainWindowHandle!=IntPtr.Zero &&
+                                string.Equals(shell.MainModule?.FileName,expectedShell,StringComparison.OrdinalIgnoreCase))
+                            return app.Id;}
+                        catch(System.ComponentModel.Win32Exception) { }
+                    }
+                }
+            }
+        }
+        if(!app.HasExited)app.Kill(entireProcessTree:true);
+        throw new IOException((dashboard ? "WebView2" : "Tk")+" окно не появилось за 45 секунд; см. logs/launch-error.txt.");
+    }
+    async Task<JsonObject> UpgradeCommand(string root, string script, string command, string? stage,
+        string? manifest, string bundle, CancellationToken cancel, string? backup=null)
+    {
+        var start = new ProcessStartInfo(Path.Combine(root,"runtime","asr","python.exe")) {
+            UseShellExecute=false,CreateNoWindow=true,RedirectStandardOutput=true,RedirectStandardError=true,
+            StandardOutputEncoding=Encoding.UTF8,StandardErrorEncoding=Encoding.UTF8,WorkingDirectory=root };
+        foreach(var arg in new[]{"-B","-X","utf8",script,command,"--install",root}) start.ArgumentList.Add(arg);
+        if(stage!=null && manifest!=null)
+        {
+            foreach(var arg in new[]{"--stage",stage,"--manifest",manifest,"--bundle",bundle}) start.ArgumentList.Add(arg);
+        }
+        if(backup!=null) { start.ArgumentList.Add("--backup");start.ArgumentList.Add(backup); }
+        using var process=Process.Start(start) ?? throw new IOException("Не удалось запустить upgrade helper.");
+        var output=process.StandardOutput.ReadToEndAsync();
+        var errors=process.StandardError.ReadToEndAsync();
+        await process.WaitForExitAsync(cancel);
+        string stdout=await output,stderr=await errors;
+        if(process.ExitCode!=0)throw new IOException("Обновление отклонено; прежняя версия сохранена. " + stderr[^Math.Min(1800,stderr.Length)..]);
+        return JsonNode.Parse(stdout)!.AsObject();
+    }
+    async Task<object> Upgrade(InstallOptions options, CancellationToken cancel)
+    {
+        string root=Normalize(options.Install),data=Normalize(options.Data);
+        if(!Directory.Exists(root) || !Directory.Exists(data) ||
+            !File.Exists(Path.Combine(root,"current.json")) ||
+            ReadObject(Path.Combine(root,"current.json"))["app_version"]?.GetValue<string>()!="2.0.0-beta.4")
+            throw new IOException("Обновление требует существующую beta.4; файлы не изменены.");
+        var config=ReadObject(Path.Combine(root,"config","config.json"));
+        if(!string.Equals(Path.GetFullPath(config["data_root"]!.GetValue<string>()),data,StringComparison.OrdinalIgnoreCase))
+            throw new IOException("Выбранная папка данных не совпадает с beta.4; файлы не изменены.");
+        using var resource=Resource("application.zip");string bundle=Hash(resource);
+        using var payloadStream=Resource("application.json");
+        var payload=JsonNode.Parse(payloadStream)!.AsObject();
+        string stageRoot=Path.Combine(root,".upgrade-stage");
+        Directory.CreateDirectory(stageRoot);
+        string stage=Path.Combine(stageRoot,Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(stage);
+        report(new("upgrade","Проверка полного пакета и установленной beta.4…"));
+        using(var archive=Resource("application.zip"))Extract(archive,stage,cancel);
+        Verify(stage,Files(payload),cancel);
+        string manifest=Path.Combine(stageRoot,Path.GetFileName(stage)+".json");
+        File.WriteAllText(manifest,payload.ToJsonString(),new UTF8Encoding(false));
+        string helper=Path.Combine(stage,"launcher","safe_upgrade.py");
+        if(!File.Exists(helper))throw new IOException("В пакете отсутствует механизм безопасного обновления.");
+        await UpgradeCommand(root,helper,"recover",null,null,bundle,cancel);
+        report(new("upgrade","Подготовка новой версии и снимка для отката…"));
+        var result=await UpgradeCommand(root,helper,"apply",stage,manifest,bundle,cancel);
+        string backup=result["backup"]!.GetValue<string>();
+        int? pid=null;
+        if(options.Launch)
+        {
+            try {pid=LaunchWindow(root,dashboard:true);}
+            catch
+            {
+                await UpgradeCommand(root,Path.Combine(root,"launcher","safe_upgrade.py"),
+                    "rollback",null,null,bundle,CancellationToken.None,backup);
+                throw;
+            }
+        }
+        string? shortcut=null;
+        try { shortcut=Shortcut(root,options.ShortcutDirectory,dashboard:true); }
+        catch(IOException error) { report(new("shortcut","Новая версия установлена; ярлык не создан: "+error.Message)); }
+        report(new("ready","Обновление завершено; существующие данные и задания не менялись."));
+        return new { status="updated", install=root, data, shortcut,
+            previous="2.0.0-beta.4", current=result["current"]!.GetValue<string>(),
+            backup, application_pid=pid };
+    }
     public async Task<object> Run(InstallOptions options, CancellationToken cancel)
     {
+        if(options.Upgrade)return await Upgrade(options,cancel);
         if (!OperatingSystem.IsWindowsVersionAtLeast(10,0,22000) || System.Runtime.InteropServices.RuntimeInformation.OSArchitecture != System.Runtime.InteropServices.Architecture.X64)
             throw new IOException("Поддерживается Windows 11 x64.");
         string root=Normalize(options.Install),data=Normalize(options.Data);
@@ -247,21 +361,20 @@ internal sealed class InstallEngine(Action<Update> report)
             await Python(options,root,data,cancel);
             cancel.ThrowIfCancellationRequested();
             report(new("shortcut","Создание пользовательского ярлыка…"));
-            string shortcut=Shortcut(root,options.ShortcutDirectory);
+            bool dashboard=File.Exists(Path.Combine(root,"versions",
+                ReadObject(Path.Combine(root,"current.json"))["app_version"]!.GetValue<string>(),
+                "gui_web","native","LecturePipelineDesktop.exe"));
+            string shortcut=Shortcut(root,options.ShortcutDirectory,dashboard);
             State("ready");
             int? pid=null;
             if (options.Launch)
             {
-                var start=new ProcessStartInfo(Path.Combine(root,"runtime/asr/pythonw.exe")) { UseShellExecute=false,WorkingDirectory=root };
-                foreach(var arg in new[]{"-B","-X","utf8",Path.Combine(root,"launcher/launch.py"),"gui"}) start.ArgumentList.Add(arg);
-                using var app=Process.Start(start) ?? throw new IOException("Не удалось запустить приложение.");
-                pid=app.Id;
-                // Confirm a real top-level application window, not merely a created process.
-                var timer=Stopwatch.StartNew();
-                string expectedTitle="Lecture Pipeline · "+ReadObject(Path.Combine(root,"current.json"))["app_version"]!.GetValue<string>();
-                while(timer.Elapsed < TimeSpan.FromSeconds(45))
-                { await Task.Delay(250); app.Refresh(); if(app.HasExited) throw new IOException("Приложение завершилось при запуске; см. logs/launch-error.txt."); if(app.MainWindowHandle != IntPtr.Zero && app.MainWindowTitle==expectedTitle) break; }
-                if(app.MainWindowHandle==IntPtr.Zero || app.MainWindowTitle!=expectedTitle) throw new IOException("Окно приложения не появилось за 45 секунд; см. logs/launch-error.txt.");
+                try { pid=LaunchWindow(root,dashboard); }
+                catch(IOException) when(dashboard)
+                {
+                    report(new("fallback","WebView2 недоступен; открывается существующий Tk GUI."));
+                    pid=LaunchWindow(root,dashboard:false);
+                }
             }
             report(new("ready","Установка завершена. Приложение готово."));
             return new { status="ready",install=root,data,shortcut,application_pid=pid };
