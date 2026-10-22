@@ -32,6 +32,15 @@ try
     Check(JsonNode.Parse(File.ReadAllText(Path.Combine(fresh,"bootstrap-state.json")))!["status"]!.GetValue<string>()=="cancelled");
     Check(!File.Exists(Path.Combine(fresh,"current.json")));
     Check(!Directory.EnumerateFiles(fresh,"*.part",SearchOption.AllDirectories).Any());
+    var firstLaunchStatus=Path.Combine(folder,"setup-webview2-test.status");
+    await Reject(()=>Task.Run(()=>InstallEngine.WaitForDashboardReady(firstLaunchStatus,()=>false,TimeSpan.FromMilliseconds(80))));
+    File.WriteAllText(firstLaunchStatus,"error\nprofile collision");
+    await Reject(()=>Task.Run(()=>InstallEngine.WaitForDashboardReady(firstLaunchStatus,()=>false,TimeSpan.FromSeconds(1))));
+    File.Delete(firstLaunchStatus);
+    await Reject(()=>Task.Run(()=>InstallEngine.WaitForDashboardReady(firstLaunchStatus,()=>true,TimeSpan.FromSeconds(1))));
+    _=Task.Run(async()=>{await Task.Delay(100);File.WriteAllText(firstLaunchStatus,"ready\n");});
+    InstallEngine.WaitForDashboardReady(firstLaunchStatus,()=>false,TimeSpan.FromSeconds(2));tests++;
+    await Reject(()=>Task.Run(()=>InstallEngine.WaitForDashboardReady(firstLaunchStatus,()=>true,TimeSpan.FromSeconds(1))));
     var statePath=Path.Combine(fresh,"bootstrap-state.json");var state=JsonNode.Parse(File.ReadAllText(statePath))!;state["status"]="ready";File.WriteAllText(statePath,state.ToJsonString());
     try{await engine.Run(new(fresh,Path.Combine(folder,"fresh-data"),"auto"),cancel.Token);throw new Exception("Expected cancel");}catch(OperationCanceledException){tests++;}
     Check(JsonNode.Parse(File.ReadAllText(statePath))!["status"]!.GetValue<string>()=="ready");

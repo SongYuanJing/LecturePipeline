@@ -4,6 +4,7 @@ from __future__ import annotations
 from contextlib import ExitStack
 from http.server import ThreadingHTTPServer
 import json
+import os
 from pathlib import Path
 import secrets
 import subprocess
@@ -66,7 +67,16 @@ def run(install_root, code_root, config_path):
         try:
             url = f'http://127.0.0.1:{server.server_port}/#session={token}'
             profile = install_root / 'run/gui-webview2-profile'
-            result = subprocess.run([str(executable), url, str(profile)], cwd=install_root)
+            command = [str(executable), url, str(profile)]
+            status = os.environ.get('LECTURE_PIPELINE_FIRST_LAUNCH_STATUS')
+            if status:
+                status_path = Path(status).resolve()
+                if (status_path.parent != (install_root / 'run').resolve()
+                        or not status_path.name.startswith('setup-webview2-')
+                        or status_path.suffix != '.status'):
+                    raise ValueError('Invalid Setup first-launch status path')
+                command.append(str(status_path))
+            result = subprocess.run(command, cwd=install_root)
             if result.returncode:
                 raise RuntimeError('WebView2 window failed; open Lecture Pipeline (Tk)')
             return 0

@@ -227,39 +227,72 @@ internal sealed class InstallEngine(Action<Update> report)
         finally {if(File.Exists(temporary))File.Delete(temporary);}
         return path;
     }
+    internal static void WaitForDashboardReady(string statusPath, Func<bool> exited, TimeSpan timeout)
+    {
+        var timer=Stopwatch.StartNew();
+        while(timer.Elapsed < timeout)
+        {
+            if(File.Exists(statusPath))
+            {
+                var status=File.ReadAllText(statusPath);
+                if(status.TrimEnd('\r','\n')=="ready")
+                {
+                    if(exited())throw new IOException("WebView2 launcher exited after initialization; see logs/launch-error.txt.");
+                    return;
+                }
+                if(status.StartsWith("error\n",StringComparison.Ordinal))
+                    throw new IOException("WebView2 initialization failed: "+status[6..][..Math.Min(1800,status.Length-6)]);
+                throw new IOException("WebView2 returned an invalid first-launch status.");
+            }
+            if(exited())throw new IOException("WebView2 launcher exited before initialization; see logs/launch-error.txt.");
+            Thread.Sleep(100);
+        }
+        throw new IOException("WebView2 initialization was not confirmed within "+timeout.TotalSeconds+" seconds.");
+    }
     static int LaunchWindow(string root, bool dashboard)
     {
         var start=new ProcessStartInfo(Path.Combine(root,"runtime","asr","pythonw.exe")) {
             UseShellExecute=false,WorkingDirectory=root };
         foreach(var arg in new[]{"-B","-X","utf8",Path.Combine(root,"launcher/launch.py"),
             dashboard ? "dashboard" : "gui"}) start.ArgumentList.Add(arg);
+        string? statusPath=null;
+        if(dashboard)
+        {
+            var run=Path.Combine(root,"run");Directory.CreateDirectory(run);
+            statusPath=Path.Combine(run,"setup-webview2-"+Guid.NewGuid().ToString("N")+".status");
+            start.Environment["LECTURE_PIPELINE_FIRST_LAUNCH_STATUS"]=statusPath;
+        }
         using var app=Process.Start(start) ?? throw new IOException("Не удалось запустить приложение.");
+        if(dashboard)
+        {
+            var firstLaunchTimer=Stopwatch.StartNew();
+            try
+            {
+                WaitForDashboardReady(statusPath!,()=>{app.Refresh();return app.HasExited;},TimeSpan.FromSeconds(45));
+                Write(Path.Combine(root,"logs",Path.GetFileNameWithoutExtension(statusPath!)+".json"),
+                    new {status="ready",elapsed_ms=firstLaunchTimer.ElapsedMilliseconds,application_pid=app.Id});
+                return app.Id;
+            }
+            catch(Exception error)
+            {
+                if(!app.HasExited) {app.Kill(entireProcessTree:true);app.WaitForExit(10000);}
+                Write(Path.Combine(root,"logs",Path.GetFileNameWithoutExtension(statusPath!)+".json"),
+                    new {status="failed",elapsed_ms=firstLaunchTimer.ElapsedMilliseconds,error=error.Message,application_pid=app.Id});
+                throw;
+            }
+        }
         var pointer=ReadObject(Path.Combine(root,"current.json"));
         var version=pointer["app_version"]!.GetValue<string>();
         string expectedTitle="Lecture Pipeline · "+version;
-        string expectedShell=Path.Combine(root,"versions",version,"gui_web","native","LecturePipelineDesktop.exe");
         var timer=Stopwatch.StartNew();
         while(timer.Elapsed < TimeSpan.FromSeconds(45))
         {
             Thread.Sleep(250);app.Refresh();
             if(app.HasExited)break;
-            if(!dashboard && app.MainWindowHandle!=IntPtr.Zero && app.MainWindowTitle==expectedTitle)return app.Id;
-            if(dashboard)
-            {
-                foreach(var shell in Process.GetProcessesByName("LecturePipelineDesktop"))
-                {
-                    using(shell)
-                    {
-                        try {if(shell.MainWindowHandle!=IntPtr.Zero &&
-                                string.Equals(shell.MainModule?.FileName,expectedShell,StringComparison.OrdinalIgnoreCase))
-                            return app.Id;}
-                        catch(System.ComponentModel.Win32Exception) { }
-                    }
-                }
-            }
+            if(app.MainWindowHandle!=IntPtr.Zero && app.MainWindowTitle==expectedTitle)return app.Id;
         }
         if(!app.HasExited)app.Kill(entireProcessTree:true);
-        throw new IOException((dashboard ? "WebView2" : "Tk")+" окно не появилось за 45 секунд; см. logs/launch-error.txt.");
+        throw new IOException("Tk окно не появилось за 45 секунд; см. logs/launch-error.txt.");
     }
     async Task<JsonObject> UpgradeCommand(string root, string script, string command, string? stage,
         string? manifest, string bundle, CancellationToken cancel, string? backup=null)

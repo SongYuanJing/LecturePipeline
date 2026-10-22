@@ -14,25 +14,27 @@ public sealed class DesktopShell : Form
     [DllImport("user32.dll")] static extern bool SetProcessDpiAwarenessContext(IntPtr context);
     readonly Uri origin;
     readonly string profile;
+    readonly string statusPath;
     readonly WebView2 view = new WebView2();
 
     [STAThread]
     public static void Main(string[] args)
     {
-        if (args.Length != 2) throw new ArgumentException("Expected dashboard URL and local profile");
+        if (args.Length != 2 && args.Length != 3) throw new ArgumentException("Expected dashboard URL and local profile");
         Uri url = new Uri(args[0]);
         if (url.Scheme != "http" || url.Host != "127.0.0.1" || url.Port < 1)
             throw new ArgumentException("Dashboard requires a local 127.0.0.1 URL");
         SetProcessDpiAwarenessContext(new IntPtr(-4));
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-        Application.Run(new DesktopShell(url, Path.GetFullPath(args[1])));
+        Application.Run(new DesktopShell(url, Path.GetFullPath(args[1]), args.Length == 3 ? Path.GetFullPath(args[2]) : null));
     }
 
-    DesktopShell(Uri url, string profileDirectory)
+    DesktopShell(Uri url, string profileDirectory, string firstLaunchStatus)
     {
         origin = url;
         profile = profileDirectory;
+        statusPath = firstLaunchStatus;
         Text = "Lecture Pipeline DEV";
         var selectedIcon = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LecturePipeline-A-dark.ico");
         if (File.Exists(selectedIcon)) Icon = new System.Drawing.Icon(selectedIcon);
@@ -64,7 +66,14 @@ public sealed class DesktopShell : Form
                             403, "Blocked", "Content-Type: text/plain");
                 };
                 view.Source = origin;
+                Signal("ready", "");
             } catch (Exception error) {
+                Signal("error", error.ToString());
+                if (statusPath != null) {
+                    Environment.ExitCode = 2;
+                    Close();
+                    return;
+                }
                 MessageBox.Show(this, "Новый интерфейс недоступен. Откройте Lecture Pipeline (Tk).\n\n" + error.Message,
                     "Lecture Pipeline DEV", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.ExitCode = 2;
@@ -72,6 +81,14 @@ public sealed class DesktopShell : Form
             }
         };
         FormClosed += delegate { view.Dispose(); };
+    }
+
+    void Signal(string state, string detail)
+    {
+        if (statusPath == null) return;
+        var temporary = statusPath + ".pending";
+        File.WriteAllText(temporary, state + "\n" + detail);
+        File.Move(temporary, statusPath);
     }
 
     bool Allowed(string value)
